@@ -11,42 +11,61 @@
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
   <title>موقع كتب</title>
 </head>
-<body>
 
+<body>
   <header>
     <div class="header-upper">
-      <button id="open-menu" onclick="openMenu()">
+      <button class="open-menu" onclick="openMenu()" title="القائمة">
         <span class="material-symbols-outlined menu-icon">
           menu
         </span>
       </button>
+
       <script>
         function openMenu(){
             // const menuButton = document.getElementById('open-menu');
             const sideMenu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
             sideMenu.classList.toggle('open');
+            overlay.classList.toggle('show');
         }
       </script>
 
-      <div id="side-menu">
-        <ul>
-          <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
-          <li><a href="{{url_for('home')}}">تواصل معنا</a></li>
-          <li><a href="{{url_for('home')}}">من نحن</a></li>
-        </ul>
+      <div id="menu">
+        <span id="overlay" onclick="closeMenu()"></span>
+        <div id="side-menu">
+          <button title="إغلاق" id="close-side-menu" onclick="closeMenu()">
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+          <script>
+            function closeMenu() {
+                const sideMenu = document.getElementById('side-menu');
+                const overlay = document.getElementById('overlay');
+                sideMenu.classList.remove('open');
+                overlay.classList.remove('show');
+            }
+          </script>
+          <ul role="list">
+            <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
+            <li><a href="{{url_for('home')}}">تواصل معنا</a></li>
+            <li><a href="{{url_for('home')}}">من نحن</a></li>
+          </ul>
+        </div>
       </div>
 
-      <a href="{{url_for('sign_in')}}" class="profile">
+      <a href="{{url_for('sign_in')}}" class="profile" title="الصفحة الشخصية">
         <span class="material-symbols-outlined profile-icon">
           person
         </span>
       </a>
-      <a href="{{url_for('home')}}" class="logo">
+      <a href="{{url_for('home')}}" class="logo" title="الصفحة الرئيسية">
         <span class="logo">
           <img src="{{ url_for('static', filename='images/logo.png')}}" alt="LOGO">
         </span>
       </a>
-      <a href="{{url_for('home')}}" class="shopping-cart">
+      <a href="{{url_for('home')}}" class="shopping-cart" title="السلة">
         <span class="material-symbols-outlined shopping-cart-icon">
           shopping_cart
         </span>
@@ -56,66 +75,71 @@
       </a>
     </div>
 
-<!--    <nav>-->
-<!--      <ul>-->
-<!--        <li>-->
-<!--          <a href="{{url_for('home')}}">-->
-<!--            الصفحة الرئيسية-->
-<!--          </a>-->
-<!--        </li>-->
-<!--        <li>-->
-<!--          <a href="{{url_for('home')}}">-->
-<!--            من نحن-->
-<!--          </a>-->
-<!--        </li>-->
-<!--        <li>-->
-<!--          <a href="{{url_for('home')}}">-->
-<!--            تواصل معنا-->
-<!--          </a>-->
-<!--        </li>-->
-<!--        <li>-->
-<!--          <a href="{{url_for('home')}}">-->
-<!--            الخدمات-->
-<!--          </a>-->
-<!--            <ul class="dropdown">-->
-<!--              <li>واحد</li>-->
-<!--              <li>ثنين</li>-->
-<!--            </ul>-->
-<!--        </li>-->
-<!--      </ul>-->
-<!--    </nav>-->
   </header>
-  <br><br><br><br>
-  {% block content %}
+  <br>
 
-  <products>
-    {% for product in products %}
-    <product>
-      <div>
-        <img src="{{ url_for('static', filename='images/products/')}}{{product}}" alt="product">
-      </div>
-      <span>
-        {{ product[:-4] }}
-      </span>
-      <hr style="height: 1px; width: 70%;">
-      <span>
-        25₪
-      </span>
-    </product>
-    {% endfor %}
-  </products>
+  {% block content %}
+  <div id="container">
+    <filters>
+      <ul>
+        <li>الفلاتر</li>
+        <li>
+          المؤلف/ة
+          <span class="material-symbols-outlined">
+            expand_more
+          </span>
+        </li>
+        <li>
+          تاريخ الإصدار
+          <span class="material-symbols-outlined">
+            expand_more
+          </span>
+        </li>
+        <li>
+          دار النشر
+          <span class="material-symbols-outlined">
+            expand_more
+          </span>
+        </li>
+        <li>
+          تصنيفات أخرى
+          <span class="material-symbols-outlined">
+            expand_more
+          </span>
+        </li>
+
+      </ul>
+    </filters>
+    <products>
+      {% for product in products %}
+      <product>
+        <div>
+          <img src="{{ url_for('static', filename='images/products/')}}{{product}}" alt="product">
+        </div>
+        <span>
+          {{ product[:-4] }}
+        </span>
+        <hr style="height: 1px; width: 70%;">
+        <span>
+          25₪
+        </span>
+      </product>
+      {% endfor %}
+    </products>
+  </div>
   <br>
   {% endblock %}
+
   <footer>
     <div class="who-we">
       من نحن
       <hr>
-      نور الفضيلة موقع أزياء شرعية
+      موقع كتب
     </div>
     <div class="important-links">
       روابط مهمة
       <hr>
-      طريقة إختيار المقاس<br>
+<!--      طريقة إختيار المقاس<br>-->
       سياسة الخصوصية<br>
       سياسة الاستبدال والاسترجاع
     </div>
