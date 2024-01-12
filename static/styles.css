@@ -1,0 +1,255 @@
+body {
+  display: block;
+  width: 100%;
+  margin: 0;
+  /*position: absolute;*/
+  /*right: 0;*/
+  /*top: 0;*/
+}
+
+/*html {*/
+/*  width: 100%;*/
+/*}*/
+
+header {
+  position: fixed;
+  top: 0;
+  left: -23px;
+  width: 100%;
+  height: 120px;
+  z-index: 1000;
+  padding: 0 1rem;
+  display: block;
+  background-color: #ffffff;
+  border-bottom: 5px solid #f2e4d7;
+}
+
+.header-upper {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ffffff;
+  align-items: center;
+  /*grid-template-columns: repeat(3, 1fr);*/
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between; /* Distribute links evenly */
+  align-items: center;
+  background-color: #f2e4d7;
+  /*padding: 10px;*/
+  height: 30px;
+}
+
+header ul li a:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+header ul {
+  display: inline-flex;
+  /*justify-content: space-between;*/
+  /*align-items: center;*/
+  list-style: none;
+  width: 100%;
+  /*margin: 0 30px;*/
+}
+
+header ul li a {
+  text-decoration: none;
+  color: #AD7765;
+  /*padding: 22px 0;*/
+  display: inline-block;
+  /*transition: all ease 0.3s;*/
+  padding: 2px 15px;
+  font-size: 24px;
+}
+
+header ul .dropdown {
+  position: absolute;
+  width: 100px;
+  background-color: #AD7765;
+  box-shadow: 0 20px 45px #00000020;
+  border-radius: 5%;
+  margin-top: -50px;
+  opacity: 0;
+  z-index: -999;
+}
+
+header ul li:hover .dropdown {
+  opacity: 1;
+  z-index: 99;
+  margin-top: 0;
+  display: grid
+}
+
+
+.shopping-cart {
+  position: absolute;
+  left: 70px;
+  top: 40px;
+}
+
+.shopping-cart-icon {
+  color: #AD7765;
+  font-size: 40px;
+}
+
+.shopping-cart-icon:hover {
+  color: black;
+}
+
+.counter {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: #f2e4d7;
+  text-align: center;
+  font-size: 20px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
+.profile {
+  position: absolute;
+  top: 40px;
+  left: 150px;
+
+}
+
+.profile-icon {
+  font-size: 40px;
+  color: #AD7765;
+  /*cursor: pointer;*/
+}
+
+.profile-icon:hover {
+  color: black;
+}
+
+.menu-icon {
+  font-size: 40px;
+  color: #AD7765;
+}
+
+.menu-icon:hover {
+  color: black;
+}
+
+#open-menu {
+  background-color: transparent;
+  border: 0;
+  position: absolute;
+  top: 40px;
+  right: 50px;
+  cursor: pointer;
+}
+
+#side-menu {
+  position: fixed; /* Position absolutely */
+  left: -250px; /* Hide off-screen */
+  top: 0;
+  bottom: 0;
+  width: 250px;
+  background-color: #ffffff;
+  transition: left 0.3s ease-in-out; /* Smooth animation */
+  z-index: 99;
+  display: flex;
+}
+
+#side-menu.open {
+  left: 0; /* Slide into view */
+}
+
+products {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  padding: 0 10px;
+}
+
+product {
+  /*display: flex;*/
+  display: block;
+  text-align: center;
+  border-radius: 5%;
+  color: #AD7765;
+  background-color: #ffffff;
+  width: 270px;
+  height: 330px;
+  /*padding: 0 21px;*/
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
+              -2px -2px 2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+product div {
+  display: flex;
+  justify-content: center;
+  /*align-items: center;*/
+  margin: auto;
+  padding: 5px 0;
+  width: 70%;
+  height: 70%;
+
+}
+
+product span {
+  margin: 0;
+}
+
+product hr {
+  margin: 5px 40px;
+}
+body {
+  flex: 1;
+}
+footer {
+  height: 150px;
+  width: 100%;
+  /*box-sizing: border-box;*/
+  background-color: #d2b1a6;
+  display: flex;
+  justify-content: space-between;
+  /*padding: 0 70px;*/
+
+}
+
+footer div {
+  display: block;
+  text-align: center;
+  padding: 0 75px;
+}
+
+footer div hr {
+  height: 1.5px;
+  width: 230px;
+  color: white;
+  background-color: white;
+  margin: 0;
+  border: #AD7765;
+}
+
+footer div a {
+  text-decoration: none;
+
+}
+
+footer div iconify-icon {
+  color: black;
+  padding: 7px 0;
+}
+
+footer div iconify-icon:hover {
+  color: #ffffff;
+}
