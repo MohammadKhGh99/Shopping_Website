@@ -15,11 +15,19 @@
 <body>
   <header>
     <div class="header-upper">
-      <button class="open-menu" onclick="openMenu()" title="القائمة">
-        <span class="material-symbols-outlined menu-icon">
-          menu
-        </span>
-      </button>
+      <div id="header-right">
+        <button class="open-menu" onclick="openMenu()" title="القائمة">
+          <span class="material-symbols-outlined menu-icon">
+            menu
+          </span>
+        </button>
+        <button class="open-menu" onclick="openSearch()" title="القائمة">
+          <span class="material-symbols-outlined search-icon">
+            search
+          </span>
+        </button>
+
+      </div>
 
       <script>
         function openMenu(){
@@ -29,10 +37,17 @@
             sideMenu.classList.toggle('open');
             overlay.classList.toggle('show');
         }
+
+        function openSearch() {
+            const searchMenu = document.getElementById('search-menu');
+            const overlay = document.getElementById('overlay');
+            searchMenu.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
       </script>
 
       <div id="menu">
-        <span id="overlay" onclick="closeMenu()"></span>
+        <span id="overlay" onclick="closeMenu(true, true)"></span>
         <div id="side-menu">
           <button title="إغلاق" id="close-side-menu" onclick="closeMenu()">
             <span class="material-symbols-outlined">
@@ -40,75 +55,244 @@
             </span>
           </button>
           <script>
-            function closeMenu() {
+            function closeMenu(isFilter=false, isSearch=false) {
                 const sideMenu = document.getElementById('side-menu');
                 const overlay = document.getElementById('overlay');
+                const searchMenu = document.getElementById('search-menu');
+                const filtersMenu = document.getElementsByTagName('filters')[0];
                 sideMenu.classList.remove('open');
+                filtersMenu.classList.remove('open');
                 overlay.classList.remove('show');
+                searchMenu.classList.remove('open');
+                if (isFilter) {
+                    event.preventDefault();
+                    const spans = document.getElementsByClassName('filters-span');
+                    for (let i = 0; i < spans.length; i++) {
+                        if (spans[i].textContent === "expand_less") {
+                            spans[i].textContent = "expand_more";
+                        }
+                    }
+                }
+                if (isSearch) {
+                    searchMenu.querySelector('input').value = "";
+                }
             }
           </script>
           <ul role="list">
             <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
-            <li><a href="{{url_for('home')}}">تواصل معنا</a></li>
-            <li><a href="{{url_for('home')}}">من نحن</a></li>
+            <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
+            <li><a href="{{url_for('about')}}">من نحن</a></li>
           </ul>
         </div>
       </div>
 
-      <a href="{{url_for('sign_in')}}" class="profile" title="الصفحة الشخصية">
-        <span class="material-symbols-outlined profile-icon">
-          person
-        </span>
-      </a>
+      <div id="search-menu">
+        <ul>
+          <li>
+            <label for="search-bar">
+              <span class="material-symbols-outlined search-icon" style="color: black">
+                search
+              </span>
+            </label>
+            <input type="text" id="search-bar" placeholder="عن ماذا تبحث؟" autofocus>
+            <button title="إغلاق" id="close-search-menu" onclick="closeMenu(false, true)">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
       <a href="{{url_for('home')}}" class="logo" title="الصفحة الرئيسية">
         <span class="logo">
           <img src="{{ url_for('static', filename='images/logo.png')}}" alt="LOGO">
         </span>
       </a>
-      <a href="{{url_for('home')}}" class="shopping-cart" title="السلة">
-        <span class="material-symbols-outlined shopping-cart-icon">
-          shopping_cart
-        </span>
-        <span class="counter">
-          0
-        </span>
-      </a>
+      <div id="header-left">
+        <a href="{{url_for('sign_in')}}" class="profile" title="الصفحة الشخصية">
+          <span class="material-symbols-outlined profile-icon">
+            person
+          </span>
+        </a>
+        <a href="{{url_for('shopping_cart')}}" class="shopping-cart" title="السلة">
+          <span class="material-symbols-outlined shopping-cart-icon">
+            shopping_cart
+          </span>
+          <span class="counter">
+            0
+          </span>
+        </a>
+      </div>
     </div>
-
   </header>
-  <br>
 
   {% block content %}
+<!--  <br>-->
   <div id="container">
-    <filters>
-      <ul>
-        <li>الفلاتر</li>
-        <li>
-          المؤلف/ة
-          <span class="material-symbols-outlined">
-            expand_more
-          </span>
-        </li>
-        <li>
-          تاريخ الإصدار
-          <span class="material-symbols-outlined">
-            expand_more
-          </span>
-        </li>
-        <li>
-          دار النشر
-          <span class="material-symbols-outlined">
-            expand_more
-          </span>
-        </li>
-        <li>
-          تصنيفات أخرى
-          <span class="material-symbols-outlined">
-            expand_more
-          </span>
-        </li>
+<!--    <div id="filter" style="overflow: auto">-->
+    <button id="filters-button" onclick="openFilters()">
+      الفلاتر
+      <span class="material-symbols-outlined filters-icon">
+        tune
+      </span>
+    </button>
+<!--    </div>-->
+    <script>
+        window.onscroll = function() {
+          const button = document.querySelector("#filters-button");
+          if (window.pageYOffset >= 200) {
+              button.style.borderBottom = "1px solid black";
+              button.classList.add("sticky");
+          } else {
+              button.style.borderBottom = "";
+              button.classList.remove("sticky");
 
-      </ul>
+          }
+        };
+      function openFilters(){
+          const filtersMenu = document.getElementsByTagName('filters')[0];
+          const overlay = document.getElementById('overlay');
+          filtersMenu.classList.toggle('open');
+          overlay.classList.toggle('show');
+      }
+    </script>
+    <filters>
+      <form>
+        <ul>
+          <li style="display: flex; justify-content: space-between">
+            الفلاتر
+            <button title="إغلاق" id="filters-close-side-menu" onclick="closeMenu(true)">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openAuthorFilter()">
+              المؤلف/ة
+              <span id="author-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="authors-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for author in authors %}
+              <input type="checkbox" id="filter-author{{i}}" value="{{author}}">
+              <label for="filter-author{{i}}">{{author}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openPublishDateFilter()">
+              تاريخ الإصدار
+              <span id="publish-date-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="publish-date-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for publish in publishes %}
+              <input type="checkbox" id="filter-publish-date{{i}}" value="{{publish}}">
+              <label for="filter-publish-date{{i}}">{{publish}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openPublisherFilter()">
+              دار النشر
+              <span id="publisher-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="publishers-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for publisher in publishers %}
+              <input type="checkbox" id="filter-publisher{{i}}" value="{{publisher}}">
+              <label for="filter-publisher{{i}}">{{publisher}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+  <!--        <li>-->
+  <!--          <div class="filter-upper" onclick="openOtherFilter()">-->
+  <!--            تصنيفات أخرى-->
+  <!--            <span id="other-filter-arrow" class="material-symbols-outlined">-->
+  <!--              expand_more-->
+  <!--            </span>-->
+  <!--          </div>-->
+  <!--          <div id="other-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">-->
+  <!--            {% set i = 1 %}-->
+  <!--            {% for other in others %}-->
+  <!--            <input type="checkbox" id="filter-other{{i}}" value="{{other}}">-->
+  <!--            <label for="filter-other{{i}}">{{other}}</label><br>-->
+  <!--            {% set i = i + 1 %}-->
+  <!--            {% endfor %}-->
+  <!--          </div>-->
+  <!--        </li>-->
+          <li><button type="submit" style="cursor: pointer">عرض النتائج</button></li>
+        </ul>
+      </form>
+      <script>
+        function openAuthorFilter() {
+            const mySpan = document.querySelector('#author-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#authors-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openPublishDateFilter() {
+            const mySpan = document.querySelector('#publish-date-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#publish-date-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openPublisherFilter() {
+            const mySpan = document.querySelector('#publisher-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#publishers-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openOtherFilter() {
+            const mySpan = document.querySelector('#other-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#other-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+      </script>
     </filters>
     <products>
       {% for product in products %}
@@ -131,33 +315,43 @@
   {% endblock %}
 
   <footer>
-    <div class="who-we">
-      من نحن
-      <hr>
-      موقع كتب
+    <div id="footer-top">
+      <div id="who-we">
+        <b>من نحن</b><br>
+        <hr>
+        موقع كتب
+      </div>
+      <div id="important-links">
+        <b>روابط مهمة</b><br>
+        <hr>
+        شروط الخدمة<br>
+        سياسة الشحن<br>
+        سياسة الخصوصية<br>
+        سياسة الاستبدال والاسترجاع
+      </div>
+      <div id="contact-us">
+        <b>تواصل معنا</b><br>
+        <hr>
+        <a href="mailto:mohammad.gh454@gmail.com">
+          <iconify-icon icon="ic:outline-email"></iconify-icon>
+        </a>
+        <a href="https://wa.me/0528942919">
+          <iconify-icon icon="mdi:whatsapp"></iconify-icon>
+        </a>
+        <a href="https://www.instagram.com/">
+          <iconify-icon icon="mdi:instagram"></iconify-icon>
+        </a>
+        <a href="https://www.facebook.com/">
+          <iconify-icon icon="mdi:facebook"></iconify-icon>
+        </a>
+      </div>
     </div>
-    <div class="important-links">
-      روابط مهمة
-      <hr>
-<!--      طريقة إختيار المقاس<br>-->
-      سياسة الخصوصية<br>
-      سياسة الاستبدال والاسترجاع
-    </div>
-    <div class="contact-us">
-      تواصل معنا
-      <hr>
-      <a href="mailto:mohammad.gh454@gmail.com">
-        <iconify-icon icon="ic:outline-email"></iconify-icon>
-      </a>
-      <a href="https://wa.me/0528942919">
-        <iconify-icon icon="mdi:whatsapp"></iconify-icon>
-      </a>
-      <a href="https://www.instagram.com/">
-        <iconify-icon icon="mdi:instagram"></iconify-icon>
-      </a>
-      <a href="https://www.facebook.com/">
-        <iconify-icon icon="mdi:facebook"></iconify-icon>
-      </a>
+    <div id="footer-bottom">
+      <br><br><br>
+      <span style="font-size: 16px">
+        &ensp;&ensp;&ensp;&ensp;BookStore &copy; 2024
+      </span>
+      <br>
     </div>
   </footer>
 </body>
