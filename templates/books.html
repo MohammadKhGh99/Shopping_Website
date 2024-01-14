@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>موقع كتب</title>
+</head>
+<body>
+  {% extends "base.html" %}
+
+  {% block breadcrumb_link %}
+  /
+  <a href="{{url_for('books')}}">كتب</a>
+  {% endblock %}
+
+  {% block upper_container %}
+  <div id="container">
+    <button id="filters-button" onclick="openFilters()">
+      <span class="material-symbols-outlined filters-icon">
+        tune
+      </span>
+      &ensp;
+      الفلاتر
+    </button>
+    <script>
+        window.onscroll = function() {
+          const button = document.querySelector("#filters-button");
+          if (window.pageYOffset >= 200) {
+              // button.style.borderBottom = "1px solid black";
+              button.classList.add("sticky");
+          } else {
+              // button.style.borderBottom = "";
+              button.classList.remove("sticky");
+
+          }
+        };
+      function openFilters(){
+          const filtersMenu = document.getElementsByTagName('filters')[0];
+          const overlay = document.getElementById('overlay');
+          filtersMenu.classList.toggle('open');
+          overlay.classList.toggle('show');
+      }
+    </script>
+    <filters id="filters">
+      <form>
+        <ul>
+          <li style="display: flex; justify-content: space-between">
+            الفلاتر
+            <button title="إغلاق" id="filters-close-side-menu" onclick="closeMenu(true)">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openAuthorFilter()">
+              المؤلف/ة
+              <span id="author-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="authors-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for author in authors %}
+              <input type="checkbox" id="filter-author{{i}}" value="{{author}}">
+              <label for="filter-author{{i}}">{{author}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openPublishDateFilter()">
+              تاريخ الإصدار
+              <span id="publish-date-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="publish-date-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for publish in publishes %}
+              <input type="checkbox" id="filter-publish-date{{i}}" value="{{publish}}">
+              <label for="filter-publish-date{{i}}">{{publish}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+          <li>
+            <div class="filter-upper" onclick="openPublisherFilter()">
+              دار النشر
+              <span id="publisher-filter-arrow" class="material-symbols-outlined filters-span">
+                expand_more
+              </span>
+            </div>
+            <div id="publishers-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
+              {% set i = 1 %}
+              {% for publisher in publishers %}
+              <input type="checkbox" id="filter-publisher{{i}}" value="{{publisher}}">
+              <label for="filter-publisher{{i}}">{{publisher}}</label><br>
+              {% set i = i + 1 %}
+              {% endfor %}
+            </div>
+          </li>
+  <!--        <li>-->
+  <!--          <div class="filter-upper" onclick="openOtherFilter()">-->
+  <!--            تصنيفات أخرى-->
+  <!--            <span id="other-filter-arrow" class="material-symbols-outlined">-->
+  <!--              expand_more-->
+  <!--            </span>-->
+  <!--          </div>-->
+  <!--          <div id="other-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">-->
+  <!--            {% set i = 1 %}-->
+  <!--            {% for other in others %}-->
+  <!--            <input type="checkbox" id="filter-other{{i}}" value="{{other}}">-->
+  <!--            <label for="filter-other{{i}}">{{other}}</label><br>-->
+  <!--            {% set i = i + 1 %}-->
+  <!--            {% endfor %}-->
+  <!--          </div>-->
+  <!--        </li>-->
+          <li><button type="submit" style="cursor: pointer">عرض النتائج</button></li>
+        </ul>
+      </form>
+      <script>
+        function openAuthorFilter() {
+            const mySpan = document.querySelector('#author-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#authors-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openPublishDateFilter() {
+            const mySpan = document.querySelector('#publish-date-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#publish-date-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openPublisherFilter() {
+            const mySpan = document.querySelector('#publisher-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#publishers-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+        function openOtherFilter() {
+            const mySpan = document.querySelector('#other-filter-arrow');
+            mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+            const checkboxesDiv = document.querySelector('#other-filter-checkboxes');
+            if (checkboxesDiv.style.visibility === "hidden") {
+                checkboxesDiv.style.visibility = "visible";
+                checkboxesDiv.style.overflow = "auto";
+                checkboxesDiv.style.height = "auto";
+            } else {
+                checkboxesDiv.style.visibility = "hidden";
+                checkboxesDiv.style.overflow = "hidden";
+                checkboxesDiv.style.height = "0";
+            }
+        }
+      </script>
+    </filters>
+    {% endblock %}
+
+    {% block lower_container %}
+    <products>
+      {% for product in products %}
+      <product>
+        <div>
+          <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
+        </div>
+        <span>
+          {{ product[:-4] }}
+        </span>
+        <hr style="height: 1px; width: 70%;">
+        <span>
+          25₪
+        </span>
+      </product>
+      {% endfor %}
+    </products>
+  </div>
+  <br>
+  {% endblock %}
+
+</body>
+</html>

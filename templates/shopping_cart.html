@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>نور الفضيلة للأزياء الشرعية</title>
+  <title>موقع كتب</title>
 </head>
 <body>
-  {% extends "home.html" %}
+  {% extends "base.html" %}
 
-  {% block content %}
+  {% block no_search %}hidden{% endblock %}
+
+  {% block breadcrumb_link %}
+  /
+  <a href="{{url_for('shopping_cart')}}">عربة التسوق</a>
+  {% endblock %}
+
+  {% block lower_container %}
+
   <h2 style="text-align: center">عربة التسوق</h2>
   {% endblock %}
+
+
 
 </body>
 </html>

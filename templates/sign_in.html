@@ -2,14 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>نور الفضيلة للأزياء الشرعية</title>
+  <title>موقع كتب</title>
 </head>
-<body>
-  {% extends "home.html" %}
+<style>
+  .sign-container {
+    display: grid;
+    grid-auto-columns: 1fr;
+    /*row-gap: 5px;*/
+    max-width: 460px;
+    padding-right: 30%;
+    text-align: center;
+  }
 
-  {% block content %}
-  <h2 style="text-align: center">تسجيل الدخول</h2>
+  .sign-container form {
+    text-align: right;
+    display: grid;
+    grid-auto-columns: 1fr;
+    row-gap: 10px;
+    color: #525d85;
+  }
+
+  .sign-container form a {
+    text-decoration: underline;
+
+  }
+
+  .forgot-password {
+    background-color: transparent;
+    border: 0;
+    text-decoration: underline;
+    position: absolute;
+    left: 370px;
+    top: 500px;
+    font-size: 16px;
+
+  }
+
+  .input_field {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgba(12, 27, 84, .5);
+    padding-right: 10px;
+  }
+
+  .input_label {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .sign-in-button {
+    width: 103%;
+    background-color: lightskyblue;
+    font-family: "Traditional Arabic",serif;
+    border: 0;
+    cursor: pointer;
+  }
+
+</style>
+<body>
+  {% extends "base.html" %}
+  {% block no_search %}hidden{% endblock %}
+  {% block breadcrumb_link %}
+  / <a href="{{url_for('sign_in')}}">تسجيل الدخول</a>
   {% endblock %}
+  {% block lower_container %}
+  <div class="sign-container">
+    <h2>تسجيل الدخول</h2>
+    <p>الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+    <form style="text-align: right">
+      <div class="field-holder">
+        <label for="customer-email" class="input_label">البريد الإلكتروني</label>
+        <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>
+      </div>
+      <div class="field-holder">
+        <label for="customer-password" class="input_label">كلمة المرور</label>
+        &ensp;&ensp;
+        <input type="password" id="customer-password" class="input_field" name="customer-password" required>
+      </div>
+      <a href="{{url_for('forgot_password')}}" class="forgot-password">هل نسيت كلمة المرور؟</a>
+      <button type="submit" class="sign-in-button">تسجيل الدخول</button>
+      <p style="text-align: center">عميل جديد؟ <a href="{{url_for('sign_up')}}">إنشاء حساب</a></p>
+    </form>
+  </div>
+  <br>
+  {% endblock %}
+
 
 </body>
 </html>

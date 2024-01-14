@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" style="font-family: 'Traditional Arabic',serif">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="../static/styles.css" />
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <title>موقع كتب</title>
+</head>
+<body>
+  <header>
+    <div class="header-upper">
+      <div id="header-right">
+        <button class="open-menu" onclick="openMenu()" title="القائمة">
+          <span class="material-symbols-outlined menu-icon">
+            menu
+          </span>
+        </button>
+        <button class="open-menu" onclick="openSearch()" title="القائمة" {% block no_search %}{% endblock %}>
+          <span class="material-symbols-outlined search-icon">
+            search
+          </span>
+        </button>
+
+      </div>
+
+      <script>
+        function openMenu(){
+            // const menuButton = document.getElementById('open-menu');
+            const sideMenu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            sideMenu.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function openSearch() {
+            const searchMenu = document.getElementById('search-menu');
+            const overlay = document.getElementById('overlay');
+            searchMenu.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+      </script>
+
+      <div id="menu">
+        <span id="overlay" onclick="closeMenu(true, true)"></span>
+        <div id="side-menu">
+          <button title="إغلاق" id="close-side-menu" onclick="closeMenu()">
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+          <script>
+            function closeMenu(isFilter=false, isSearch=false) {
+                const sideMenu = document.getElementById('side-menu');
+                const overlay = document.getElementById('overlay');
+                const searchMenu = document.getElementById('search-menu');
+                const filtersMenu = document.getElementById('filters');
+                sideMenu.classList.remove('open');
+                if (filtersMenu != null) {
+                  filtersMenu.classList.remove('open');
+                }
+                overlay.classList.remove('show');
+                searchMenu.classList.remove('open');
+                if (isFilter) {
+                    event.preventDefault();
+                    const spans = document.getElementsByClassName('filters-span');
+                    for (let i = 0; i < spans.length; i++) {
+                        if (spans[i].textContent === "expand_less") {
+                            spans[i].textContent = "expand_more";
+                        }
+                    }
+                }
+                if (isSearch) {
+                    searchMenu.querySelector('input').value = "";
+                }
+            }
+          </script>
+          <ul role="list">
+            <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
+            <li><a href="{{url_for('books')}}">كتب</a></li>
+            <li><a href="{{url_for('clothes')}}">أزياء شرعية</a></li>
+            <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
+            <li><a href="{{url_for('about')}}">من نحن</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="search-menu">
+        <ul>
+          <li>
+            <label for="search-bar">
+              <span class="material-symbols-outlined search-icon" style="color: black; font-size: 25px">
+                search
+              </span>
+            </label>
+            <input type="text" id="search-bar" placeholder="عن ماذا تبحث؟" autofocus>
+            <button title="إغلاق" id="close-search-menu" onclick="closeMenu(false, true)">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <a href="{{url_for('home')}}" class="logo" title="الصفحة الرئيسية">
+        <span class="logo">
+          <img src="{{ url_for('static', filename='images/logo.png')}}" alt="LOGO">
+        </span>
+      </a>
+      <div id="header-left">
+        <a href="{{url_for('sign_in')}}" class="profile" title="الصفحة الشخصية">
+          <span class="material-symbols-outlined profile-icon">
+            person
+          </span>
+        </a>
+        <a href="{{url_for('shopping_cart')}}" class="shopping-cart" title="السلة">
+          <span class="material-symbols-outlined shopping-cart-icon">
+            shopping_cart
+          </span>
+          <span class="counter">
+            0
+          </span>
+        </a>
+      </div>
+    </div>
+  </header>
+  {% block upper_container %}
+  {% endblock %}
+
+  <nav class="breadcrumb-list">
+    <ul>
+      <li>
+        <a href="{{url_for('home')}}">الصفحة الرئيسية</a>
+        {% block breadcrumb_link %}
+        {% endblock %}
+      </li>
+    </ul>
+  </nav>
+
+  {% block lower_container %}
+  {% endblock %}
+  <footer>
+    <div id="footer-top">
+      <div id="who-we">
+        <b>من نحن</b><br>
+        <hr>
+        موقع كتب
+      </div>
+      <div id="important-links">
+        <b>روابط مهمة</b><br>
+        <hr>
+        شروط الخدمة<br>
+        سياسة الشحن<br>
+        سياسة الخصوصية<br>
+        سياسة الاستبدال والاسترجاع
+      </div>
+      <div id="contact-us">
+        <b>تواصل معنا</b><br>
+        <hr>
+        <a href="mailto:mohammad.gh454@gmail.com">
+          <iconify-icon icon="ic:outline-email"></iconify-icon>
+        </a>
+        <a href="https://wa.me/0528942919">
+          <iconify-icon icon="mdi:whatsapp"></iconify-icon>
+        </a>
+        <a href="https://www.instagram.com/">
+          <iconify-icon icon="mdi:instagram"></iconify-icon>
+        </a>
+        <a href="https://www.facebook.com/">
+          <iconify-icon icon="mdi:facebook"></iconify-icon>
+        </a>
+      </div>
+    </div>
+    <div id="footer-bottom">
+      <br><br><br>
+      <span style="font-size: 16px">
+        &ensp;&ensp;&ensp;&ensp;BookStore &copy; 2024
+      </span>
+      <br>
+    </div>
+  </footer>
+
+</body>
+</html>
