@@ -54,10 +54,23 @@
 
   .sign-in-button {
     width: 103%;
-    background-color: lightskyblue;
+    background-color: #cce5ff;
     font-family: "Traditional Arabic",serif;
     border: 0;
     cursor: pointer;
+    transition: left 0.5s ease-in-out;
+  }
+
+  .sign-in-button:hover {
+    background-color: gray;
+  }
+
+  .sign-container form a {
+    color: black;
+  }
+
+  .sign-container form a:hover {
+    color: gray;
   }
 
 </style>
@@ -81,9 +94,18 @@
         &ensp;&ensp;
         <input type="password" id="customer-password" class="input_field" name="customer-password" required>
       </div>
-      <a href="{{url_for('forgot_password')}}" class="forgot-password">هل نسيت كلمة المرور؟</a>
-      <button type="submit" class="sign-in-button">تسجيل الدخول</button>
-      <p style="text-align: center">عميل جديد؟ <a href="{{url_for('sign_up')}}">إنشاء حساب</a></p>
+      <a href="{{url_for('forgot_password')}}" class="forgot-password">
+        هل نسيت كلمة المرور؟
+      </a>
+      <button type="submit" class="sign-in-button">
+        تسجيل الدخول
+      </button>
+      <p style="text-align: center">
+        عميل جديد؟
+        <a href="{{url_for('sign_up')}}" id="create-account">
+          إنشاء حساب
+        </a>
+      </p>
     </form>
   </div>
   <br>

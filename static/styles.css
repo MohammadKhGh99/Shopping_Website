@@ -76,10 +76,11 @@ header {
   margin: auto;
 }
 
-/*.profile {*/
+/*.profile span:hover {*/
 /*  position: absolute;*/
 /*  top: 40px;*/
 /*  left: 120px;*/
+/*  color: black;*/
 /*}*/
 
 .profile-icon {
@@ -132,6 +133,7 @@ header {
   z-index: 3;
   display: block;
   padding-top: 15px;
+  overflow: auto;
 }
 
 #side-menu.open {
