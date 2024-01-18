@@ -550,6 +550,7 @@ footer #footer-top {
   display: flex;
   justify-content: space-around;
   padding-top: 20px;
+  font-size: 0.8em;
 }
 
 footer div div {
@@ -581,7 +582,7 @@ footer div iconify-icon:hover {
 }
 
 #footer-bottom {
-  font-size: 16px;
+  font-size: 0.8em;
   position: absolute;
   bottom: 20px;
   right: 20px;

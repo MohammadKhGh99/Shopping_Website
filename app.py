@@ -40,6 +40,11 @@ def books():
     return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers)#, other=other)
 
 
+@app.route('/product')
+def product():
+    return render_template('product.html')
+
+
 @app.route('/clothes')
 def clothes():
     return render_template('clothes.html', products=clothes_lst)

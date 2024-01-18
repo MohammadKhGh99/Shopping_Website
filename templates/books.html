@@ -184,20 +184,22 @@
 <!--    <br>-->
     <products class="products">
       {% for product in products %}
-      <product class="product">
-        <div class="upper-product">
-          <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
-        </div>
-        <div class="lower-product">
-          <span>
-            {{ product[:-4] }}
-          </span>
-          <hr>
-          <span>
-            25₪
-          </span>
-        </div>
-      </product>
+      <a href="{{url_for('product')}}">
+        <product class="product">
+          <div class="upper-product">
+            <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
+          </div>
+          <div class="lower-product">
+            <span>
+              {{ product[:-4] }}
+            </span>
+            <hr>
+            <span>
+              25₪
+            </span>
+          </div>
+        </product>
+      </a>
       {% endfor %}
     </products>
   </div>
