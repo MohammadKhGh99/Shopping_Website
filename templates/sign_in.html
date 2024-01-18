@@ -6,45 +6,55 @@
 </head>
 <style>
   .sign-container {
-    display: grid;
-    grid-auto-columns: 1fr;
-    /*row-gap: 5px;*/
-    max-width: 460px;
-    padding-right: 30%;
+    display: block;
+    justify-content: center;
+    max-width: 100%;
     text-align: center;
   }
 
   .sign-container form {
     text-align: right;
-    display: grid;
-    grid-auto-columns: 1fr;
-    row-gap: 10px;
+    max-width: 350px;
+    width: 350px;
     color: #525d85;
+  }
+
+  .sign-container form span {
+    /*font-size: 0.7em;*/
   }
 
   .sign-container form a {
     text-decoration: underline;
-
   }
 
-  .forgot-password {
+  .input_field {
+    width: 100%;
+    /*max-width: 100%;*/
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgba(12, 27, 84, .5);
+    /*margin-right: 10px;*/
+    font-family: "Traditional Arabic", serif;
+  }
+
+  .password-div {
+    position: relative;
+    width: 100%;
+  }
+
+  .password-div input {
+    width: 100%;
+  }
+
+  .password-div a {
     background-color: transparent;
     border: 0;
     text-decoration: underline;
     position: absolute;
-    left: 370px;
-    top: 500px;
-    font-size: 16px;
-
-  }
-
-  .input_field {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    border: 1px solid rgba(12, 27, 84, .5);
-    padding-right: 10px;
+    top: 30%;
+    left: 0;
+    /*top: 500px;*/
+    font-size: 0.7em;
   }
 
   .input_label {
@@ -53,12 +63,13 @@
   }
 
   .sign-in-button {
-    width: 103%;
+    width: 100%;
     background-color: #cce5ff;
     font-family: "Traditional Arabic",serif;
     border: 0;
     cursor: pointer;
-    transition: left 0.5s ease-in-out;
+    /*transition: left 0.5s ease-in-out;*/
+    margin-right: 2px;
   }
 
   .sign-in-button:hover {
@@ -67,10 +78,22 @@
 
   .sign-container form a {
     color: black;
+    /*font-size: 0.7em;*/
   }
 
   .sign-container form a:hover {
     color: gray;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .input_field {
+    font-size: 0.9em;
+    width: 100%;
   }
 
 </style>
@@ -82,31 +105,41 @@
   {% endblock %}
   {% block lower_container %}
   <div class="sign-container">
-    <h2>تسجيل الدخول</h2>
-    <p>الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
-    <form style="text-align: right">
-      <div class="field-holder">
-        <label for="customer-email" class="input_label">البريد الإلكتروني</label>
-        <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>
-      </div>
-      <div class="field-holder">
-        <label for="customer-password" class="input_label">كلمة المرور</label>
-        &ensp;&ensp;
-        <input type="password" id="customer-password" class="input_field" name="customer-password" required>
-      </div>
-      <a href="{{url_for('forgot_password')}}" class="forgot-password">
-        هل نسيت كلمة المرور؟
-      </a>
-      <button type="submit" class="sign-in-button">
-        تسجيل الدخول
-      </button>
-      <p style="text-align: center">
-        عميل جديد؟
-        <a href="{{url_for('sign_up')}}" id="create-account">
-          إنشاء حساب
-        </a>
-      </p>
-    </form>
+    <div class="upper-form">
+      <h2>تسجيل الدخول</h2>
+      <p>الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+    </div>
+    <div class="form-container">
+      <form>
+        <div class="field-holder">
+          <label for="customer-phone" class="input_label">رقم الهاتف</label>
+          <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
+        </div>
+  <!--      <div class="field-holder">-->
+  <!--        <label for="customer-email" class="input_label">البريد الإلكتروني</label>-->
+  <!--        <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>-->
+  <!--      </div>-->
+        <div class="field-holder">
+          <label for="customer-password" class="input_label">كلمة المرور</label>
+          <div class="password-div">
+            <input type="password" id="customer-password" class="input_field" name="customer-password" required maxlength="20">
+            <a href="{{url_for('forgot_password')}}" class="forgot-password">
+              هل نسيت كلمة المرور؟
+            </a>
+          </div>
+        </div>
+        <br>
+        <button type="submit" class="sign-in-button">
+          تسجيل الدخول
+        </button>
+        <span style="font-size: 0.7em">
+          عميل جديد؟
+          <a href="{{url_for('sign_up')}}" id="create-account">
+            إنشاء حساب
+          </a>
+        </span>
+      </form>
+    </div>
   </div>
   <br>
   {% endblock %}

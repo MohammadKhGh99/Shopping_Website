@@ -72,23 +72,25 @@
 <!--  <br><br><br><br>-->
   {% block lower_container %}
 
-  <products>
+  <products class="products">
     {% for product in products %}
-    <product>
-      <div>
+    <product class="product">
+      <div class="upper-product">
         <img src="{{ url_for('static', filename='images/clothes/')}}{{product}}" alt="product">
       </div>
-      <span>
-        {{ product[:-4] }}
-      </span>
-      <hr style="height: 1px; width: 70%;">
-      <span>
-        25₪
-      </span>
+      <div class="lower-product">
+        <span>
+          {{ product[:-4] }}
+        </span>
+        <hr style="height: 1px; width: 70%;">
+        <span>
+          25₪
+        </span>
+      </div>
     </product>
     {% endfor %}
   </products>
-  <br>
+<!--  <br>-->
   {% endblock %}
 <!--  <footer>-->
 <!--    <div class="who-we">-->

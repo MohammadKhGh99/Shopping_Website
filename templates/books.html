@@ -13,6 +13,7 @@
   {% endblock %}
 
   {% block upper_container %}
+<!--  <br>-->
   <div id="container">
     <button id="filters-button" onclick="openFilters()">
       <span class="material-symbols-outlined filters-icon">
@@ -180,24 +181,27 @@
     {% endblock %}
 
     {% block lower_container %}
-    <products>
+<!--    <br>-->
+    <products class="products">
       {% for product in products %}
-      <product>
-        <div>
+      <product class="product">
+        <div class="upper-product">
           <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
         </div>
-        <span>
-          {{ product[:-4] }}
-        </span>
-        <hr style="height: 1px; width: 70%;">
-        <span>
-          25₪
-        </span>
+        <div class="lower-product">
+          <span>
+            {{ product[:-4] }}
+          </span>
+          <hr>
+          <span>
+            25₪
+          </span>
+        </div>
       </product>
       {% endfor %}
     </products>
   </div>
-  <br>
+<!--  <br>-->
   {% endblock %}
 
 </body>

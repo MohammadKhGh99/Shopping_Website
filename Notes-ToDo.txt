@@ -1,0 +1,20 @@
+- Admin Page
+	- done deliveries
+	- current deliveries
+
+- Delivery for 48 Arab
+- Visa (Cash Optional ?)
+- Items left
+- sizes table (S M L...)
+- phone number (backup number)
+- address
+- location ?
+- accessories for books (optional)
+- name of store
+	- of of sub-stores
+- delivery by 14 days
+- each item will have: color
+- wishlist
+- number code for each item
+- ads on whatsapp (if you want to receive whatsapp ads in future...)
+- phone account registration 

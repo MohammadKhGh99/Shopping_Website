@@ -48,8 +48,8 @@
       <div id="menu">
         <span id="overlay" onclick="closeMenu(true, true)"></span>
         <div id="side-menu">
-          <button title="إغلاق" id="close-side-menu" onclick="closeMenu()">
-            <span class="material-symbols-outlined">
+          <button title="إغلاق" id="close-side-menu">
+            <span class="material-symbols-outlined" style="cursor: pointer" onclick="closeMenu()">
               close
             </span>
           </button>
@@ -100,6 +100,11 @@
       </div>
 
       <div id="search-menu">
+        <button title="إغلاق" id="close-search-menu">
+          <span class="material-symbols-outlined" style="cursor: pointer" onclick="closeMenu(false, true)">
+            close
+          </span>
+        </button>
         <ul>
           <li>
             <label for="search-bar">
@@ -108,20 +113,20 @@
               </span>
             </label>
             <input type="text" id="search-bar" placeholder="عن ماذا تبحث؟" autofocus>
-            <button title="إغلاق" id="close-search-menu" onclick="closeMenu(false, true)">
-              <span class="material-symbols-outlined">
-                close
-              </span>
-            </button>
           </li>
         </ul>
       </div>
 
-      <a href="{{url_for('home')}}" class="logo" title="الصفحة الرئيسية">
-        <span class="logo">
-          <img src="{{ url_for('static', filename='images/logo.png')}}" alt="LOGO">
+      <div class="logo-container">
+        <a href="{{url_for('home')}}" class="logo" title="الصفحة الرئيسية">
+          <span class="logo">
+            <img src="{{ url_for('static', filename='images/books_logo.png')}}" alt="LOGO">
+          </span>
+        </a>
+        <span style="text-align: center; margin: 0">
+          نرتقي بعلمنا ونرتقي بعفتنا
         </span>
-      </a>
+      </div>
       <div id="header-left">
         <a href="{{url_for('sign_in')}}" class="profile" title="الصفحة الشخصية">
           <span class="material-symbols-outlined profile-icon">
@@ -142,15 +147,15 @@
   {% block upper_container %}
   {% endblock %}
 
-  <nav class="breadcrumb-list">
-    <ul>
-      <li>
-        <a href="{{url_for('home')}}">الصفحة الرئيسية</a>
-        {% block breadcrumb_link %}
-        {% endblock %}
-      </li>
-    </ul>
-  </nav>
+<!--  <nav class="breadcrumb-list">-->
+<!--    <ul>-->
+<!--      <li>-->
+<!--        <a href="{{url_for('home')}}">الصفحة الرئيسية</a>-->
+<!--        {% block breadcrumb_link %}-->
+<!--        {% endblock %}-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </nav>-->
 
   {% block lower_container %}
   {% endblock %}
@@ -187,9 +192,8 @@
       </div>
     </div>
     <div id="footer-bottom">
-      <br><br><br>
-      <span style="font-size: 16px">
-        &ensp;&ensp;&ensp;&ensp;BookStore &copy; 2024
+      <span>
+        IrtikaaStore &copy; 2024
       </span>
       <br>
     </div>

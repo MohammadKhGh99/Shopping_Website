@@ -18,21 +18,22 @@
   {% block no_search %}hidden{% endblock %}
 
   {% block lower_container %}
+<!--  <br>-->
   <div class="container">
     <div class="books-shopping" title="كتب">
       <a href="{{url_for('books')}}">
-        <img src="{{ url_for('static', filename='images/logo.png')}}" alt="books">
-        <span style="color: black">كتب</span>
+        <img src="{{ url_for('static', filename='images/books_logo.png')}}" alt="books">
+        <span style="color: black; font-size: 0.9em">متجر ورثة الأنبياء للكتب</span>
       </a>
     </div>
     <div class="clothes-shopping" title="أزياء شرعية">
       <a href="{{url_for('clothes')}}">
-        <img src="{{ url_for('static', filename='images/hijabi.png')}}" alt="clothes">
-        <span style="color: black">أزياء شرعية</span>
+        <img src="{{ url_for('static', filename='images/clothes_logo.jpg')}}" alt="clothes">
+        <span style="color: black; font-size: 0.9em">متجر نور الفضيلة للألبسة الشرعية</span>
       </a>
     </div>
   </div>
-  <br>
+<!--  <br>-->
   {% endblock %}
 </body>
 </html>

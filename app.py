@@ -1,7 +1,7 @@
 import os
 import webbrowser
 
-from jinja2 import Environment
+# from jinja2 import Environment
 from flask import render_template, Flask, request, redirect, url_for, flash
 
 app = Flask(__name__)
@@ -90,5 +90,6 @@ def page_not_found(error):
 
 if __name__ == "__main__":
     # webbrowser.open("http://127.0.0.1:5000/home")
-    app.run()
+    # app.run()
+    app.run(host="0.0.0.0")
     
