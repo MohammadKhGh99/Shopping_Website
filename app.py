@@ -1,25 +1,15 @@
 import os
-import webbrowser
-
-# from jinja2 import Environment
+import sqlite3
 from flask import render_template, Flask, request, redirect, url_for, flash
 
 app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
-# env = Environment()
-# env.filters['increment'] = lambda value: value + 1
-# breadcrumbs = [
-#     {"url": url_for("home"), "text": "الصفحة الرئيسية"},
-#     {"url": url_for(""), "text": "تسجيل الدخول"},
-#     {"url": url_for(""), "text": "عربة التسوق"}
-#     # {"url": url_for("الصفحة", category=category, item=item), "text": item.capitalize()},
-# ]
 
 
 books_lst = [filename for filename in os.listdir('static/images/books')] * 4
 clothes_lst = [filename for filename in os.listdir('static/images/clothes')] * 4
-# authors = []
+
 with open("static/Books_Authors.txt", encoding="utf8") as f:
     authors = f.readlines()
 with open("static/Books_Dates.txt", encoding="utf8") as f:
@@ -85,12 +75,6 @@ def shopping_cart():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

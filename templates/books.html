@@ -184,7 +184,7 @@
 <!--    <br>-->
     <products class="products">
       {% for product in products %}
-      <a href="{{url_for('product')}}">
+      <a href="{{url_for('product')}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
             <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
