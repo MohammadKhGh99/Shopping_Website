@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <title>موقع كتب</title>
@@ -54,7 +54,7 @@
     top: 30%;
     left: 0;
     /*top: 500px;*/
-    font-size: 0.7em;
+    font-size: 0.8em;
   }
 
   .input_label {
@@ -101,7 +101,7 @@
   {% extends "base.html" %}
   {% block no_search %}hidden{% endblock %}
   {% block breadcrumb_link %}
-  / <a href="{{url_for('sign_in')}}">تسجيل الدخول</a>
+  / <a href="{{url_for('login')}}">تسجيل الدخول</a>
   {% endblock %}
   {% block lower_container %}
   <div class="sign-container">
@@ -110,7 +110,7 @@
       <p>الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
     </div>
     <div class="form-container">
-      <form>
+      <form method="post">
         <div class="field-holder">
           <label for="customer-phone" class="input_label">رقم الهاتف</label>
           <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
@@ -132,9 +132,9 @@
         <button type="submit" class="sign-in-button">
           تسجيل الدخول
         </button>
-        <span style="font-size: 0.7em">
+        <span style="font-size: 0.8em">
           عميل جديد؟
-          <a href="{{url_for('sign_up')}}" id="create-account">
+          <a href="{{url_for('register')}}" id="create-account">
             إنشاء حساب
           </a>
         </span>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>موقع كتب</title>
+</head>
+<style>
+  .sign-container {
+    /*display: grid;*/
+    /*grid-auto-columns: 1fr;*/
+    /*!*row-gap: 5px;*!*/
+    /*max-width: 460px;*/
+    /*padding-right: 30%;*/
+    /*text-align: center;*/
+    display: block;
+    justify-content: center;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .sign-container form {
+    /*text-align: right;*/
+    /*display: grid;*/
+    /*grid-auto-columns: 1fr;*/
+    /*row-gap: 10px;*/
+    /*color: #525d85;*/
+    text-align: right;
+    /*max-width: 350px;*/
+    width: 350px;
+    color: #525d85;
+  }
+
+  .sign-container form a {
+    text-decoration: underline;
+
+  }
+
+  .input_field {
+    /*position: relative;*/
+    /*width: 100%;*/
+    /*height: 50px;*/
+    /*line-height: 50px;*/
+    /*border: 1px solid rgba(12, 27, 84, .5);*/
+    /*padding-right: 10px;*/
+    width: 100%;
+    /*max-width: 100%;*/
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgba(12, 27, 84, .5);
+    /*margin-right: 10px;*/
+    font-family: "Traditional Arabic", serif;
+  }
+
+  .input_label {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .sign-up-button {
+    width: 100%;
+    background-color: #cce5ff;
+    font-family: "Traditional Arabic",serif;
+    border: 0;
+    cursor: pointer;
+    /*transition: left 0.5s ease-in-out;*/
+    margin-right: 2px;
+  }
+
+  .sign-up-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  .sign-container form a {
+    color: black;
+  }
+
+  .sign-container form a:hover {
+    color: gray;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .input_field {
+    font-size: 0.9em;
+    width: 100%;
+    padding-right: 10px;
+  }
+
+
+  /*.customer-name-container {*/
+  /*  display: flex;*/
+  /*  justify-content: space-evenly;*/
+  /*  gap: 20px;*/
+  /*}*/
+
+  /*.customer-address-container {*/
+  /*  display: flex;*/
+  /*  justify-content: space-evenly;*/
+  /*  gap: 20px;*/
+  /*}*/
+
+  /*.customer-phones-container {*/
+  /*  display: flex;*/
+  /*  justify-content: space-evenly;*/
+  /*  gap: 20px;*/
+  /*}*/
+
+  .field-holder {
+    margin-bottom: 10px;
+  }
+
+</style>
+<body>
+  {% extends "base.html" %}
+  {% block no_search %}hidden{% endblock %}
+  {% block breadcrumb_link %}
+  / <a href="{{url_for('register')}}">تسجيل</a>
+  {% endblock %}
+  {% block lower_container %}
+  <div class="sign-container">
+    <div class="upper-form">
+      <h2>تسجيل</h2>
+      <p>من فضلك إملأ الحقول في الأسفل:</p>
+    </div>
+    <div class="form-container">
+      <form method="post" id="sign-up-form">
+        <div class="otp-process">
+          <div class="field-holder">
+            <label for="customer-phone" class="input_label">رقم الهاتف الشخصي <span style="font-size: 0.6em">(يستخدم في تسجيل الدخول للموقع)</span></label>
+            <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
+          </div>
+<!--          <button hidden onclick="callOTP()" id="check-otp-button" class="sign-up-button" style="width: 250px; margin-right: 55px">-->
+<!--            للحصول على كود التحقق-->
+<!--          </button>-->
+<!--          <div class="field-holder" style="display: none" hidden>-->
+<!--            <label for="otp-code" class="input_label">كود التحقق</label>-->
+<!--            <input type="text" id="otp-code" class="input_field" name="otp-code" required style="text-align: right" maxlength="10">-->
+<!--          </div>-->
+<!--          <button hidden onclick="checkOTP()" class="sign-up-button" style="width: 250px; margin-right: 55px; display: none">-->
+<!--            التحقق-->
+<!--          </button>-->
+        </div>
+        <div class="field-holder" >
+          <label for="customer-first-name" class="input_label">الاسم الأول</label>
+          <input type="text" id="customer-first-name" class="input_field" name="customer-first-name" autocomplete="given-name" required>
+        </div>
+        <div class="field-holder" >
+          <label for="customer-last-name" class="input_label">اسم العائلة</label>
+          <input type="text" id="customer-last-name" class="input_field" name="customer-last-name" autocomplete="family-name" required>
+        </div>
+        <div class="field-holder" >
+          <label for="customer-city" class="input_label">البلد</label>
+          <select id="customer-city" class="input_field" name="customer-city" required style="width: 365px; background-color: white">
+            <option value="בחר">בחר</option>
+            <option value="אבו גוש">אבו גוש</option>
+            <option value="אבן יהודה">אבן יהודה</option>
+            <option value="אום אל-פחם">אום אל-פחם</option>
+            <option value="אופקים">אופקים</option>
+            <option value="אור יהודה">אור יהודה</option>
+            <option value="אור עקיבא">אור עקיבא</option>
+            <option value="אורנית">אורנית</option>
+            <option value="אזור">אזור</option>
+            <option value="אחוזת ברק">אחוזת ברק</option>
+            <option value="אילת">אילת</option>
+            <option value="אלון מורה">אלון מורה</option>
+            <option value="אלון שבות">אלון שבות</option>
+            <option value="אליכין">אליכין</option>
+            <option value="אלעד">אלעד</option>
+            <option value="אלפי מנשה">אלפי מנשה</option>
+            <option value="אעבלין">אעבלין</option>
+            <option value="אפק">אפק</option>
+            <option value="אפרת">אפרת</option>
+            <option value="אריאל">אריאל</option>
+            <option value="אשדוד">אשדוד</option>
+            <option value="אשקלון">אשקלון</option>
+            <option value="באקה אל-גרביה">באקה אל-גרביה</option>
+            <option value="באר גנים">באר גנים</option>
+            <option value="באר יעקב">באר יעקב</option>
+            <option value="באר שבע">באר שבע</option>
+            <option value="בארות יצחק">בארות יצחק</option>
+            <option value="בועיינה-נוג'ידאת">בועיינה-נוג'ידאת</option>
+            <option value="בורגתה">בורגתה</option>
+            <option value="ביצרון">ביצרון</option>
+            <option value="ביר אל-מכסור">ביר אל-מכסור</option>
+            <option value="בית אל">בית אל</option>
+            <option value="בית אריה">בית אריה</option>
+            <option value="בית ג'ן">בית ג'ן</option>
+            <option value="בית דגן">בית דגן</option>
+            <option value="בית זית">בית זית</option>
+            <option value="בית חלקיה">בית חלקיה</option>
+            <option value="בית שאן">בית שאן</option>
+            <option value="בית שמש">בית שמש</option>
+            <option value="ביתר עילית">ביתר עילית</option>
+            <option value="בני ברק">בני ברק</option>
+            <option value="בני יהודה">בני יהודה</option>
+            <option value="בני ציון">בני ציון</option>
+            <option value="בנימינה">בנימינה</option>
+            <option value="בסמת טבעון">בסמת טבעון</option>
+            <option value="בענה">בענה</option>
+            <option value="בת הדר">בת הדר</option>
+            <option value="בת חפר">בת חפר</option>
+            <option value="בת ים">בת ים</option>
+            <option value="ג'לג'וליה">ג'לג'וליה</option>
+            <option value="ג'סר א-זרקא">ג'סר א-זרקא</option>
+            <option value="ג'ש (גוש חלב)">ג'ש (גוש חלב)</option>
+            <option value="ג'ת">ג'ת</option>
+            <option value="גאולים">גאולים</option>
+            <option value="גבעון החדשה">גבעון החדשה</option>
+            <option value="גבעת אבני">גבעת אבני</option>
+            <option value="גבעת ברנר">גבעת ברנר</option>
+            <option value="גבעת השלושה">גבעת השלושה</option>
+            <option value="גבעת זאב">גבעת זאב</option>
+            <option value="גבעת עדה">גבעת עדה</option>
+            <option value="גבעת שמואל">גבעת שמואל</option>
+            <option value="גבעתיים">גבעתיים</option>
+            <option value="גדרה">גדרה</option>
+            <option value="גן חיים">גן חיים</option>
+            <option value="גן יבנה">גן יבנה</option>
+            <option value="געש">געש</option>
+            <option value="דאלית אל-כרמל">דאלית אל-כרמל</option>
+            <option value="דבוריה">דבוריה</option>
+            <option value="דולב">דולב</option>
+            <option value="דייר אל-אסד">דייר אל-אסד</option>
+            <option value="דימונה">דימונה</option>
+            <option value="הוד השרון">הוד השרון</option>
+            <option value="הרצליה">הרצליה</option>
+            <option value="זבדיאל">זבדיאל</option>
+            <option value="זכרון יעקב">זכרון יעקב</option>
+            <option value="זמר">זמר</option>
+            <option value="זרזיר">זרזיר</option>
+            <option value="חדרה">חדרה</option>
+            <option value="חולון">חולון</option>
+            <option value="חורה">חורה</option>
+            <option value="חורפיש">חורפיש</option>
+            <option value="חיפה">חיפה</option>
+            <option value="חצור הגלילית">חצור הגלילית</option>
+            <option value="חריש">חריש</option>
+            <option value="טבריה">טבריה</option>
+            <option value="טורעאן">טורעאן</option>
+            <option value="טייבה">טייבה</option>
+            <option value="טירה">טירה</option>
+            <option value="טירת כרמל">טירת כרמל</option>
+            <option value="טמרה">טמרה</option>
+            <option value="יבנאל">יבנאל</option>
+            <option value="יבנה">יבנה</option>
+            <option value="יגור">יגור</option>
+            <option value="יד בנימין">יד בנימין</option>
+            <option value="יהוד">יהוד</option>
+            <option value="יהוד-מונוסון">יהוד-מונוסון</option>
+            <option value="יסוד המעלה">יסוד המעלה</option>
+            <option value="יקום">יקום</option>
+            <option value="יקנעם (מושבה)">יקנעם (מושבה)</option>
+            <option value="יקנעם עילית">יקנעם עילית</option>
+            <option value="ירוחם">ירוחם</option>
+            <option value="ירושלים">ירושלים</option>
+            <option value="ירכא">ירכא</option>
+            <option value="כאוכב אבו אל-היג'א">כאוכב אבו אל-היג'א</option>
+            <option value="כוכב יאיר">כוכב יאיר</option>
+            <option value="כסרא-סמיע">כסרא-סמיע</option>
+            <option value="כפר ויתקין">כפר ויתקין</option>
+            <option value="כפר חיים">כפר חיים</option>
+            <option value="כפר יאסיף">כפר יאסיף</option>
+            <option value="כפר ידידיה">כפר ידידיה</option>
+            <option value="כפר יונה">כפר יונה</option>
+            <option value="כפר כמא">כפר כמא</option>
+            <option value="כפר מנדא">כפר מנדא</option>
+            <option value="כפר סבא">כפר סבא</option>
+            <option value="כפר סירקין">כפר סירקין</option>
+            <option value="כפר קאסם">כפר קאסם</option>
+            <option value="כפר קרע">כפר קרע</option>
+            <option value="כפר תבור">כפר תבור</option>
+            <option value="כרמיאל">כרמיאל</option>
+            <option value="להבים">להבים</option>
+            <option value="לוד">לוד</option>
+            <option value="מאור">מאור</option>
+            <option value="מבואות יריחו">מבואות יריחו</option>
+            <option value="מבשרת ציון">מבשרת ציון</option>
+            <option value="מג'ד אל כרום">מג'ד אל כרום</option>
+            <option value="מג'דל שמס">מג'דל שמס</option>
+            <option value="מגאר">מגאר</option>
+            <option value="מגדל">מגדל</option>
+            <option value="מגדל העמק">מגדל העמק</option>
+            <option value="מגשימים">מגשימים</option>
+            <option value="מודיעין עילית">מודיעין עילית</option>
+            <option value="מודיעין-מכבים-רעות">מודיעין-מכבים-רעות</option>
+            <option value="מזור">מזור</option>
+            <option value="מזכרת בתיה">מזכרת בתיה</option>
+            <option value="מזרעה">מזרעה</option>
+            <option value="מטולה">מטולה</option>
+            <option value="מיתר">מיתר</option>
+            <option value="מכמורת">מכמורת</option>
+            <option value="מנחמיה">מנחמיה</option>
+            <option value="מסעדה">מסעדה</option>
+            <option value="מעברות">מעברות</option>
+            <option value="מעיליא">מעיליא</option>
+            <option value="מעלה אדומים">מעלה אדומים</option>
+            <option value="מעלה אפרים">מעלה אפרים</option>
+            <option value="מעלות-תרשיחא">מעלות-תרשיחא</option>
+            <option value="מצפה רמון">מצפה רמון</option>
+            <option value="משהד">משהד</option>
+            <option value="משמר השבעה">משמר השבעה</option>
+            <option value="נהורה">נהורה</option>
+            <option value="נהלל">נהלל</option>
+            <option value="נהריה">נהריה</option>
+            <option value="נהרייה">נהרייה</option>
+            <option value="נוף הגליל">נוף הגליל</option>
+            <option value="נחף">נחף</option>
+            <option value="נס ציונה">נס ציונה</option>
+            <option value="נצרת">נצרת</option>
+            <option value="נשר">נשר</option>
+            <option value="נתיבות">נתיבות</option>
+            <option value="נתניה">נתניה</option>
+            <option value="סאג'ור">סאג'ור</option>
+            <option value="סביון">סביון</option>
+            <option value="סח'נין">סח'נין</option>
+            <option value="עומר">עומר</option>
+            <option value="עופרה">עופרה</option>
+            <option value="עיילבון">עיילבון</option>
+            <option value="עילוט">עילוט</option>
+            <option value="עין מאהל">עין מאהל</option>
+            <option value="עינת">עינת</option>
+            <option value="עכו">עכו</option>
+            <option value="עלי">עלי</option>
+            <option value="עמקה">עמקה</option>
+            <option value="עספיא">עספיא</option>
+            <option value="עפולה">עפולה</option>
+            <option value="עראבה">עראבה</option>
+            <option value="ערד">ערד</option>
+            <option value="ערערה">ערערה</option>
+            <option value="עתלית">עתלית</option>
+            <option value="פארק תעשיות עמק חפר">פארק תעשיות עמק חפר</option>
+            <option value="פוריידיס">פוריידיס</option>
+            <option value="פורת">פורת</option>
+            <option value="פסוטה">פסוטה</option>
+            <option value="פקיעין (בוקייעה)">פקיעין (בוקייעה)</option>
+            <option value="פרדס חנה-כרכור">פרדס חנה-כרכור</option>
+            <option value="פרדסיה">פרדסיה</option>
+            <option value="פתח תקווה">פתח תקווה</option>
+            <option value="צופית">צופית</option>
+            <option value="צור הדסה">צור הדסה</option>
+            <option value="צור יצחק">צור יצחק</option>
+            <option value="צורן">צורן</option>
+            <option value="צפת">צפת</option>
+            <option value="קדומים">קדומים</option>
+            <option value="קדימה">קדימה</option>
+            <option value="קדרון">קדרון</option>
+            <option value="קיסריה">קיסריה</option>
+            <option value="קלנסווה">קלנסווה</option>
+            <option value="קציר">קציר</option>
+            <option value="קצרין">קצרין</option>
+            <option value="קריית אונו">קריית אונו</option>
+            <option value="קריית ארבע">קריית ארבע</option>
+            <option value="קריית אתא">קריית אתא</option>
+            <option value="קריית ביאליק">קריית ביאליק</option>
+            <option value="קריית גת">קריית גת</option>
+            <option value="קריית חיים">קריית חיים</option>
+            <option value="קריית טבעון">קריית טבעון</option>
+            <option value="קריית ים">קריית ים</option>
+            <option value="קריית מוצקין">קריית מוצקין</option>
+            <option value="קריית מלאכי">קריית מלאכי</option>
+            <option value="קריית נטפים">קריית נטפים</option>
+            <option value="קריית עקרון">קריית עקרון</option>
+            <option value="קריית שמונה">קריית שמונה</option>
+            <option value="קרית יערים">קרית יערים</option>
+            <option value="קרני שומרון">קרני שומרון</option>
+            <option value="ראמה">ראמה</option>
+            <option value="ראש העין">ראש העין</option>
+            <option value="ראש פינה">ראש פינה</option>
+            <option value="ראשון לציון">ראשון לציון</option>
+            <option value="רהט">רהט</option>
+            <option value="רחובות">רחובות</option>
+            <option value="ריחאניה">ריחאניה</option>
+            <option value="ריינה">ריינה</option>
+            <option value="רמלה">רמלה</option>
+            <option value="רמת גן">רמת גן</option>
+            <option value="רמת השרון">רמת השרון</option>
+            <option value="רמת ישי">רמת ישי</option>
+            <option value="רעננה">רעננה</option>
+            <option value="רשפון">רשפון</option>
+            <option value="שגב-שלום">שגב-שלום</option>
+            <option value="שדרות">שדרות</option>
+            <option value="שואבה">שואבה</option>
+            <option value="שוהם">שוהם</option>
+            <option value="שייח' דנון">שייח' דנון</option>
+            <option value="שילה">שילה</option>
+            <option value="שלומי">שלומי</option>
+            <option value="שמשית">שמשית</option>
+            <option value="שעב">שעב</option>
+            <option value="שער אפרים">שער אפרים</option>
+            <option value="שפיים">שפיים</option>
+            <option value="שפרעם">שפרעם</option>
+            <option value="תל אביב - יפו">תל אביב - יפו</option>
+            <option value="תל מונד">תל מונד</option>
+            <option value="תל שבע">תל שבע</option>
+          </select>
+<!--          <input type="text" id="customer-city" class="input_field" name="customer-city" autocomplete="city" required>-->
+        </div>
+        <div class="field-holder" >
+          <label for="customer-address" class="input_label">العنوان</label>
+          <input type="text" id="customer-address" class="input_field" name="customer-address" autocomplete="address" required>
+        </div>
+        <div class="field-holder" >
+          <label for="customer-backup-phone" class="input_label">رقم هاتف إحتياطي</label>
+          <input type="tel" id="customer-backup-phone" class="input_field" name="customer-backup-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
+        </div>
+<!--        </div>-->
+<!--        <div class="field-holder">-->
+<!--          <label for="customer-email" class="input_label">البريد الإلكتروني</label>-->
+<!--          <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>-->
+<!--        </div>-->
+        <div class="field-holder" >
+          <label for="customer-password" class="input_label">كلمة المرور</label>
+          <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20" required>
+          <span style="font-size: 0.7em; color: #9d9898;">
+            طول كلمة المرور  8 - 20 رقم أو حرف
+          </span>
+        </div>
+<!--        <br>-->
+        <div class="lower-form" >
+          <button type="submit" class="sign-up-button">
+            إنشاء حساب
+          </button>
+          <p style="text-align: center; font-size: 0.8em">
+            هل لديك حساب بالفعل؟
+            <a href="{{url_for('login')}}">
+              دخول
+            </a>
+          </p>
+        </div>
+      </form>
+<!--      <dialog>hi</dialog>-->
+<!--      <script>-->
+<!--        document.getElementsByTagName("dialog")[0].show();-->
+<!--      </script>-->
+    </div>
+  </div>
+  <script>
+    function callOTP() {
+        const children = document.getElementById("sign-up-form").getElementsByTagName('div');
+        console.log(children);
+        document.getElementById("check-otp-button").hidden = true;
+        document.getElementById("customer-phone").setAttribute('readonly', 'true');
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].style.display !== "none") {
+              children[i].hidden = false;
+            }
+        }
+    }
+  </script>
+  <br>
+  {% endblock %}
+
+
+</body>
+</html>
