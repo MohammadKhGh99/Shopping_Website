@@ -83,8 +83,8 @@ def load_user(user_phone):
             """
         result = cursor.execute(check_user_existance).fetchone()
         # print(user_phone)
-        print(result)
-        if result and len(result) == 1:
+        # print(result)
+        if result:  # and len(result) == 1:
             return User(*result)
         else:
             return None
@@ -113,9 +113,10 @@ def login():
                 from Customers
                 where phone_number = '{phone_number}'
                 """
-            
+            print("Post phone:  " + str(phone_number))
             res_rows = cursor.execute(check_user_existance)
             res_rows = res_rows.fetchall()
+            print("Res:  " + str(res_rows))
             if len(res_rows) == 1:
                 if bcrypt.check_password_hash(res_rows[0][-1], password):
                     print(res_rows[0][0])
@@ -198,6 +199,19 @@ def forgot_password():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    return render_template('profile.html', hide_additional_content=True)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 
 @app.route('/about')

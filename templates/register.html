@@ -113,6 +113,18 @@
     margin-bottom: 10px;
   }
 
+  .password-container {
+    position: relative;
+  }
+
+  .show-password-btn {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
 </style>
 <body>
   {% extends "base.html" %}
@@ -412,9 +424,12 @@
 <!--          <label for="customer-email" class="input_label">البريد الإلكتروني</label>-->
 <!--          <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>-->
 <!--        </div>-->
-        <div class="field-holder" >
+        <div class="field-holder password-container" >
           <label for="customer-password" class="input_label">كلمة المرور</label>
           <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20" required>
+          <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+            visibility_off
+          </span>
           <span style="font-size: 0.7em; color: #9d9898;">
             طول كلمة المرور  8 - 20 رقم أو حرف
           </span>
@@ -448,6 +463,19 @@
             if (children[i].style.display !== "none") {
               children[i].hidden = false;
             }
+        }
+    }
+
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('customer-password');
+        var showPasswordBtn = document.querySelector('.show-password-btn');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordBtn.textContent = 'visibility';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordBtn.textContent = 'visibility_off';
         }
     }
   </script>

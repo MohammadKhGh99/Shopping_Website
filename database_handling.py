@@ -19,6 +19,7 @@ def create_table():
 		phone_number char(10) primary key,
 		first_name nvarchar(15),
 		last_name nvarchar(15),
+		role nvarchar(10),
 		city nvarchar(20),
 		address nvarchar(50),
 		backup_phone nvarchar(10),
@@ -28,8 +29,23 @@ def create_table():
 		check (phone_number GLOB '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 	 )
 	"""
+		# foreign key (phone_number) references Addresses(user_phone),
 		# check (length(password) >= 8 and length(password) <= 20)
 		# check (password like '^.{8,20}$')
+	
+	#  todo - add list of addresses or not?
+	addresses_table = """
+	create table if not exists Addresses(
+		user_phone nvarchar(10) primary key,
+		phone_number char(10),
+		first_name nvarchar(15),
+		last_name nvarchar(15),
+		city nvarchar(20),
+		address nvarchar(50),
+		zip nvarchar(7),
+		default int
+	)
+	"""
 	
 	products_table = """
 	create table if not exists Products(
