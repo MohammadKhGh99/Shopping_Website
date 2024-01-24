@@ -20,6 +20,7 @@ def create_table():
 		first_name nvarchar(15),
 		last_name nvarchar(15),
 		role nvarchar(10),
+		date_joined nvarchar(20),
 		city nvarchar(20),
 		address nvarchar(50),
 		backup_phone nvarchar(10),

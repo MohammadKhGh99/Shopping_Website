@@ -4,10 +4,308 @@
   <meta charset="UTF-8">
   <title>addresses</title>
 </head>
+
+<style>
+  #dashboard-link-bar {
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    padding: 0 20vw 0 20vw;
+    border-bottom: 1px solid #f2e4d7;
+  }
+
+  #dashboard-link-bar a {
+    text-decoration: none;
+    color: black;
+  }
+
+  #dashboard-link-bar a:hover {
+    text-decoration: underline;
+  }
+
+  #profile-container {
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    flex-direction: column;
+  }
+
+  #upper-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-bottom: 1px solid black;
+
+  }
+
+  #lower-profile {
+    /*padding-right: 20px;*/
+    display: flex;
+    /*justify-content: flex-start;*/
+    /*align-items: center;*/
+    flex-direction: column;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  #lower-profile ul {
+    text-decoration: none;
+    list-style: none;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  #lower-profile ul #profile-info, #orders-info {
+    border-bottom: 1px solid gray;
+    display: flex;
+    /*justify-content: space-between;*/
+    /*align-items: center;*/
+    flex-direction: column;
+    /*width: 100%;*/
+    width: 80%;
+    padding-right: 20px;
+  }
+
+  #upper-profile-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #lower-profile ul li ul {
+    text-decoration: none;
+    list-style: none;
+    width: 80%;
+    padding-right: 0;
+  }
+
+  #lower-profile ul li ul li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+  }
+
+  #lower-profile ul li ul li:not(:last-child) {
+    border-bottom: 1px solid gray;
+  }
+
+  #lower-profile ul li ul li h5 {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  #lower-profile ul li ul li p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 0.7em;
+  }
+  
+  .edit-button {
+    cursor: pointer; 
+    width: 30px; 
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: 0;
+  }
+
+  .edit-button:hover {
+    color: gray;
+  }
+
+  #upper-orders {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #orders-counter {
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    font-size: 15px;
+    justify-content: center;
+    vertical-align: top;
+  }
+
+  #go-shopping-button {
+    cursor: pointer;
+    background-color: #cce5ff;
+    border: 0;
+    width: 100px;
+    height: 50px;
+  }
+
+  #go-shopping-button:hover {
+    background-color: #e5e5e5;
+  }
+</style>
+
 <body>
-  {% extends "dashboard.html" %}
+  {% extends "base.html" %}
+
+  {% block upper_container %}
+  <div id="dashboard-link-bar">
+    <a href="{{url_for('dashboard')}}">
+      الطلبات
+    </a>
+    <a href="{{url_for('profile')}}">
+      الصفحة الشخصية
+    </a>
+    <a href="{{url_for('logout')}}">
+      تسجيل الخروج
+    </a>
+  </div>
+  {% endblock %}
+
   {% block lower_container %}
-  <h1>address</h1>
+  <div id="profile-container">
+    <div id="upper-profile">
+      <h2 style="margin-bottom: 0;">
+        السلام عليكم {{current_user.first_name + " " + current_user.last_name}}
+      </h2>
+      <span style="margin-top: 0; font-size: 0.7em;">
+        {{current_user.date_joined}}
+      </span>
+    </div>
+    <div id="lower-profile">
+      <ul>
+        <li id="profile-info">
+          <div id="upper-profile-info">
+            <h4>المعلومات الشخصية</h4>
+            <button style="background-color: transparent; border: 0; cursor: pointer" onclick="OpenProfileInfo()">
+              <span class="material-symbols-outlined" id="profile-info-arrow">
+                expand_more
+              </span>
+            </button>
+          </div>
+          <ul style="display: none">
+            <li>
+              <div>
+                <h5>الإسم الكامل</h5>
+                <p>{{current_user.first_name + " " + current_user.last_name}}</p>
+              </div>
+              <button class="edit-button">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+              </button>
+            </li>
+            <li>
+              <div>
+                <h5>رقم الهاتف</h5>
+                <p>{{current_user.phone_number}}</p>
+              </div>
+              <button class="edit-button">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+              </button>
+            </li>
+            <li>
+              <div>
+                <h5>كلمة المرور</h5>
+                <p>**********</p>
+              </div>
+              <button class="edit-button">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+              </button>
+            </li>
+            <li>
+              <div>
+                <h5>المدينة</h5>
+                <p>{{current_user.city}}</p>
+              </div>
+              <button class="edit-button">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+              </button>
+            </li>
+            <li>
+              <div>
+                <h5>العنوان</h5>
+                <p>{{current_user.address}}</p>
+              </div>
+              <button class="edit-button">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+              </button>
+            </li>
+          </ul>
+        </li>
+        <li id="orders-info">
+          <div id="upper-orders">
+            <h4>
+              الطلبات
+              <span id="orders-counter">1</span>
+            </h4>
+            <button style="background-color: transparent; border: 0; cursor: pointer" onclick="OpenOrdersInfo()">
+              <span class="material-symbols-outlined" id="orders-info-arrow">
+                expand_more
+              </span>
+            </button>
+          </div>
+          <div id="lower-orders" style="display: none; padding-bottom: 20px">
+            <div id="no-orders">
+              <p>لم تقدم أي طلبات حتى الآن</p>
+              <a href="{{url_for('home')}}">
+                <button id="go-shopping-button">
+                  إبدأ التسوق
+                </button>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    function OpenProfileInfo() {
+        const mySpan = document.querySelector('#profile-info-arrow');
+        mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+        const profileInfo = document.querySelector('#profile-info ul');
+        const profileInfoTitle = document.querySelector("#upper-profile-info h4")
+        if (profileInfo.style.display === "none") {
+            profileInfo.style.display = "block";
+            profileInfoTitle.style.textDecoration = "underline";
+        } else {
+            profileInfo.style.display = "none";
+            profileInfoTitle.style.textDecoration = "none";
+        }
+    }
+
+    function OpenOrdersInfo() {
+        const mySpan = document.querySelector('#orders-info-arrow');
+        mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
+        const ordersInfo = document.querySelector('#lower-orders');
+        const noOrders = document.querySelector("#no-orders");
+        const ordersInfoTitle = document.querySelector("#upper-orders h4");
+        const ordersCounter = document.getElementById("orders-counter");
+        if (ordersCounter.value === "0") {
+            noOrders.style.display = "block";
+        } else {
+            noOrders.style.display = "none";
+        }
+        if (ordersInfo.style.display === "none") {
+            ordersInfo.style.display = "block";
+            ordersInfoTitle.style.textDecoration = "underline";
+        } else {
+            ordersInfo.style.display = "none";
+            ordersInfoTitle.style.textDecoration = "none";
+        }
+    }
+  </script>
   {% endblock %}
 </body>
 </html>
