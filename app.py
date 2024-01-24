@@ -219,7 +219,9 @@ def profile():
 @app.route('/admin_profile', methods=['GET', 'POST'])
 @login_required
 def admin_profile():
-    return render_template('admin_profile.html', current_user=current_user)
+    if current_user.role == "admin":
+        return render_template('admin_profile.html', current_user=current_user)
+    return redirect(url_for('profile'))
 
 
 @app.route('/logout', methods=['GET', 'POST'])
