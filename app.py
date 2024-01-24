@@ -124,12 +124,16 @@ def login():
                 if bcrypt.check_password_hash(res_rows[0][-1], password):
                     user = load_user(res_rows[0][0])
                     login_user(user)
-                    redirect(url_for('profile'))
+                    if current_user.role == "admin":
+                        return redirect(url_for('admin_profile'))
+                    return redirect(url_for('profile'))
                 
                 # return render_template("logged_in.html")
             else:
                 return redirect(url_for('register'))
     if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for('admin_profile'))
         return redirect(url_for('profile'))
     return render_template('login.html')
 
@@ -209,7 +213,13 @@ def dashboard():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html', hide_additional_content=True, current_user=current_user)
+    return render_template('profile.html', current_user=current_user)
+
+
+@app.route('/admin_profile', methods=['GET', 'POST'])
+@login_required
+def admin_profile():
+    return render_template('admin_profile.html', current_user=current_user)
 
 
 @app.route('/logout', methods=['GET', 'POST'])

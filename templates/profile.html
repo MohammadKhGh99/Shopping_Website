@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>addresses</title>
+  <title>profile</title>
 </head>
 
 <style>
@@ -35,8 +35,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border-bottom: 1px solid black;
-
+    /*border-bottom: 1px solid black;*/
   }
 
   #lower-profile {
@@ -54,6 +53,7 @@
     list-style: none;
     width: 100%;
     padding-right: 0;
+    padding-bottom: 40px;
   }
 
   #lower-profile ul #profile-info, #orders-info {
@@ -168,19 +168,21 @@
   {% block lower_container %}
   <div id="profile-container">
     <div id="upper-profile">
-      <h2 style="margin-bottom: 0;">
-        السلام عليكم {{current_user.first_name + " " + current_user.last_name}}
-      </h2>
-      <span style="margin-top: 0; font-size: 0.7em;">
-        {{current_user.date_joined}}
-      </span>
+      <div style="text-align: center; border-bottom: 1px solid black">
+        <h2 style="margin-bottom: 0;">
+          السلام عليكم {{current_user.first_name + " " + current_user.last_name}}
+        </h2>
+        <span style="margin-top: 0; font-size: 0.7em;">
+          {{current_user.date_joined}}
+        </span>
+      </div>
     </div>
     <div id="lower-profile">
       <ul>
         <li id="profile-info">
-          <div id="upper-profile-info">
+          <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
             <h4>المعلومات الشخصية</h4>
-            <button style="background-color: transparent; border: 0; cursor: pointer" onclick="OpenProfileInfo()">
+            <button style="background-color: transparent; border: 0;">
               <span class="material-symbols-outlined" id="profile-info-arrow">
                 expand_more
               </span>
@@ -245,12 +247,12 @@
           </ul>
         </li>
         <li id="orders-info">
-          <div id="upper-orders">
-            <h4>
+          <div id="upper-orders" style="cursor: pointer" onclick="OpenOrdersInfo()">
+            <h4 style="user-select: none">
               الطلبات
-              <span id="orders-counter">1</span>
+              <span id="orders-counter" style="user-select: none">0</span>
             </h4>
-            <button style="background-color: transparent; border: 0; cursor: pointer" onclick="OpenOrdersInfo()">
+            <button style="background-color: transparent; border: 0;">
               <span class="material-symbols-outlined" id="orders-info-arrow">
                 expand_more
               </span>
