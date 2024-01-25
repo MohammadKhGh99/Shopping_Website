@@ -39,16 +39,20 @@
   }
 
   #lower-profile {
-    /*padding-right: 20px;*/
     display: flex;
-    /*justify-content: flex-start;*/
-    /*align-items: center;*/
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    width: 100%;
-    padding-right: 0;
+    /*text-align: center;*/
+    /*width: 100%;*/
+    /*padding-right: 0;*/
   }
 
   #lower-profile ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     text-decoration: none;
     list-style: none;
     width: 100%;
@@ -59,12 +63,12 @@
   #lower-profile ul #profile-info, #orders-info {
     border-bottom: 1px solid gray;
     display: flex;
-    /*justify-content: space-between;*/
+    /*justify-content: center;*/
     /*align-items: center;*/
     flex-direction: column;
     /*width: 100%;*/
     width: 80%;
-    padding-right: 20px;
+    /*padding-right: 20px;*/
   }
 
   #upper-profile-info {
@@ -91,15 +95,16 @@
     border-bottom: 1px solid gray;
   }
 
-  #lower-profile ul li ul li h5 {
+  #lower-profile ul li ul li h4 {
     margin-top: 10px;
     margin-bottom: 0;
   }
 
-  #lower-profile ul li ul li p {
+  #lower-profile ul li ul li input, p {
     margin-top: 0;
     margin-bottom: 10px;
-    font-size: 0.7em;
+    font-size: 0.8em;
+    font-family: "Traditional Arabic", sans-serif;
   }
   
   .edit-button {
@@ -153,7 +158,7 @@
 
   {% block upper_container %}
   <div id="dashboard-link-bar">
-    <a href="{{url_for('dashboard')}}">
+    <a href="{{url_for('profile')}}">
       الطلبات
     </a>
     <a href="{{url_for('profile')}}">
@@ -181,20 +186,22 @@
       <ul>
         <li id="profile-info">
           <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
-            <h4>المعلومات الشخصية</h4>
+            <h3>المعلومات الشخصية</h3>
             <button style="background-color: transparent; border: 0;">
               <span class="material-symbols-outlined" id="profile-info-arrow">
                 expand_more
               </span>
             </button>
           </div>
-          <ul style="display: none">
+          <form method="post">
+            <ul style="display: none">
             <li>
               <div>
-                <h5>الإسم الكامل</h5>
+                <h4>الإسم الكامل</h4>
+<!--                <input readonly type="text" name="full_name" value="{{current_user.first_name}} {{current_user.last_name}}">-->
                 <p>{{current_user.first_name + " " + current_user.last_name}}</p>
               </div>
-              <button class="edit-button">
+              <button class="edit-button"> <!-- type="button" onclick="toggleEditContent(this)"> -->
                 <span class="material-symbols-outlined">
                   edit
                 </span>
@@ -202,7 +209,8 @@
             </li>
             <li>
               <div>
-                <h5>رقم الهاتف</h5>
+                <h4>رقم الهاتف</h4>
+<!--                <input readonly type="text" name="phone_number" value="{{current_user.phone_number}}">-->
                 <p>{{current_user.phone_number}}</p>
               </div>
               <button class="edit-button">
@@ -213,7 +221,7 @@
             </li>
             <li>
               <div>
-                <h5>كلمة المرور</h5>
+                <h4>كلمة المرور</h4>
                 <p>**********</p>
               </div>
               <button class="edit-button">
@@ -224,7 +232,7 @@
             </li>
             <li>
               <div>
-                <h5>المدينة</h5>
+                <h4>المدينة</h4>
                 <p>{{current_user.city}}</p>
               </div>
               <button class="edit-button">
@@ -235,7 +243,8 @@
             </li>
             <li>
               <div>
-                <h5>العنوان</h5>
+                <h4>العنوان</h4>
+<!--                <input readonly type="text" name="address" value="{{current_user.address}}">-->
                 <p>{{current_user.address}}</p>
               </div>
               <button class="edit-button">
@@ -245,6 +254,7 @@
               </button>
             </li>
           </ul>
+          </form>
         </li>
         <li id="orders-info">
           <div id="upper-orders" style="cursor: pointer" onclick="OpenOrdersInfo()">
@@ -277,7 +287,7 @@
         const mySpan = document.querySelector('#profile-info-arrow');
         mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
         const profileInfo = document.querySelector('#profile-info ul');
-        const profileInfoTitle = document.querySelector("#upper-profile-info h4")
+        const profileInfoTitle = document.querySelector("#upper-profile-info h3")
         if (profileInfo.style.display === "none") {
             profileInfo.style.display = "block";
             profileInfoTitle.style.textDecoration = "underline";
@@ -292,7 +302,7 @@
         mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
         const ordersInfo = document.querySelector('#lower-orders');
         const noOrders = document.querySelector("#no-orders");
-        const ordersInfoTitle = document.querySelector("#upper-orders h4");
+        const ordersInfoTitle = document.querySelector("#upper-orders h3");
         const ordersCounter = document.getElementById("orders-counter");
         if (ordersCounter.value === "0") {
             noOrders.style.display = "block";
@@ -306,6 +316,25 @@
             ordersInfo.style.display = "none";
             ordersInfoTitle.style.textDecoration = "none";
         }
+    }
+
+    function toggleEditContent(button) {
+        const toEdit = button.parentNode.querySelector("div input");
+        const initialValue = toEdit.textContent;
+        const submitButton = button.parentNode.querySelector("div ");
+        // console.log(initialValue);
+        if (toEdit.getAttribute("readonly") != null){
+        // if (toEdit.getAttribute("contenteditable") === "false"){
+        //     toEdit.setAttribute("contenteditable", "true");
+            toEdit.removeAttribute("readonly");
+            // button.setAttribute("type", "submit");
+
+            toEdit.focus();
+        }
+        // else {
+        //     toEdit.setAttribute("contenteditable", "false");
+        // }
+
     }
   </script>
   {% endblock %}
