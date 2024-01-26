@@ -18,17 +18,7 @@
   {% block no_search %}hidden{% endblock %}
 
   {% block lower_container %}
-  {% for message in get_flashed_messages(category_filter=["success"]) %}
-    <div role="alert" style="color: lawngreen">
-      <h2>{{ message }}</h2>
-    </div>
-  {% endfor %}
 
-  {% for message in get_flashed_messages(category_filter=["error"]) %}
-    <div role="alert" style="color: red">
-      <h2>{{ message }}</h2>
-    </div>
-  {% endfor %}
 <!--  <br>-->
   <div class="container">
     <div class="books-shopping" title="كتب">

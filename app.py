@@ -15,8 +15,8 @@ app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
-db = SQLAlchemy(app)
+# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
+# db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
 
@@ -38,6 +38,9 @@ with open("static/Books_Publishers.txt", encoding="utf8") as f:
 
 # with open("static/Books_Others.txt", encoding="utf8") as f:
 #     other = f.readlines()
+
+
+NO_ACCOUNTS = True
 
 
 class User(UserMixin):
@@ -83,15 +86,13 @@ def books():
 def load_user(user_phone):
 	with sqlite3.connect("Shopping.db") as connection:
 		cursor = connection.cursor()
-		check_user_existance = f"""
+		check_user_existence = f"""
             select *
             from Customers
             where phone_number = '{user_phone}'
             """
-		result = cursor.execute(check_user_existance).fetchone()
-		# print(user_phone)
-		# print(result)
-		if result:  # and len(result) == 1:
+		result = cursor.execute(check_user_existence).fetchone()
+		if result:
 			return User(*result)
 		else:
 			return None
@@ -110,33 +111,42 @@ def clothes():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 	if request.method == 'POST':
+		
 		phone_number = request.form['customer-phone']
 		password = request.form['customer-password']
 		
 		with sqlite3.connect('Shopping.db') as connection:
 			cursor = connection.cursor()
-			check_user_existance = f"""
+			check_user_existence = f"""
                 select *
                 from Customers
                 where phone_number = '{phone_number}'
                 """
-			res_rows = cursor.execute(check_user_existance)
+			res_rows = cursor.execute(check_user_existence)
 			res_rows = res_rows.fetchall()
+			# todo - in this time we have just admins
+			if res_rows[0][3] != "admin":
+				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
+				return redirect(url_for('home'))
+			
 			if len(res_rows) == 1:
 				if bcrypt.check_password_hash(res_rows[0][-1], password):
 					user = load_user(res_rows[0][0])
 					login_user(user)
+					flash("تم تسجيل الدخول بنجاح!", category="success")
 					if current_user.role == "admin":
 						return redirect(url_for('admin_profile'))
 					return redirect(url_for('profile'))
 				
 				# return render_template("logged_in.html")
 			else:
+				flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
 				return redirect(url_for('register'))
 	if current_user.is_authenticated:
 		if current_user.role == "admin":
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
+	# flash("خطأ في تسجيل الدخول, إحدى الخانات تحتاج للتعديل", category="warning")
 	return render_template('login.html')
 
 
@@ -167,6 +177,11 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+	# todo - in this time we have just admins
+	if NO_ACCOUNTS:
+		flash("فقط المسؤول يمكنه الدخول", "warning")
+		return redirect(url_for('home'))
+	
 	if request.method == 'POST':
 		form = request.form
 		first_name = form['customer-first-name'].strip()
@@ -190,15 +205,14 @@ def register():
 				)
 				connection.commit()
 				# successfully registered
-				flash("Success", 'success')
+				flash("تم التسجيل في الموقع بنجاح", category="success")
+				return redirect(url_for('login'))
 			except Exception as e:
-				print(e)
 				connection.rollback()
 				# failed to register
-				flash("Error: " + str(e), 'error')
+				flash("حدث خطأ أثناء التسجيل للموقع" + str(e), category="error")
+				return redirect(url_for("register"))
 		
-		return redirect(url_for('login'))
-	
 	return render_template('register.html', cities=cities)
 
 
@@ -207,21 +221,14 @@ def forgot_password():
 	return render_template('forgot_password.html')
 
 
-# @app.route('/dashboard', methods=['GET', 'POST'])
-# @login_required
-# def dashboard():
-#     return render_template('dashboard.html')
-
-
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
 	if request.method == 'POST':
-		
 		return redirect(url_for('profile'))
-	if current_user.role == "customer":
-		return render_template('profile.html', current_user=current_user)
-	return redirect(url_for('admin_profile'))
+	if current_user.role == "admin":
+		return redirect(url_for('admin_profile'))
+	return render_template('profile.html', current_user=current_user)
 
 
 @app.route('/admin_profile', methods=['GET', 'POST'])
@@ -229,6 +236,22 @@ def profile():
 def admin_profile():
 	if current_user.role == "admin":
 		return render_template('admin_profile.html', current_user=current_user)
+	return redirect(url_for('profile'))
+
+
+@app.route('/orders', methods=['GET', 'POST'])
+@login_required
+def orders():
+	if current_user.role == "admin":
+		return render_template('orders.html')
+	return redirect(url_for('profile'))
+
+
+@app.route('/products', methods=['GET', 'POST'])
+@login_required
+def products():
+	if current_user.role == "admin":
+		return render_template('products.html')
 	return redirect(url_for('profile'))
 
 

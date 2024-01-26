@@ -157,7 +157,23 @@
 <!--      </li>-->
 <!--    </ul>-->
 <!--  </nav>-->
+  {% for message in get_flashed_messages(category_filter=["success"]) %}
+    <div role="alert" style="color: lawngreen">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
 
+  {% for message in get_flashed_messages(category_filter=["error"]) %}
+    <div role="alert" style="color: red">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  {% for message in get_flashed_messages(category_filter=["warning"]) %}
+    <div role="alert" style="color: orange">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
   {% block lower_container %}
   {% endblock %}
   <footer>
