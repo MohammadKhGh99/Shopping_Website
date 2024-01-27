@@ -2,16 +2,18 @@ import os
 import sqlite3
 import datetime
 
+import flask_login
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from werkzeug.utils import secure_filename
 
 from flask import render_template, jsonify, Flask, request, redirect, url_for, flash
 from database_handling import *
 
-app = Flask(__name__)
+app = Flask(__name__)  # , static_folder="static", template_folder="templates")
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
 
@@ -24,7 +26,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-books_lst = [filename for filename in os.listdir('static/images/books')] * 4
+# books_lst = [filename for filename in os.listdir('static/images/books')] * 4
 clothes_lst = [filename for filename in os.listdir('static/images/clothes')] * 4
 cities = open("cities.txt", "r", encoding="utf8").readlines()
 
@@ -74,12 +76,20 @@ class User(UserMixin):
 
 @app.route('/home')
 def home():
-	return render_template('home.html')
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	return render_template('home.html', customer=customer)
 
 
 @app.route('/books')
 def books():
-	return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers)  # , other=other)
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	books_lst = [filename for filename in os.listdir('static/images/books')]
+	books_lst = {folder: [os.listdir(f"static/images/books/{folder}")[0], "كتب"] for folder in books_lst}
+	return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers, customer=customer)  # , other=other)
 
 
 @login_manager.user_loader
@@ -98,14 +108,31 @@ def load_user(user_phone):
 			return None
 
 
-@app.route('/product')
-def product():
-	return render_template('product.html')
+@app.route('/<name>/<ptype>')
+def product(ptype, name):
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	with sqlite3.connect('Shopping.db') as connection:
+		cursor = connection.cursor()
+		take_product = f"""
+		select * from Products
+		where name = '{name}'
+		"""
+		res_rows = cursor.execute(take_product)
+		result = res_rows.fetchone()
+		img_src = result[3][7:]
+		product_images = [img for img in os.listdir(result[3])]
+		img_src += f"/{product_images[0]}"
+	return render_template('product.html', customer=customer, result=result, img_src=img_src)
 
 
 @app.route('/clothes')
 def clothes():
-	return render_template('clothes.html', products=clothes_lst)
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	return render_template('clothes.html', products=clothes_lst, customer=customer)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -146,8 +173,12 @@ def login():
 		if current_user.role == "admin":
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
+	
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
 	# flash("خطأ في تسجيل الدخول, إحدى الخانات تحتاج للتعديل", category="warning")
-	return render_template('login.html')
+	return render_template('login.html', customer=customer)
 
 
 #
@@ -235,23 +266,89 @@ def profile():
 @login_required
 def admin_profile():
 	if current_user.role == "admin":
-		return render_template('admin_profile.html', current_user=current_user)
+		customer = False
+		return render_template('admin_profile.html', current_user=current_user, customer=customer)
 	return redirect(url_for('profile'))
 
 
-@app.route('/orders', methods=['GET', 'POST'])
+@app.route('/admin_profile/orders', methods=['GET', 'POST'])
 @login_required
 def orders():
 	if current_user.role == "admin":
-		return render_template('orders.html')
+		customer = False
+		return render_template('orders.html', customer=customer)
 	return redirect(url_for('profile'))
 
 
-@app.route('/products', methods=['GET', 'POST'])
+@app.route('/admin_profile/products', methods=['GET', 'POST'])
 @login_required
 def products():
 	if current_user.role == "admin":
-		return render_template('products.html')
+		customer = False
+		return render_template('products.html', customer=customer)
+	return redirect(url_for('profile'))
+
+
+@app.route('/admin_profile/products/add_product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+	if current_user.role == "admin":
+		customer = False
+		if request.method == "POST":
+			product_name = request.form['product-name']
+			product_type = request.form['product-type']
+			product_img = request.files['product-img']
+			product_description = request.form['product-description']
+			product_price = request.form['product-price']
+			product_publish_year = request.form['product-publish-year']
+			product_author = request.form['product-author']
+			
+			filename = secure_filename(product_img.filename)
+			product_folder = 'books' if product_type == "كتب" else "clothes"
+			img_path = f'static/images/{product_folder}'
+			if not os.path.exists(img_path + f"/{product_name}"):
+				os.mkdir(img_path + f"/{product_name}")
+			img_path += f"/{product_name}"
+			product_img.save(os.path.join(img_path, filename))
+			
+			with sqlite3.connect("Shopping.db") as connection:
+				cursor = connection.cursor()
+				try:
+					cursor.execute(
+						"INSERT INTO Products (name, type, img_path, price, description, publish_year, author_name) "
+						"VALUES(?, ?, ?, ?, ?, ?, ?)",
+						(product_name, product_type, img_path, product_price, product_description, product_publish_year, product_author)
+					)
+					connection.commit()
+					# successfully added
+					flash(f"تمت إضافة ال{product_type} بنجاح", category="success")
+				except Exception as e:
+					connection.rollback()
+					# failed to add
+					flash(f"حدث خطأ أثناء إضافة ال{product_type} :" + str(e), category="error")
+			return redirect(url_for('add_product'))
+		
+		# if we arrive now to add product page
+		return render_template('add_product.html', customer=customer)
+	# if the user is not admin
+	return redirect(url_for('profile'))
+
+
+@app.route('/admin_profile/products/remove_product', methods=['GET', 'POST'])
+@login_required
+def remove_product():
+	if current_user.role == "admin":
+		customer = False
+		return render_template('remove_product.html', customer=customer)
+	return redirect(url_for('profile'))
+
+
+@app.route('/admin_profile/products/update_product', methods=['GET', 'POST'])
+@login_required
+def update_product():
+	if current_user.role == "admin":
+		customer = False
+		return render_template('update_product.html', customer=customer)
 	return redirect(url_for('profile'))
 
 
@@ -264,16 +361,25 @@ def logout():
 
 @app.route('/about')
 def about():
-	return render_template('about.html')
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	return render_template('about.html', customer=customer)
 
 
 @app.route('/contact_us')
 def contact_us():
-	return render_template('contact_us.html')
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	return render_template('contact_us.html', customer=customer)
 
 
 @app.route('/shopping_cart')
 def shopping_cart():
+	if current_user.is_authenticated and current_user.role == "admin":
+		flash("عربة التسوق فقط للزبائن", category="warning")
+		return redirect(url_for('admin_profile'))
 	return render_template('shopping_cart.html')
 
 
@@ -314,4 +420,5 @@ if __name__ == "__main__":
 	# webbrowser.open("http://127.0.0.1:5000/home")
 	# app.run()
 	# create_table()
+	# print(app.url_map)
 	app.run(host="0.0.0.0", debug=True)

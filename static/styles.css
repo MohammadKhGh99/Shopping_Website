@@ -241,6 +241,31 @@ header {
   user-select: none;
 }
 
+#coming-soon-side {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  /*bottom: 0;*/
+  left: 0;
+  /*right: 0;*/
+  /*border-radius: 10%;*/
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background-color: rgba(0,0,0,0.7);
+}
+
+#coming-soon-side span {
+  color: white;
+  font-size: 1em;
+  display: inline-block;
+  /*transform: rotate(-45deg);*/
+  user-select: none;
+}
+
 #overlay {
   display: none;
   position: fixed;
@@ -392,7 +417,7 @@ header {
 }
 
 #filters-button {
-  position: -webkit-sticky; /* Safari */
+  /*position: -webkit-sticky; !* Safari *!*/
   position: sticky;
   /*top: 0;*/
   display: flex;

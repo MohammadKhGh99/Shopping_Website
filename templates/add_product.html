@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Product</title>
+</head>
+
+<style>
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-right: 0;
+    padding-bottom: 40px;
+    /*width: 300px;*/
+  }
+
+  form div {
+    width: 350px;
+  }
+
+  .input_field {
+    /*font-size: 0.9em;*/
+    width: 100%;
+    padding-right: 10px;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgba(12, 27, 84, .5);
+    font-family: "Traditional Arabic", serif;
+    font-size: 0.8em;
+  }
+
+  /*.field-holder {*/
+  /*  margin-bottom: 10px;*/
+  /*}*/
+
+  #product-description {
+    height: 100px;
+  }
+</style>
+
+<body>
+
+  {% extends "products.html" %}
+
+  {% block lower_container %}
+  <div id="adding-products-container">
+    <form method="post" enctype="multipart/form-data">
+      <h4>إضافة منتج</h4>
+      <div id="form-container">
+        <div class="field-holder">
+          <label for="product-name">إسم المنتج</label><br>
+          <input type="text" id="product-name" name="product-name" class="input_field">
+        </div>
+        <div class="field-holder">
+          <label for="product-type">نوع المنتج</label><br>
+          <select id="product-type" name="product-type" class="input_field" style="width: 363px">
+            <option>كتب</option>
+<!--            <option></option>-->
+          </select>
+<!--          <input type="text" id="product-type" name="product-type" class="input_field">-->
+        </div>
+        <div class="field-holder">
+          <label for="product-img">صورة المنتج</label><br>
+          <input type="file" accept="image/*" multiple id="product-img" name="product-img" class="input_field">
+        </div>
+        <div class="field-holder">
+          <label for="product-description">وصف المنتج</label><br>
+          <textarea id="product-description" name="product-description" class="input_field"></textarea>
+<!--          <input type="text" id="product-description" name="product-description" class="input_field" height="20">-->
+        </div>
+        <div class="field-holder">
+          <label for="product-price">السعر</label><br>
+          <input type="text" id="product-price" name="product-price" class="input_field">
+        </div>
+        <div class="field-holder">
+          <label for="product-publish-year">سنة الإصدار</label><br>
+          <input type="text" id="product-publish-year" name="product-publish-year" class="input_field">
+        </div>
+        <div class="field-holder">
+          <label for="product-author">المؤلف</label><br>
+          <input type="text" id="product-author" name="product-author" class="input_field">
+        </div>
+    <!--    <div class="field-holder">-->
+    <!--      <label for="product-tags">تصنيفات</label><br>-->
+    <!--      <input type="text" id="product-tags" name="product-tags" class="input_field">-->
+    <!--    </div>-->
+        <br>
+        <button type="submit">
+          حفظ المنتج
+        </button>
+      </div>
+    </form>
+  </div>
+  {% endblock %}
+
+</body>
+</html>

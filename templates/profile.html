@@ -57,7 +57,7 @@
     /*padding-right: 0;*/
   }
 
-  #lower-profile ul {
+  #main-list {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -66,7 +66,7 @@
     list-style: none;
     width: 100%;
     padding-right: 0;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
   }
 
   #lower-profile ul #profile-info, #orders-info {
@@ -78,6 +78,13 @@
     /*width: 100%;*/
     width: 80%;
     /*padding-right: 20px;*/
+  }
+
+  form ul {
+    display: flex;
+    justify-content: right;
+    align-items: start;
+    flex-direction: column;
   }
 
   #upper-profile-info {
@@ -117,10 +124,11 @@
   }
   
   .edit-button {
+    display: none;
     cursor: pointer; 
     width: 30px; 
     height: 30px;
-    display: flex;
+    /*display: flex;*/
     justify-content: center;
     align-items: center;
     background-color: transparent;
@@ -161,6 +169,19 @@
     background-color: #e5e5e5;
   }
 
+  #update-info-button {
+    cursor: pointer;
+    width: 10em;
+    background-color: #cce5ff;
+    border: 0;
+    font-family: 'Traditional Arabic', serif;
+    font-size: 0.9em;
+  }
+
+  #update-info-button:hover {
+    background-color: #e5e5e5;
+  }
+
 </style>
 
 <body>
@@ -169,13 +190,7 @@
   {% block upper_container %}
   <div id="dashboard-link-bar">
     {% block link_bar %}
-    <a href="{{url_for('products')}}">
-      المنتجات
-    </a>
     {% endblock %}
-    <a href="{{url_for('orders')}}">
-      الطلبات
-    </a>
     <a href="{{url_for('profile')}}">
       الصفحة الشخصية
     </a>
@@ -189,16 +204,18 @@
   <div id="profile-container">
     <div id="upper-profile">
       <div style="text-align: center; border-bottom: 1px solid black">
-        <h2 style="margin-bottom: 0;">
-          السلام عليكم {{current_user.first_name + " " + current_user.last_name}}
+        <h2 style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between; column-gap: 10px">
+          السلام عليكم  {{current_user.first_name + " " + current_user.last_name}}{% block admin %}{% endblock %}
         </h2>
-        <span style="margin-top: 0; font-size: 0.7em;">
-          {{current_user.date_joined}}
-        </span>
+        {% if current_user.role == "customer" %}
+          <span style="margin-top: 0; font-size: 0.7em;">
+            {{current_user.date_joined}}
+          </span>
+        {% endif %}
       </div>
     </div>
     <div id="lower-profile">
-      <ul>
+      <ul id="main-list">
         <li id="profile-info">
           <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
             <h3>المعلومات الشخصية</h3>
@@ -208,64 +225,69 @@
               </span>
             </button>
           </div>
-          <form method="post">
-            <ul style="display: none">
-            <li>
-              <div>
-                <h4>الإسم الكامل</h4>
-<!--                <input readonly type="text" name="full_name" value="{{current_user.first_name}} {{current_user.last_name}}">-->
-                <p>{{current_user.first_name + " " + current_user.last_name}}</p>
-              </div>
-              <button class="edit-button"> <!-- type="button" onclick="toggleEditContent(this)"> -->
-                <span class="material-symbols-outlined">
-                  edit
-                </span>
-              </button>
-            </li>
-            <li>
-              <div>
-                <h4>رقم الهاتف</h4>
-<!--                <input readonly type="text" name="phone_number" value="{{current_user.phone_number}}">-->
-                <p>{{current_user.phone_number}}</p>
-              </div>
-              <button class="edit-button">
-                <span class="material-symbols-outlined">
-                  edit
-                </span>
-              </button>
-            </li>
-            <li>
-              <div>
-                <h4>كلمة المرور</h4>
-                <p>**********</p>
-              </div>
-              <button class="edit-button">
-                <span class="material-symbols-outlined">
-                  edit
-                </span>
-              </button>
-            </li>
-            <li>
-              <div>
-                <h4>المدينة</h4>
-                <p>{{current_user.city}}</p>
-              </div>
-              <button class="edit-button">
-                <span class="material-symbols-outlined">
-                  edit
-                </span>
-              </button>
-            </li>
-            <li>
-              <div>
-                <h4>العنوان</h4>
-<!--                <input readonly type="text" name="address" value="{{current_user.address}}">-->
-                <p>{{current_user.address}}</p>
-              </div>
-              <button class="edit-button">
-                <span class="material-symbols-outlined">
-                  edit
-                </span>
+          <form method="post" style="display: none; flex-direction: column; padding-right: 0; position:relative;">
+            <ul>
+              <li>
+                <div>
+                  <h4>الإسم الكامل</h4>
+  <!--                <input readonly type="text" name="full_name" value="{{current_user.first_name}} {{current_user.last_name}}">-->
+                  <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p>
+                </div>
+                <button class="edit-button"> <!-- type="button" onclick="toggleEditContent(this)"> -->
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+              <li>
+                <div>
+                  <h4>رقم الهاتف</h4>
+  <!--                <input readonly type="text" name="phone_number" value="{{current_user.phone_number}}">-->
+                  <p class="disabled-text-p">{{current_user.phone_number}}</p>
+                </div>
+                <button class="edit-button">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+              <li>
+                <div>
+                  <h4>كلمة المرور</h4>
+                  <p class="disabled-text-p">**********</p>
+                </div>
+                <button class="edit-button">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+              <li>
+                <div>
+                  <h4>المدينة</h4>
+                  <p class="disabled-text-p">{{current_user.city}}</p>
+                </div>
+                <button class="edit-button">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+              <li>
+                <div>
+                  <h4>العنوان</h4>
+  <!--                <input readonly type="text" name="address" value="{{current_user.address}}">-->
+                  <p class="disabled-text-p">{{current_user.address}}</p>
+                </div>
+                <button class="edit-button">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+            <li style="margin: 30px 0 30px 0">
+              <button id="update-info-button" type="button" onclick="updateProfileInfo()">
+                تعديل المعلومات الشخصية
               </button>
             </li>
           </ul>
@@ -301,10 +323,10 @@
     function OpenProfileInfo() {
         const mySpan = document.querySelector('#profile-info-arrow');
         mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
-        const profileInfo = document.querySelector('#profile-info ul');
+        const profileInfo = document.querySelector('#profile-info form');
         const profileInfoTitle = document.querySelector("#upper-profile-info h3")
         if (profileInfo.style.display === "none") {
-            profileInfo.style.display = "block";
+            profileInfo.style.display = "flex";
             profileInfoTitle.style.textDecoration = "underline";
         } else {
             profileInfo.style.display = "none";
@@ -331,6 +353,11 @@
             ordersInfo.style.display = "none";
             ordersInfoTitle.style.textDecoration = "none";
         }
+    }
+
+    function updateProfileInfo() {
+        const formDiv = document.querySelector("form input");
+        // const paragraphDivs
     }
 
     function toggleEditContent(button) {

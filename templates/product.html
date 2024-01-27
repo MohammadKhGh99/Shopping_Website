@@ -4,10 +4,53 @@
   <meta charset="UTF-8">
   <title>product</title>
 </head>
+
+<style>
+
+  #product-container {
+    display: flex;
+    justify-content: space-around;
+
+  }
+
+  #product-left-side {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+  }
+
+</style>
+
 <body>
   {% extends "base.html" %}
 
   {% block lower_container %}
+  <div id="product-container">
+    <div>
+      <img src="{{url_for('static', filename=img_src)}}" alt="">
+    </div>
+    <div id="product-left-side">
+      <span>
+        {{result[1]}}
+      </span>
+      <span>
+        {{result[4]}}
+      </span>
+      <hr>
+      <button>
+        add to cart
+      </button>
+      <p>
+        {{result[5]}}
+      </p>
+      <span>
+        {{result[6]}}
+      </span>
+      <span>
+        {{result[7]}}
+      </span>
+    </div>
+  </div>
   {% endblock %}
 </body>
 </html>

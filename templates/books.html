@@ -60,11 +60,9 @@
               </span>
             </div>
             <div id="authors-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
-              {% set i = 1 %}
               {% for author in authors %}
-              <input type="checkbox" id="filter-author{{i}}" value="{{author}}">
-              <label for="filter-author{{i}}">{{author}}</label><br>
-              {% set i = i + 1 %}
+                <input type="checkbox" id="filter-author{{loop.index}}" value="{{author}}">
+                <label for="filter-author{{loop.index}}">{{author}}</label><br>
               {% endfor %}
             </div>
           </li>
@@ -76,30 +74,26 @@
               </span>
             </div>
             <div id="publish-date-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
-              {% set i = 1 %}
               {% for publish in publishes %}
-              <input type="checkbox" id="filter-publish-date{{i}}" value="{{publish}}">
-              <label for="filter-publish-date{{i}}">{{publish}}</label><br>
-              {% set i = i + 1 %}
+                <input type="checkbox" id="filter-publish-date{{loop.index}}" value="{{publish}}">
+                <label for="filter-publish-date{{loop.index}}">{{publish}}</label><br>
               {% endfor %}
             </div>
           </li>
-          <li>
-            <div class="filter-upper" onclick="openPublisherFilter()">
-              دار النشر
-              <span id="publisher-filter-arrow" class="material-symbols-outlined filters-span">
-                expand_more
-              </span>
-            </div>
-            <div id="publishers-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">
-              {% set i = 1 %}
-              {% for publisher in publishers %}
-              <input type="checkbox" id="filter-publisher{{i}}" value="{{publisher}}">
-              <label for="filter-publisher{{i}}">{{publisher}}</label><br>
-              {% set i = i + 1 %}
-              {% endfor %}
-            </div>
-          </li>
+<!--          <li>-->
+<!--            <div class="filter-upper" onclick="openPublisherFilter()">-->
+<!--              دار النشر-->
+<!--              <span id="publisher-filter-arrow" class="material-symbols-outlined filters-span">-->
+<!--                expand_more-->
+<!--              </span>-->
+<!--            </div>-->
+<!--            <div id="publishers-filter-checkboxes" style="overflow: hidden; visibility: hidden; height: 0; display: block; cursor: default">-->
+<!--              {% for publisher in publishers %}-->
+<!--                <input type="checkbox" id="filter-publisher{{loop.index}}" value="{{publisher}}">-->
+<!--                <label for="filter-publisher{{loop.index}}">{{publisher}}</label><br>-->
+<!--              {% endfor %}-->
+<!--            </div>-->
+<!--          </li>-->
   <!--        <li>-->
   <!--          <div class="filter-upper" onclick="openOtherFilter()">-->
   <!--            تصنيفات أخرى-->
@@ -183,15 +177,15 @@
     {% block lower_container %}
 <!--    <br>-->
     <products class="products">
-      {% for product in products %}
-      <a href="{{url_for('product')}}" style="text-decoration: none; color: black">
+      {% for name, lst in products.items() %}
+      <a href="{{url_for('product', name=name, ptype=lst[1])}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
-            <img src="{{ url_for('static', filename='images/books/')}}{{product}}" alt="product">
+            <img src="../static/images/books/{{name}}/{{lst[0]}}" alt="product">
           </div>
           <div class="lower-product">
             <span>
-              {{ product[:-4] }}
+              {{ name }}
             </span>
             <hr>
             <span>

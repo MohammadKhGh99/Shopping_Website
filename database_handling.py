@@ -52,6 +52,7 @@ def create_table():
 	create table if not exists Products(
 		id_number int auto_increment primary key,
 		name nvarchar(50),
+		type nvarchar(20),
 		img_path nvarchar(100),
 		price nvarchar(10),
 		description nvarchar(200),

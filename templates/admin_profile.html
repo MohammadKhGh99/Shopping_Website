@@ -4,18 +4,21 @@
   <meta charset="UTF-8">
   <title>admin profile</title>
 </head>
+
 <body>
   {% extends "profile.html" %}
 
+  {% block link_bar %}
+  <a href="{{url_for('products')}}">
+    المنتجات
+  </a>
+  <a href="{{url_for('orders')}}">
+      الطلبات
+    </a>
+  {% endblock %}
 
-  {% block lower_container %}
-  <main>
-    <section id="handling-products">
-      <div id="adding-product">
-
-      </div>
-    </section>
-  </main>
+  {% block admin %}
+  <span style="background-color: lawngreen; border-radius: 30%; font-size: 0.6em">مسؤول</span>
   {% endblock %}
 
 

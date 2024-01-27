@@ -7,11 +7,27 @@
 <!--  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">-->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;700&display=swap">
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
   <title>موقع كتب</title>
 </head>
+
+<style>
+  .flash-message {
+    animation: fadeOut 10s ease-in-out forwards;
+    opacity: 1;
+    background-color: #e5e5e5;
+  }
+
+  @keyframes fadeOut {
+    100% {
+      opacity: 0;
+      display: none;
+    }
+  }
+</style>
+
 <body>
   <header>
     <div class="header-upper">
@@ -83,7 +99,14 @@
           <ul role="list">
             <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
             <li><a href="{{url_for('books')}}">كتب</a></li>
-            <li><a href="{{url_for('clothes')}}">أزياء شرعية</a></li>
+            <li style="position: relative">
+              <span id="coming-soon-side">
+                <span>
+                  قريبًا
+                </span>
+              </span>
+              <a href="{{url_for('clothes')}}">أزياء شرعية</a>
+            </li>
             <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
             <li><a href="{{url_for('about')}}">من نحن</a></li>
           </ul>
@@ -134,14 +157,16 @@
             person
           </span>
         </a>
-        <a href="{{url_for('shopping_cart')}}" class="shopping-cart" title="السلة">
-          <span class="material-symbols-outlined shopping-cart-icon">
-            shopping_cart
-          </span>
-          <span class="counter">
-            0
-          </span>
-        </a>
+        {% if customer %}
+          <a href="{{url_for('shopping_cart')}}" class="shopping-cart" title="السلة">
+            <span class="material-symbols-outlined shopping-cart-icon">
+              shopping_cart
+            </span>
+            <span class="counter">
+              0
+            </span>
+          </a>
+        {% endif %}
       </div>
     </div>
   </header>
@@ -158,22 +183,52 @@
 <!--    </ul>-->
 <!--  </nav>-->
   {% for message in get_flashed_messages(category_filter=["success"]) %}
-    <div role="alert" style="color: lawngreen">
-      <h2>{{ message }}</h2>
+    <div class="flash-message" role="alert" style="color: lawngreen; text-align: center">
+      <h2>
+        {{ message }}
+        <button title="إغلاق" style="background-color: transparent; border: 0">
+          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
+            close
+          </span>
+        </button>
+      </h2>
     </div>
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["error"]) %}
-    <div role="alert" style="color: red">
-      <h2>{{ message }}</h2>
+    <div class="flash-message" role="alert" style="color: red; text-align: center">
+      <h2>
+        {{ message }}
+        <button title="إغلاق" style="background-color: transparent; border: 0">
+          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
+            close
+          </span>
+        </button>
+      </h2>
     </div>
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["warning"]) %}
-    <div role="alert" style="color: orange">
-      <h2>{{ message }}</h2>
+    <div class="flash-message" role="alert" style="color: orange; text-align: center">
+      <h2>
+        {{ message }}
+        <button title="إغلاق" style="background-color: transparent; border: 0">
+          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
+            close
+          </span>
+        </button>
+      </h2>
     </div>
   {% endfor %}
+
+  <script>
+    function closeFlash(span) {
+        const grandpa = span.parentNode.parentNode.parentNode.parentNode;
+        const parent = span.parentNode.parentNode.parentNode;
+        grandpa.removeChild(parent);
+    }
+  </script>
+
   {% block lower_container %}
   {% endblock %}
   <footer>
