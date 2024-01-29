@@ -24,15 +24,37 @@ def create_table():
 		city nvarchar(20),
 		address nvarchar(50),
 		backup_phone nvarchar(10),
-		password nvarchar(80),
-		check (length(phone_number) == 10),
-		check (phone_number not like backup_phone),
-		check (phone_number GLOB '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+		password nvarchar(80)
 	 )
 	"""
-		# foreign key (phone_number) references Addresses(user_phone),
-		# check (length(password) >= 8 and length(password) <= 20)
-		# check (password like '^.{8,20}$')
+	# check (length(phone_number) == 10),
+	# check (phone_number not like backup_phone),
+	# check (phone_number GLOB '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+	# foreign key (phone_number) references Addresses(user_phone),
+	# check (length(password) >= 8 and length(password) <= 20)
+	# check (password like '^.{8,20}$')
+	
+	orders_table = """
+	create table if not exists Orders(
+		order_id int primary key auto_increment,
+		customer_phone_number char(10),
+		order_date datetime default now(),
+		total_amount int,
+		fk_customer_phone_number foreign key char(10) references Customers(phone_number)
+	)
+	"""
+	
+	guests_table = """
+	create table if not exists Guests(
+		phone_number char(10) primary key,
+		first_name nvarchar(15),
+		last_name nvarchar(15),
+		date_joined nvarchar(20),
+		city nvarchar(20),
+		address nvarchar(50),
+		backup_phone nvarchar(10)
+	)
+	"""
 	
 	#  todo - add list of addresses or not?
 	addresses_table = """
@@ -55,6 +77,7 @@ def create_table():
 		type nvarchar(20),
 		img_path nvarchar(100),
 		price nvarchar(10),
+		items_left int default 0,
 		description nvarchar(200),
 		publish_year nvarchar(20),
 		author_name nvarchar(20)
@@ -64,7 +87,10 @@ def create_table():
 	with sqlite3.connect(database="Shopping.db") as connection:
 		cursor = connection.cursor()
 		try:
-			cursor.execute(customers_table )
+			cursor.execute(customers_table)
+			# cursor.execute(guests_table)
+			# cursor.execute(orders_table)
+			
 			cursor.execute(products_table)
 			connection.commit()
 		except Exception as e:

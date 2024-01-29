@@ -15,17 +15,17 @@
 
 <style>
   .flash-message {
-    animation: fadeOut 10s ease-in-out forwards;
-    opacity: 1;
+    /*animation: fadeOut 10s ease-in-out forwards;*/
+    /*opacity: 1;*/
     background-color: #e5e5e5;
   }
 
-  @keyframes fadeOut {
-    100% {
-      opacity: 0;
-      display: none;
-    }
-  }
+  /*@keyframes fadeOut {*/
+  /*  100% {*/
+  /*    opacity: 0;*/
+  /*    display: none;*/
+  /*  }*/
+  /*}*/
 </style>
 
 <body>
@@ -45,22 +45,6 @@
 
       </div>
 
-      <script>
-        function openMenu(){
-            // const menuButton = document.getElementById('open-menu');
-            const sideMenu = document.getElementById('side-menu');
-            const overlay = document.getElementById('overlay');
-            sideMenu.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        function openSearch() {
-            const searchMenu = document.getElementById('search-menu');
-            const overlay = document.getElementById('overlay');
-            searchMenu.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-      </script>
 
       <div id="menu">
         <span id="overlay" onclick="closeMenu(true, true)"></span>
@@ -70,32 +54,7 @@
               close
             </span>
           </button>
-          <script>
-            function closeMenu(isFilter=false, isSearch=false) {
-                const sideMenu = document.getElementById('side-menu');
-                const overlay = document.getElementById('overlay');
-                const searchMenu = document.getElementById('search-menu');
-                const filtersMenu = document.getElementById('filters');
-                sideMenu.classList.remove('open');
-                if (filtersMenu != null) {
-                  filtersMenu.classList.remove('open');
-                }
-                overlay.classList.remove('show');
-                searchMenu.classList.remove('open');
-                if (isFilter) {
-                    event.preventDefault();
-                    const spans = document.getElementsByClassName('filters-span');
-                    for (let i = 0; i < spans.length; i++) {
-                        if (spans[i].textContent === "expand_less") {
-                            spans[i].textContent = "expand_more";
-                        }
-                    }
-                }
-                if (isSearch) {
-                    searchMenu.querySelector('input').value = "";
-                }
-            }
-          </script>
+
           <ul role="list">
             <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
             <li><a href="{{url_for('books')}}">كتب</a></li>
@@ -221,14 +180,6 @@
     </div>
   {% endfor %}
 
-  <script>
-    function closeFlash(span) {
-        const grandpa = span.parentNode.parentNode.parentNode.parentNode;
-        const parent = span.parentNode.parentNode.parentNode;
-        grandpa.removeChild(parent);
-    }
-  </script>
-
   {% block lower_container %}
   {% endblock %}
   <footer>
@@ -271,6 +222,70 @@
       <br>
     </div>
   </footer>
+  <script>
+    function openMenu(){
+        // const menuButton = document.getElementById('open-menu');
+        const sideMenu = document.getElementById('side-menu');
+        const overlay = document.getElementById('overlay');
+        sideMenu.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+
+    function openSearch() {
+        const searchMenu = document.getElementById('search-menu');
+        const overlay = document.getElementById('overlay');
+        searchMenu.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+
+    function closeMenu(isFilter=false, isSearch=false) {
+        const sideMenu = document.getElementById('side-menu');
+        const overlay = document.getElementById('overlay');
+        const searchMenu = document.getElementById('search-menu');
+        const filtersMenu = document.getElementById('filters');
+        sideMenu.classList.remove('open');
+        if (filtersMenu != null) {
+          filtersMenu.classList.remove('open');
+        }
+        overlay.classList.remove('show');
+        searchMenu.classList.remove('open');
+        if (isFilter) {
+            event.preventDefault();
+            const spans = document.getElementsByClassName('filters-span');
+            for (let i = 0; i < spans.length; i++) {
+                if (spans[i].textContent === "expand_less") {
+                    spans[i].textContent = "expand_more";
+                }
+            }
+        }
+        if (isSearch) {
+            searchMenu.querySelector('input').value = "";
+        }
+    }
+
+    function closeFlash(span) {
+        const grandpa = span.parentNode.parentNode.parentNode.parentNode;
+        const parent = span.parentNode.parentNode.parentNode;
+        grandpa.removeChild(parent);
+    }
+  </script>
+
+  {% if customer %}
+    <script>
+      const counter = document.getElementsByClassName("counter")[0];
+      if (localStorage.getItem("cartCounter") !== "0") {
+          counter.textContent = localStorage.getItem("cartCounter");
+      } else {
+          localStorage.setItem("cartCounter", "0");
+      }
+
+      // if (localStorage.getItem("cartItems") !== "[]") {
+      //     counter.textContent = localStorage.getItem("cartCounter");
+      // } else {
+      //     localStorage.setItem("cartCounter", "0");
+      // }
+    </script>
+  {% endif %}
 
 </body>
 </html>

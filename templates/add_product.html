@@ -38,6 +38,31 @@
   #product-description {
     height: 100px;
   }
+
+  #go-new-added-button, #save-product-button {
+    font-size: 1em;
+    font-family: 'Traditional Arabic', sans-serif;
+    text-decoration: none;
+    background-color: #cce5ff;
+    cursor: pointer;
+    border: 0;
+    padding: 5px 5px 5px 5px;
+  }
+
+  #go-new-added-button {
+    text-decoration: none;
+    margin: 30px 40vw 30px 0;
+  }
+
+  #go-new-added-button a{
+    text-decoration: none;
+    color: black;
+  }
+
+  #go-new-added-button:hover, #save-product-button:hover {
+    background-color: #e5e5e5;
+  }
+
 </style>
 
 <body>
@@ -46,6 +71,7 @@
 
   {% block lower_container %}
   <div id="adding-products-container">
+  {% if not done %}
     <form method="post" enctype="multipart/form-data">
       <h4>إضافة منتج</h4>
       <div id="form-container">
@@ -75,6 +101,10 @@
           <input type="text" id="product-price" name="product-price" class="input_field">
         </div>
         <div class="field-holder">
+          <label for="product-items-left">الكمية</label><br>
+          <input type="number" id="product-items-left" name="product-items-left" class="input_field">
+        </div>
+        <div class="field-holder">
           <label for="product-publish-year">سنة الإصدار</label><br>
           <input type="text" id="product-publish-year" name="product-publish-year" class="input_field">
         </div>
@@ -82,16 +112,25 @@
           <label for="product-author">المؤلف</label><br>
           <input type="text" id="product-author" name="product-author" class="input_field">
         </div>
-    <!--    <div class="field-holder">-->
-    <!--      <label for="product-tags">تصنيفات</label><br>-->
-    <!--      <input type="text" id="product-tags" name="product-tags" class="input_field">-->
-    <!--    </div>-->
+        <div class="field-holder">
+          <label for="product-tags">تصنيفات</label><br>
+<!--          <select id="product-tags" name="product-tags" class="input_field" style="width: 363px">-->
+          <input type="text" id="product-tags" name="product-tags" class="input_field">
+        </div>
         <br>
-        <button type="submit">
+        <button type="submit" id="save-product-button">
           حفظ المنتج
         </button>
       </div>
     </form>
+  {% endif %}
+  {% if done %}
+    <button id="go-new-added-button">
+      <a href="{{url_for('product', name=name, ptype=ptype)}}">
+        الإنتقال للمنتج المضاف حديثًا
+      </a>
+    </button>
+  {% endif %}
   </div>
   {% endblock %}
 

@@ -37,7 +37,6 @@ with open("static/Books_Dates.txt", encoding="utf8") as f:
 with open("static/Books_Publishers.txt", encoding="utf8") as f:
 	publishers = f.readlines()
 
-
 # with open("static/Books_Others.txt", encoding="utf8") as f:
 #     other = f.readlines()
 
@@ -89,7 +88,8 @@ def books():
 		customer = False
 	books_lst = [filename for filename in os.listdir('static/images/books')]
 	books_lst = {folder: [os.listdir(f"static/images/books/{folder}")[0], "كتب"] for folder in books_lst}
-	return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers, customer=customer)  # , other=other)
+	return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers,
+	                       customer=customer)  # , other=other)
 
 
 @login_manager.user_loader
@@ -164,8 +164,8 @@ def login():
 					if current_user.role == "admin":
 						return redirect(url_for('admin_profile'))
 					return redirect(url_for('profile'))
-				
-				# return render_template("logged_in.html")
+			
+			# return render_template("logged_in.html")
 			else:
 				flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
 				return redirect(url_for('register'))
@@ -243,7 +243,7 @@ def register():
 				# failed to register
 				flash("حدث خطأ أثناء التسجيل للموقع" + str(e), category="error")
 				return redirect(url_for("register"))
-		
+	
 	return render_template('register.html', cities=cities)
 
 
@@ -292,6 +292,10 @@ def products():
 @app.route('/admin_profile/products/add_product', methods=['GET', 'POST'])
 @login_required
 def add_product():
+	done = request.args.get('done')
+	name = request.args.get('name')
+	ptype = request.args.get('ptype')
+	
 	if current_user.role == "admin":
 		customer = False
 		if request.method == "POST":
@@ -300,6 +304,7 @@ def add_product():
 			product_img = request.files['product-img']
 			product_description = request.form['product-description']
 			product_price = request.form['product-price']
+			product_items_left = request.form['product-items-left']
 			product_publish_year = request.form['product-publish-year']
 			product_author = request.form['product-author']
 			
@@ -315,9 +320,9 @@ def add_product():
 				cursor = connection.cursor()
 				try:
 					cursor.execute(
-						"INSERT INTO Products (name, type, img_path, price, description, publish_year, author_name) "
-						"VALUES(?, ?, ?, ?, ?, ?, ?)",
-						(product_name, product_type, img_path, product_price, product_description, product_publish_year, product_author)
+						"INSERT INTO Products (name, type, img_path, price, items_left, description, publish_year, author_name) "
+						"VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+						(product_name, product_type, img_path, product_price, product_items_left, product_description, product_publish_year, product_author)
 					)
 					connection.commit()
 					# successfully added
@@ -326,10 +331,10 @@ def add_product():
 					connection.rollback()
 					# failed to add
 					flash(f"حدث خطأ أثناء إضافة ال{product_type} :" + str(e), category="error")
-			return redirect(url_for('add_product'))
+			return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type))
 		
 		# if we arrive now to add product page
-		return render_template('add_product.html', customer=customer)
+		return render_template('add_product.html', customer=customer, done=done, name=name, ptype=ptype)
 	# if the user is not admin
 	return redirect(url_for('profile'))
 

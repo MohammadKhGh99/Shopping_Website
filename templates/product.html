@@ -9,14 +9,54 @@
 
   #product-container {
     display: flex;
-    justify-content: space-around;
-
+    justify-content: space-between;
+    margin: 40px 40px 40px 40px;
   }
 
   #product-left-side {
     display: flex;
     text-align: right;
     flex-direction: column;
+    width: 50vw;
+  }
+
+  #product-left-upper {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  #product-left-upper span {
+    font-size: 0.9em;
+  }
+
+  #product-right-side {
+    width: 50vw;
+  }
+
+  #add-to-cart-button {
+    background-color: #cce5ff;
+    border: 0;
+    font-family: "Traditional Arabic", sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  #add-to-cart-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  #product-left-lower {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 1em;
+  }
+
+  #product-left-lower span {
+    margin-bottom: 10px;
   }
 
 </style>
@@ -26,29 +66,78 @@
 
   {% block lower_container %}
   <div id="product-container">
-    <div>
-      <img src="{{url_for('static', filename=img_src)}}" alt="">
+    <div id="product-right-side">
+      <img src="{{url_for('static', filename=img_src)}}" alt="" style="width: 90%; height: 90%; object-fit: fill">
     </div>
     <div id="product-left-side">
-      <span>
-        {{result[1]}}
-      </span>
-      <span>
-        {{result[4]}}
-      </span>
-      <hr>
-      <button>
-        add to cart
-      </button>
-      <p>
-        {{result[5]}}
-      </p>
-      <span>
-        {{result[6]}}
-      </span>
-      <span>
-        {{result[7]}}
-      </span>
+      <div id="product-left-upper">
+        <h1 style="margin-top: 0; line-height: 1">
+          {{result[1]}}
+        </h1>
+        <span>
+          {{result[4]}} ₪
+        </span>
+        <span style="margin-bottom: 20px">
+          شامل الضريبة, تكلفة الشحن ستحسب عند ادخال العنوان
+        </span>
+      </div>
+<!--      <hr style="color: black; background-color: black; height: 1px; width: 300px">-->
+      <br>
+      <div id="product-left-lower">
+        <form method="post" id="cartForm">
+          <input type="hidden" name="cartItems" id="cartItems">
+          <button id="add-to-cart-button" type="submit">
+            إضافة إلى عربة التسوق
+          </button>
+        </form>
+
+        {% if customer %}
+          <script>
+            const addToCartButton = document.getElementById("add-to-cart-button");
+            const counter1 = document.getElementsByClassName("counter")[0];
+            addToCartButton.setAttribute("onclick", "AddToCart()");
+            // localStorage.setItem("cartCounter", "0");
+            // localStorage.setItem("cartItems", "[]");
+            // if (localStorage.getItem("cartCounter") !== "0") {
+            //     localStorage.setItem("cartCounter", counter1.textContent);
+            // }
+            function AddToCart() {
+                counter1.textContent = (parseInt(counter1.textContent) + 1).toString();
+                localStorage.setItem("cartCounter", counter1.textContent);
+                let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+                if (retrievedArray === null) {
+                    localStorage.setItem("cartItems", "[]");
+                    retrievedArray = [];
+                }
+                retrievedArray[retrievedArray.length] = "{{result[1]}}";
+                localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+                const cartItems = document.getElementById("cartItems");
+                cartItems.value = retrievedArray;
+                const myForm = document.getElementById("cart-form");
+                myForm.addEventListener("submit", (event) => {
+                   event.preventDefault();
+                });
+            }
+          </script>
+        {% endif %}
+
+        <br>
+        <span>
+          الكمية المتبقية: {{result[5]}}
+        </span>
+        <p>
+          {{result[6]}}
+        </p>
+        <span>
+          سنة النشر: {{result[7]}}
+        </span>
+        <span>
+          المؤلف: {{result[8]}}
+        </span>
+        <span>
+          تصنيفات: {{result[9]}}
+        </span>
+      </div>
     </div>
   </div>
   {% endblock %}
