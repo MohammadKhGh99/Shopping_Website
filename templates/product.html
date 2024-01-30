@@ -70,6 +70,11 @@
       <img src="{{url_for('static', filename=img_src)}}" alt="" style="width: 90%; height: 90%; object-fit: fill">
     </div>
     <div id="product-left-side">
+      {% if not customer %}
+        <h5 style="background-color: #e5e5e5; width: 150px; text-align: center">
+          رقم المنتج: {{result[0]}}
+        </h5>
+      {% endif %}
       <div id="product-left-upper">
         <h1 style="margin-top: 0; line-height: 1">
           {{result[1]}}
@@ -84,12 +89,14 @@
 <!--      <hr style="color: black; background-color: black; height: 1px; width: 300px">-->
       <br>
       <div id="product-left-lower">
-        <form method="post" id="cartForm">
-          <input type="hidden" name="cartItems" id="cartItems">
-          <button id="add-to-cart-button" type="submit">
-            إضافة إلى عربة التسوق
-          </button>
-        </form>
+        {% if customer %}
+          <form method="post" id="cartForm">
+            <input type="hidden" name="cartItems" id="cartItems">
+            <button id="add-to-cart-button" type="submit">
+              إضافة إلى عربة التسوق
+            </button>
+          </form>
+        {% endif %}
 
         {% if customer %}
           <script>
@@ -102,6 +109,11 @@
             //     localStorage.setItem("cartCounter", counter1.textContent);
             // }
             function AddToCart() {
+                const itemsLeft = document.getElementById("items-left");
+                if (parseInt(itemsLeft.textContent) > 0) {
+                    console.log("No Items Left");
+                    return;
+                }
                 counter1.textContent = (parseInt(counter1.textContent) + 1).toString();
                 localStorage.setItem("cartCounter", counter1.textContent);
                 let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
@@ -122,7 +134,7 @@
         {% endif %}
 
         <br>
-        <span>
+        <span id="items-left">
           الكمية المتبقية: {{result[5]}}
         </span>
         <p>

@@ -108,25 +108,6 @@ def load_user(user_phone):
 			return None
 
 
-@app.route('/<name>/<ptype>')
-def product(ptype, name):
-	customer = True
-	if current_user.is_authenticated and current_user.role == "admin":
-		customer = False
-	with sqlite3.connect('Shopping.db') as connection:
-		cursor = connection.cursor()
-		take_product = f"""
-		select * from Products
-		where name = '{name}'
-		"""
-		res_rows = cursor.execute(take_product)
-		result = res_rows.fetchone()
-		img_src = result[3][7:]
-		product_images = [img for img in os.listdir(result[3])]
-		img_src += f"/{product_images[0]}"
-	return render_template('product.html', customer=customer, result=result, img_src=img_src)
-
-
 @app.route('/clothes')
 def clothes():
 	customer = True
@@ -241,7 +222,7 @@ def register():
 			except Exception as e:
 				connection.rollback()
 				# failed to register
-				flash("حدث خطأ أثناء التسجيل للموقع" + str(e), category="error")
+				flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
 				return redirect(url_for("register"))
 	
 	return render_template('register.html', cities=cities)
@@ -280,6 +261,26 @@ def orders():
 	return redirect(url_for('profile'))
 
 
+@app.route('/<name>/<ptype>')
+def product(ptype, name):
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
+	with sqlite3.connect('Shopping.db') as connection:
+		cursor = connection.cursor()
+		take_product = f"""
+		select * from Products
+		where name = '{name}'
+		"""
+		res_rows = cursor.execute(take_product)
+		
+		result = res_rows.fetchone()
+		img_src = result[3][7:]
+		product_images = [img for img in os.listdir(result[3])]
+		img_src += f"/{product_images[0]}"
+	return render_template('product.html', customer=customer, result=result, img_src=img_src)
+
+
 @app.route('/admin_profile/products', methods=['GET', 'POST'])
 @login_required
 def products():
@@ -307,6 +308,8 @@ def add_product():
 			product_items_left = request.form['product-items-left']
 			product_publish_year = request.form['product-publish-year']
 			product_author = request.form['product-author']
+			product_categories = request.form['product-categories']
+			categories = [x.strip() for x in product_categories.split(',')]
 			
 			filename = secure_filename(product_img.filename)
 			product_folder = 'books' if product_type == "كتب" else "clothes"
@@ -320,9 +323,9 @@ def add_product():
 				cursor = connection.cursor()
 				try:
 					cursor.execute(
-						"INSERT INTO Products (name, type, img_path, price, items_left, description, publish_year, author_name) "
-						"VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
-						(product_name, product_type, img_path, product_price, product_items_left, product_description, product_publish_year, product_author)
+						"INSERT INTO Products (name, type, img_path, price, items_left, description, publish_year, author_name, categories) "
+						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+						(product_name, product_type, img_path, product_price, product_items_left, product_description, product_publish_year, product_author, product_categories)
 					)
 					connection.commit()
 					# successfully added
@@ -330,7 +333,8 @@ def add_product():
 				except Exception as e:
 					connection.rollback()
 					# failed to add
-					flash(f"حدث خطأ أثناء إضافة ال{product_type} :" + str(e), category="error")
+					flash(f"حدث خطأ أثناء إضافة ال{product_type}" + f": {e}", category="error")
+					return redirect(url_for('add_product'))
 			return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type))
 		
 		# if we arrive now to add product page
@@ -344,16 +348,132 @@ def add_product():
 def remove_product():
 	if current_user.role == "admin":
 		customer = False
+		if request.method == "POST":
+			product_id = request.form["search-product-id-input"]
+			with sqlite3.connect("Shopping.db") as connection:
+				cursor = connection.cursor()
+				try:
+					cursor.execute(f"""
+					delete from Products
+					where id_number = {product_id}
+					""")
+					connection.commit()
+					flash(f"تمت إزالة المنتج رقم {product_id}", "success")
+					return redirect(url_for('remove_product'))
+				except Exception as e:
+					connection.rollback()
+					flash(f"حدث خطأ أثناء إزالة منتج رقم {product_id}" + f": {e}", "error")
+					return redirect(url_for('remove_product'))
+					
 		return render_template('remove_product.html', customer=customer)
+	return redirect(url_for('profile'))
+
+
+@app.route('/admin_profile/products/search_update_product', methods=['GET', 'POST'])
+@login_required
+def search_update_product():
+	if current_user.role == "admin":
+		customer = False
+		# if request.method == "POST":
+		# 	product_id = request.form['product-id-input']
+		# 	search_for_id = f"""
+		# 	select * from Products
+		# 	where id_number = {int(product_id)}
+		# 	"""
+		# 	with sqlite3.connect("Shopping.db") as connection:
+		# 		cursor = connection.cursor()
+		# 		try:
+		# 			cursor.execute(search_for_id)
+		# 			connection.commit()
+		# 			flash(f"تم إيجاد المنتج رقم {product_id}", "success")
+		# 		except Exception as e:
+		# 			connection.rollback()
+		# 			flash(f"حدث خطأ أثناء البحث عن منتج رقم {product_id}", "error")
+		# 			return redirect(url_for('update_product'))
+		# 		result = cursor.fetchone()
+		# 		img_src = result[3] + "/" + os.listdir(result[3])[0]
+		# 		# return redirect(url_for('update_product', customer=customer, result=result))
+		# 		return render_template("update_product.html", customer=customer, result=result, img_src=img_src)
+		return render_template("search_update_product.html", customer=customer)
 	return redirect(url_for('profile'))
 
 
 @app.route('/admin_profile/products/update_product', methods=['GET', 'POST'])
 @login_required
 def update_product():
+	done = request.args.get('done')
+	name = request.args.get('name')
+	ptype = request.args.get('ptype')
+	
 	if current_user.role == "admin":
 		customer = False
-		return render_template('update_product.html', customer=customer)
+		if request.method == "POST":
+			product_id = request.form['product-id-input']
+			product_name = request.form['product-name']
+			product_type = request.form['product-type']
+			product_img = request.files['product-img']
+			print(product_img)
+			product_description = request.form['product-description']
+			product_price = request.form['product-price']
+			product_items_left = request.form['product-items-left']
+			product_publish_year = request.form['product-publish-year']
+			product_author = request.form['product-author']
+			product_categories = request.form['product-categories']
+			
+			save_product_sql = f"""
+			update Products
+			set name = '{product_name}',
+			type = '{product_type}',
+			
+			price = '{product_price}',
+			items_left = {product_items_left},
+			description = '{product_description}',
+			publish_year = '{product_publish_year}',
+			author_name = '{product_author}',
+			categories = '{product_categories}'
+			where id_number = {product_id}
+			"""
+			with sqlite3.connect("Shopping.db") as connection:
+				cursor = connection.cursor()
+				try:
+					cursor.execute(save_product_sql)
+					connection.commit()
+					flash(f"تم تعديل المنتج رقم {product_id}", "success")
+					print("hi")
+				except Exception as e:
+					print(e)
+					connection.rollback()
+					flash(f"حدث خطأ أثناء تعديل منتج رقم {product_id}" + f": {e}", "error")
+					print("what")
+					return redirect(url_for('update_product'))
+				# result = cursor.fetchone()
+				
+				return redirect(url_for('update_product', done=True, name=product_name, ptype=product_type, id_num=product_id))
+		
+		elif request.method == "GET":
+			
+			id_num = int(request.args.get('id_num'))
+			search_for_id = f"""
+			select * from Products
+			where id_number = {id_num}
+			"""
+			with sqlite3.connect("Shopping.db") as connection:
+				cursor = connection.cursor()
+				try:
+					cursor.execute(search_for_id)
+					connection.commit()
+					flash(f"تم إيجاد المنتج رقم {id_num}", "success")
+				except Exception as e:
+					connection.rollback()
+					flash(f"حدث خطأ أثناء البحث عن منتج رقم {id_num}" + f": {e}", "error")
+					return redirect(url_for('update_product'))
+				result = cursor.fetchone()
+				img_src = result[3][7:]
+				product_images = [img for img in os.listdir(result[3])]
+				img_src += f"/{product_images[0]}"
+			return render_template('update_product.html', customer=customer, done=done, result=result, name=name, ptype=ptype, img_src=img_src)
+		
+		# return render_template('search_update_product.html', customer=customer, done=done, name=name, ptype=ptype)
 	return redirect(url_for('profile'))
 
 

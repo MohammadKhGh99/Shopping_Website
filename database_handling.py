@@ -72,7 +72,7 @@ def create_table():
 	
 	products_table = """
 	create table if not exists Products(
-		id_number int auto_increment primary key,
+		id_number integer primary key autoincrement,
 		name nvarchar(50),
 		type nvarchar(20),
 		img_path nvarchar(100),
@@ -80,7 +80,8 @@ def create_table():
 		items_left int default 0,
 		description nvarchar(200),
 		publish_year nvarchar(20),
-		author_name nvarchar(20)
+		author_name nvarchar(20),
+		categories nvarchar(100)
 	)
 	"""
 	# phone = '^[0-9]{10}$'

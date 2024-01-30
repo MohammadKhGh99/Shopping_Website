@@ -73,8 +73,9 @@
   <div id="adding-products-container">
   {% if not done %}
     <form method="post" enctype="multipart/form-data">
-      <h4>إضافة منتج</h4>
+      <h4 id="add-title">إضافة منتج</h4>
       <div id="form-container">
+        <input id="product-id-input" style="display: none">
         <div class="field-holder">
           <label for="product-name">إسم المنتج</label><br>
           <input type="text" id="product-name" name="product-name" class="input_field">
@@ -83,6 +84,7 @@
           <label for="product-type">نوع المنتج</label><br>
           <select id="product-type" name="product-type" class="input_field" style="width: 363px">
             <option>كتب</option>
+            <option>أزياء</option>
 <!--            <option></option>-->
           </select>
 <!--          <input type="text" id="product-type" name="product-type" class="input_field">-->
@@ -113,9 +115,9 @@
           <input type="text" id="product-author" name="product-author" class="input_field">
         </div>
         <div class="field-holder">
-          <label for="product-tags">تصنيفات</label><br>
+          <label for="product-categories">تصنيفات</label><br>
 <!--          <select id="product-tags" name="product-tags" class="input_field" style="width: 363px">-->
-          <input type="text" id="product-tags" name="product-tags" class="input_field">
+          <input type="text" id="product-categories" name="product-categories" class="input_field">
         </div>
         <br>
         <button type="submit" id="save-product-button">
@@ -132,6 +134,7 @@
     </button>
   {% endif %}
   </div>
+
   {% endblock %}
 
 </body>

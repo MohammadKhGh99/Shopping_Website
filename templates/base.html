@@ -14,18 +14,22 @@
 </head>
 
 <style>
-  .flash-message {
-    /*animation: fadeOut 10s ease-in-out forwards;*/
-    /*opacity: 1;*/
+  .error-flash-message {
     background-color: #e5e5e5;
   }
 
-  /*@keyframes fadeOut {*/
-  /*  100% {*/
-  /*    opacity: 0;*/
-  /*    display: none;*/
-  /*  }*/
-  /*}*/
+  .flash-message {
+    animation: fadeOut 15s ease-in-out forwards;
+    opacity: 1;
+    background-color: #e5e5e5;
+  }
+
+  @keyframes fadeOut {
+    100% {
+      opacity: 0;
+      display: none;
+    }
+  }
 </style>
 
 <body>
@@ -155,7 +159,7 @@
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["error"]) %}
-    <div class="flash-message" role="alert" style="color: red; text-align: center">
+    <div class="error-flash-message" role="alert" style="color: red; text-align: center">
       <h2>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">
