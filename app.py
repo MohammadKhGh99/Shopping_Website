@@ -45,7 +45,8 @@ NO_ACCOUNTS = True
 
 
 class User(UserMixin):
-	def __init__(self, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password):
+	def __init__(self, id_number, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password):
+		self.id_number = id_number
 		self.phone_number = phone_number
 		self.first_name = first_name
 		self.last_name = last_name
@@ -56,9 +57,10 @@ class User(UserMixin):
 		self.backup_phone = backup_phone
 		self.password = password
 		self.authenticated = False
+		self.is_active = True
 	
 	def is_active(self):
-		return self.is_active()
+		return self.is_active
 	
 	def is_anonymous(self):
 		return False
@@ -66,11 +68,11 @@ class User(UserMixin):
 	def is_authenticated(self):
 		return self.authenticated
 	
-	def is_active(self):
-		return True
+	# def is_active(self):
+	# 	return True
 	
 	def get_id(self):
-		return self.phone_number
+		return self.id_number
 
 
 @app.route('/home')
@@ -86,20 +88,34 @@ def books():
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
-	books_lst = [filename for filename in os.listdir('static/images/books')]
-	books_lst = {folder: [os.listdir(f"static/images/books/{folder}")[0], "كتب"] for folder in books_lst}
-	return render_template('books.html', products=books_lst, authors=authors, publishes=publishes, publishers=publishers,
+	with sqlite3.connect("Shopping.db") as connection:
+		cursor = connection.cursor()
+		try:
+			cursor.execute("""
+			select * from Products
+			""")
+			
+			all_books = cursor.fetchall()
+			connection.commit()
+		except Exception as e:
+			connection.rollback()
+			flash("خطأ في تحميل الكتب", "error")
+			return redirect(url_for('books'))
+	
+	# books_lst = [filename for filename in os.listdir('static/images/books')]
+	# books_lst = {folder: [os.listdir(f"static/images/books/{folder}")[0], "كتب"] for folder in books_lst}
+	return render_template('books.html', products=all_books, authors=authors, publishes=publishes, publishers=publishers,
 	                       customer=customer)  # , other=other)
 
 
 @login_manager.user_loader
-def load_user(user_phone):
+def load_user(user_id):
 	with sqlite3.connect("Shopping.db") as connection:
 		cursor = connection.cursor()
 		check_user_existence = f"""
             select *
             from Customers
-            where phone_number = '{user_phone}'
+            where id_number = '{user_id}'
             """
 		result = cursor.execute(check_user_existence).fetchone()
 		if result:
@@ -133,16 +149,18 @@ def login():
 			res_rows = cursor.execute(check_user_existence)
 			res_rows = res_rows.fetchall()
 			# todo - in this time we have just admins
-			if res_rows[0][3] != "admin":
+			if res_rows[0][4] != "admin":
 				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
 				return redirect(url_for('home'))
 			
 			if len(res_rows) == 1:
 				if bcrypt.check_password_hash(res_rows[0][-1], password):
 					user = load_user(res_rows[0][0])
+					print(user.is_active)
 					login_user(user)
 					flash("تم تسجيل الدخول بنجاح!", category="success")
 					if current_user.role == "admin":
+						print("1232")
 						return redirect(url_for('admin_profile'))
 					return redirect(url_for('profile'))
 			
@@ -159,32 +177,8 @@ def login():
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
 	# flash("خطأ في تسجيل الدخول, إحدى الخانات تحتاج للتعديل", category="warning")
+	print("login")
 	return render_template('login.html', customer=customer)
-
-
-#
-# @app.route('/', methods=['POST'])
-# def checklogin():
-#     phone_number = request.form['phone_number']
-#     password = request.form['password']
-#
-#     with sqlite3.connect('Shopping.db') as connection:
-#         cursor = connection.cursor()
-#         check_user_existance = f"""
-#         select *
-#         from Customers
-#         where phone_number = {phone_number}
-#         """
-#
-#         res_rows = cursor.execute(check_user_existance)
-#         res_rows = res_rows.fetchall()
-#         if len(res_rows) == 1:
-#             if bcrypt.check_password_hash(res_rows[0][-1], password):
-#                 login_user(User(*res_rows[0]))
-#                 return redirect(url_for('dashboard'))
-#             return render_template("logged_in.html")
-#         else:
-#             return redirect(url_for('register'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -211,7 +205,7 @@ def register():
 			cursor = connection.cursor()
 			try:
 				cursor.execute(
-					"INSERT INTO Customers "
+					"INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password) "
 					"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
 					(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password)
 				)
@@ -246,8 +240,10 @@ def profile():
 @app.route('/admin_profile', methods=['GET', 'POST'])
 @login_required
 def admin_profile():
+	print("admin")
 	if current_user.role == "admin":
 		customer = False
+		print("456")
 		return render_template('admin_profile.html', current_user=current_user, customer=customer)
 	return redirect(url_for('profile'))
 
@@ -276,8 +272,9 @@ def product(ptype, name):
 		
 		result = res_rows.fetchone()
 		img_src = result[3][7:]
-		product_images = [img for img in os.listdir(result[3])]
-		img_src += f"/{product_images[0]}"
+		
+		# product_images = [img for img in os.listdir(result[3][:result[3].rindex("/")])]
+		# img_src += f"/{product_images[0]}"
 	return render_template('product.html', customer=customer, result=result, img_src=img_src)
 
 
@@ -311,31 +308,39 @@ def add_product():
 			product_categories = request.form['product-categories']
 			categories = [x.strip() for x in product_categories.split(',')]
 			
-			filename = secure_filename(product_img.filename)
-			product_folder = 'books' if product_type == "كتب" else "clothes"
-			img_path = f'static/images/{product_folder}'
-			if not os.path.exists(img_path + f"/{product_name}"):
-				os.mkdir(img_path + f"/{product_name}")
-			img_path += f"/{product_name}"
-			product_img.save(os.path.join(img_path, filename))
-			
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
 				try:
 					cursor.execute(
-						"INSERT INTO Products (name, type, img_path, price, items_left, description, publish_year, author_name, categories) "
-						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-						(product_name, product_type, img_path, product_price, product_items_left, product_description, product_publish_year, product_author, product_categories)
+						"INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories) "
+						"VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+						(product_name, product_type, product_price, product_items_left, product_description, product_publish_year, product_author, product_categories)
 					)
+					
+					filename = secure_filename(product_img.filename)
+					product_folder = 'books' if product_type == "كتب" else "clothes"
+					img_path = f'static/images/{product_folder}'
+					if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
+						os.mkdir(img_path + f"/{cursor.lastrowid}")
+					img_path += f"/{cursor.lastrowid}/{filename}"
+					product_img.save(img_path)
+					
+					cursor.execute(f"""
+					update Products
+					set img_path = '{img_path}'
+					where id_number = {cursor.lastrowid}
+					""")
+					
 					connection.commit()
+					
 					# successfully added
 					flash(f"تمت إضافة ال{product_type} بنجاح", category="success")
+					return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type))
 				except Exception as e:
 					connection.rollback()
 					# failed to add
 					flash(f"حدث خطأ أثناء إضافة ال{product_type}" + f": {e}", category="error")
 					return redirect(url_for('add_product'))
-			return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type))
 		
 		# if we arrive now to add product page
 		return render_template('add_product.html', customer=customer, done=done, name=name, ptype=ptype)
@@ -350,15 +355,25 @@ def remove_product():
 		customer = False
 		if request.method == "POST":
 			product_id = request.form["search-product-id-input"]
+			# if the user didn't enter any number to search for
+			if product_id == "":
+				flash("لم يتم إدخال أي رقم", "warning")
+				return redirect(url_for('remove_product'))
+			
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
 				try:
-					cursor.execute(f"""
+					row_count = cursor.execute(f"""
 					delete from Products
 					where id_number = {product_id}
 					""")
+					
 					connection.commit()
-					flash(f"تمت إزالة المنتج رقم {product_id}", "success")
+					if row_count.rowcount > 0:
+						flash(f"تمت إزالة المنتج رقم {product_id}", "success")
+					else:
+						flash(f"لم يتم إيجاد منتج رقم {product_id}", "warning")
+					
 					return redirect(url_for('remove_product'))
 				except Exception as e:
 					connection.rollback()
@@ -374,26 +389,6 @@ def remove_product():
 def search_update_product():
 	if current_user.role == "admin":
 		customer = False
-		# if request.method == "POST":
-		# 	product_id = request.form['product-id-input']
-		# 	search_for_id = f"""
-		# 	select * from Products
-		# 	where id_number = {int(product_id)}
-		# 	"""
-		# 	with sqlite3.connect("Shopping.db") as connection:
-		# 		cursor = connection.cursor()
-		# 		try:
-		# 			cursor.execute(search_for_id)
-		# 			connection.commit()
-		# 			flash(f"تم إيجاد المنتج رقم {product_id}", "success")
-		# 		except Exception as e:
-		# 			connection.rollback()
-		# 			flash(f"حدث خطأ أثناء البحث عن منتج رقم {product_id}", "error")
-		# 			return redirect(url_for('update_product'))
-		# 		result = cursor.fetchone()
-		# 		img_src = result[3] + "/" + os.listdir(result[3])[0]
-		# 		# return redirect(url_for('update_product', customer=customer, result=result))
-		# 		return render_template("update_product.html", customer=customer, result=result, img_src=img_src)
 		return render_template("search_update_product.html", customer=customer)
 	return redirect(url_for('profile'))
 
@@ -502,10 +497,12 @@ def contact_us():
 
 @app.route('/shopping_cart')
 def shopping_cart():
+	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
+		customer = False
 		flash("عربة التسوق فقط للزبائن", category="warning")
 		return redirect(url_for('admin_profile'))
-	return render_template('shopping_cart.html')
+	return render_template('shopping_cart.html', customer=customer)
 
 
 @app.errorhandler(404)

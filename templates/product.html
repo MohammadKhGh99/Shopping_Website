@@ -90,12 +90,12 @@
       <br>
       <div id="product-left-lower">
         {% if customer %}
-          <form method="post" id="cartForm">
+<!--          <form method="post" id="cartForm">-->
             <input type="hidden" name="cartItems" id="cartItems">
-            <button id="add-to-cart-button" type="submit">
+            <button id="add-to-cart-button" onclick="AddToCart()">
               إضافة إلى عربة التسوق
             </button>
-          </form>
+<!--          </form>-->
         {% endif %}
 
         {% if customer %}
@@ -110,25 +110,29 @@
             // }
             function AddToCart() {
                 const itemsLeft = document.getElementById("items-left");
-                if (parseInt(itemsLeft.textContent) > 0) {
+                if (parseInt(itemsLeft.textContent) === 0) {
+                    window.alert("No Items Left");
                     console.log("No Items Left");
                     return;
                 }
                 counter1.textContent = (parseInt(counter1.textContent) + 1).toString();
                 localStorage.setItem("cartCounter", counter1.textContent);
+
                 let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
                 if (retrievedArray === null) {
                     localStorage.setItem("cartItems", "[]");
                     retrievedArray = [];
                 }
-                retrievedArray[retrievedArray.length] = "{{result[1]}}";
+                retrievedArray[retrievedArray.length] = "{{result[0]}}";
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+                console.log(localStorage.getItem("cartItems"));
+
                 const cartItems = document.getElementById("cartItems");
                 cartItems.value = retrievedArray;
-                const myForm = document.getElementById("cart-form");
-                myForm.addEventListener("submit", (event) => {
-                   event.preventDefault();
-                });
+                // const myForm = document.getElementById("cart-form");
+                // myForm.addEventListener("submit", (event) => {
+                //    event.preventDefault();
+                // });
             }
           </script>
         {% endif %}

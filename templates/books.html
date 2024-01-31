@@ -177,19 +177,19 @@
     {% block lower_container %}
 <!--    <br>-->
     <products class="products">
-      {% for name, lst in products.items() %}
-      <a href="{{url_for('product', name=name, ptype=lst[1])}}" style="text-decoration: none; color: black">
+      {% for prod in products %}
+      <a href="{{url_for('product', name=prod[1], ptype=prod[2])}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
-            <img src="../static/images/books/{{name}}/{{lst[0]}}" alt="product">
+            <img src="../{{prod[3]}}" alt="product">
           </div>
           <div class="lower-product">
             <span>
-              {{ name }}
+              {{ prod[1] }}
             </span>
             <hr>
             <span>
-              25₪
+              {{ prod[4] }} ₪
             </span>
           </div>
         </product>

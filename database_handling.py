@@ -16,7 +16,8 @@ def regex_check(s):
 def create_table():
 	customers_table = """
 	create table if not exists Customers(
-		phone_number char(10) primary key,
+		id_number integer primary key autoincrement,
+		phone_number char(10),
 		first_name nvarchar(15),
 		last_name nvarchar(15),
 		role nvarchar(10),
@@ -36,16 +37,19 @@ def create_table():
 	
 	orders_table = """
 	create table if not exists Orders(
-		order_id int primary key auto_increment,
+		order_id integer primary key autoincrement,
 		customer_phone_number char(10),
 		order_date datetime default now(),
 		total_amount int,
-		fk_customer_phone_number foreign key char(10) references Customers(phone_number)
+		status nvarchar(100),
+		fk_customer_id_number foreign key integer references Customers(id_number),
+		fk_product_id_number foreign key integer references Products(id_number)
 	)
 	"""
 	
 	guests_table = """
 	create table if not exists Guests(
+		id_number integer primary key autoincrement
 		phone_number char(10) primary key,
 		first_name nvarchar(15),
 		last_name nvarchar(15),
