@@ -9,13 +9,15 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
+# from flask_jsglue import JSGlue
 
-from flask import render_template, jsonify, Flask, request, redirect, url_for, flash
+from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
 from database_handling import *
 
 app = Flask(__name__)  # , static_folder="static", template_folder="templates")
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
+# jsglue = JSGlue(app)
 
 # app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 # db = SQLAlchemy(app)
@@ -240,10 +242,8 @@ def profile():
 @app.route('/admin_profile', methods=['GET', 'POST'])
 @login_required
 def admin_profile():
-	print("admin")
 	if current_user.role == "admin":
 		customer = False
-		print("456")
 		return render_template('admin_profile.html', current_user=current_user, customer=customer)
 	return redirect(url_for('profile'))
 
@@ -495,14 +495,57 @@ def contact_us():
 	return render_template('contact_us.html', customer=customer)
 
 
-@app.route('/shopping_cart')
+@app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
+	# result = request.args.get("cart_items")
+	result = session.get("cart-items")
+	# print(session.get("total"))
+	total = session.get("total")
+	if total is None:
+		total = 0
+	else:
+		total = int(total)
+	# total = int(session.get("total") if not None else 0)
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
 		flash("عربة التسوق فقط للزبائن", category="warning")
 		return redirect(url_for('admin_profile'))
-	return render_template('shopping_cart.html', customer=customer)
+	if request.method == 'POST':
+		total = 0
+		cart_items = [int(x) for x in request.form['cart-items-input'][1:-1].replace("\"", "").split(",")]
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			result = {}
+			for cur_id in cart_items:
+				try:
+					cursor.execute(f"""
+					select * from Products
+					where id_number = {cur_id}
+					""")
+					
+					cur_res_rows = cursor.fetchone()
+					# if there is already the same item in the cart
+					if cur_res_rows[0] not in result.keys():
+						result[cur_res_rows[0]] = 1, cur_res_rows
+						total += int(cur_res_rows[4])
+					else:
+						result[cur_res_rows[0]][0] += 1
+						total += int(cur_res_rows[4])
+				except Exception as e:
+					connection.rollback()
+					flash(f"error in shopping cart product num {cur_id}", "error")
+					return redirect(url_for('shopping_cart'))
+					
+			# commit when finish the loop
+			connection.commit()
+			
+			session["cart-items"] = result
+			session["total"] = total
+			print(total)
+			return redirect(url_for('shopping_cart'))
+			
+	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))
 
 
 @app.errorhandler(404)

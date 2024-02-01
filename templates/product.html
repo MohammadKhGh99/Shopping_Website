@@ -125,7 +125,6 @@
                 }
                 retrievedArray[retrievedArray.length] = "{{result[0]}}";
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
-                console.log(localStorage.getItem("cartItems"));
 
                 const cartItems = document.getElementById("cartItems");
                 cartItems.value = retrievedArray;
@@ -134,6 +133,8 @@
                 //    event.preventDefault();
                 // });
             }
+
+            console.log(localStorage.getItem("cartItems"));
           </script>
         {% endif %}
 
