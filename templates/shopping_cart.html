@@ -8,7 +8,7 @@
 <style>
 
   #shopping-cart-container {
-   padding: 20px 20px 20px 20px;
+    padding: 20px 20px 20px 20px;
   }
 
   cart-items {
@@ -17,141 +17,203 @@
     border-top: 2px solid #e5e5e5;
   }
 
-  item {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    padding: 20px 20px 10px 20px;
-    border-bottom: 2px solid #e5e5e5;
-  }
-
-  #item-img {
-    width: 20%;
-    height: 100%;
-  }
-
-  #item-img img {
-    object-fit: contain;
-    width: 100%;
-    height: 100%;
-  }
-
-  #item-info {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-  }
-
-  #item-handle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   #item-handle button {
     width: 30px;
     height: 30px;
     cursor: pointer;
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+  }
+
+  #item-quantity {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 20px;
+  }
+
+  #item-quantity button {
+    cursor: pointer;
+    width: 25px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: 0;
+    color: #AD7765;
+  }
+
+  #item-quantity button:hover {
+    color: black;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 1em;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  td {
+    text-align: center;
+    width: 25%;
+  }
+
+  td a {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: inline-flex;
+    margin: 13px 0 0 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  td img {
+    /*object-fit: fill;*/
+    width: 100%;
+    height: 100%;
+
   }
 
 
 </style>
 
 <body>
-  {% extends "base.html" %}
+{% extends "base.html" %}
 
-  {% block no_search %}hidden{% endblock %}
+{% block no_search %}hidden{% endblock %}
 
-  {% block breadcrumb_link %}
-  /
-  <a href="{{url_for('shopping_cart')}}">عربة التسوق</a>
-  {% endblock %}
+{% block breadcrumb_link %}
+/
+<a href="{{url_for('shopping_cart')}}">عربة التسوق</a>
+{% endblock %}
 
-  {% block lower_container %}
-  <div id="shopping-cart-container">
-    <h2 style="text-align: center">عربة التسوق</h2>
-    <div style="display: flex; justify-content: space-between; margin-right: 30%;">
-      <b>
+{% block lower_container %}
+<div id="shopping-cart-container">
+  <h2 style="text-align: center">عربة التسوق</h2>
+  <table>
+    <tr>
+      <th></th>
+      <th>
         إسم المنتج
-      </b>
-      <b style="margin-left: 5%">
+      </th>
+      <th>
         السعر
-      </b>
-      <b style="margin-left: 7%">
+      </th>
+      <th>
         الكمية
-      </b>
+      </th>
+    </tr>
+    {% for quantity, item in cart_items.values() %}
+    <tr>
+      <td style="justify-content: center; align-items: center">
+        <a href="{{url_for('product', name=item[1], ptype=item[2])}}">
+          <img src="../{{item[3]}}" alt="item">
+        </a>
+      </td>
+      <td style="display: none">{{item[0]}}</td>
+      <td style="display: none">{{item[4]}}</td>
+      <td style="display: none">{{quantity}}</td>
 
-    </div>
-    <cart-items>
-      {% for quantity, item in cart_items.values() %}
-  <!--    <h1>{{total}}</h1>-->
-      <item>
-        <div id="item-img">
-          <a href="{{url_for('product', name=item[1], ptype=item[2])}}" style="width: 100%; height: 100%">
-            <img src="../{{item[3]}}" alt="item">
-          </a>
-        </div>
-<!--        <div id="item-info">-->
-        <span style="margin-right: -15%">
-          {{item[1]}}
-        </span>
-        <span>
-          {{item[4]}} ₪
-        </span>
-<!--        </div>-->
-<!--        <div id="item-handle">-->
+      <td>
+        {{item[1]}}
+      </td>
+      <td>
+        {{item[4]}} ₪
+      </td>
+      <td>
         <div id="item-quantity">
-          <select onchange="UpdateTotal(this)">
-            {% for x in range(item[5]) %}
-                <option>{{ x + 1 }}</option>
-            {% endfor %}
-          </select>
-<!--          <button>-->
-<!--            +-->
-<!--          </button>-->
-<!--          &ensp;-->
-<!--          <span>-->
-<!--            {{quantity}}-->
-<!--          </span>-->
-<!--          &ensp;-->
-<!--          <button>-->
-<!--            - -->
-<!--          </button>-->
+          <form id="update-form{{item[0]}}" method="post">
+            <select id="select{{item[0]}}" name="select{{item[0]}}" onchange="UpdateCart(this)">
+              {% for x in range(item[5]) %}
+              <option value="{{ x + 1 }}">{{ x + 1 }}</option>
+              {% endfor %}
+              <script>
+                  document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}") - 1;
+              </script>
+            </select>
+          </form>
+          <button onclick="DeleteCartItem(this)">
+            <span class="material-symbols-outlined">
+              delete
+            </span>
+          </button>
         </div>
-<!--        </div>-->
-      </item>
-      {% endfor %}
-    </cart-items>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <form id="delete-form" method="post">
+    <input id="deleted-id" name="deleted-id" style="display: none">
+  </form>
 
-    <script>
-      function UpdateTotal(select) {
-          
+  <script>
+      function DeleteCartItem(button) {
+          const toDelete = button.parentNode.parentNode.parentNode;
+          const parentDeleted = toDelete.parentNode;
+          const itemId = toDelete.querySelectorAll("td")[1].textContent;
+          const price = parseInt(toDelete.querySelectorAll("td")[2].textContent);
+          const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
+          console.log(itemId);
+          document.getElementById("deleted-id").value = itemId;
+
+          const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
+          counter.textContent = newCounter.toString();
+          localStorage.setItem("cartCounter", newCounter.toString());
+          const newCartItems = JSON.parse(localStorage.getItem("cartItems"));
+          delete newCartItems[itemId];
+          localStorage.setItem("cartItems", JSON.stringify(newCartItems));
+          const totalDiv = document.getElementById("total-price").querySelector("b");
+          const beforeSum = parseInt(totalDiv.textContent);
+          const totalSum = beforeSum - (quantity * price);
+          totalDiv.textContent = totalSum.toString();
+
+          const deleteForm = document.getElementById("delete-form");
+          parentDeleted.removeChild(toDelete);
+          deleteForm.submit();
       }
-    </script>
 
-    <br>
-    <div id="cart-total-price">
+      function UpdateCart(select) {
+          const parentDiv = select.parentNode.parentNode.parentNode.parentNode;
+          const quantityDiv = parentDiv.querySelectorAll("td")[3];
+          const curId = parentDiv.querySelectorAll("td")[1].textContent;
+          const initialQuantity = parseInt(quantityDiv.textContent);
+          const newQuantity = parseInt(select.value);
+
+          let newCounter = parseInt(localStorage.getItem("cartCounter"));
+          newCounter += (newQuantity - initialQuantity);
+          localStorage.setItem("cartCounter", newCounter);
+          quantityDiv.textContent = newQuantity;
+          document.getElementById("update-form" + curId).submit();
+      }
+  </script>
+
+  <br>
+  <div id="cart-total-price">
       <span id="total-price">
-        المجموع الكلي: {{total}} ₪
+        المجموع الكلي:
+        <b>{{total}}</b>
+        ₪
       </span>
-      <br>
-      <span>
+    <br>
+    <span>
         غير شامل التوصيل, سعر التوصيل يُحسب في الصفحة القادمة
       </span>
-    </div>
-    <br>
-    <div id="cart-footer">
-      <button id="checkout">
-        لإتمام الطلب
-      </button>
-    </div>
-    <br>
   </div>
-  {% endblock %}
-
+  <br>
+  <div id="cart-footer">
+    <button id="checkout">
+      لإتمام الطلب
+    </button>
+  </div>
+  <br>
+</div>
+{% endblock %}
 
 
 </body>

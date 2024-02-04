@@ -103,11 +103,11 @@
             const addToCartButton = document.getElementById("add-to-cart-button");
             const counter1 = document.getElementsByClassName("counter")[0];
             addToCartButton.setAttribute("onclick", "AddToCart()");
-            // localStorage.setItem("cartCounter", "0");
-            // localStorage.setItem("cartItems", "[]");
+
             // if (localStorage.getItem("cartCounter") !== "0") {
             //     localStorage.setItem("cartCounter", counter1.textContent);
             // }
+            // console.log(counter1.textContent);
             function AddToCart() {
                 const itemsLeft = document.getElementById("items-left");
                 if (parseInt(itemsLeft.textContent) === 0) {
@@ -120,10 +120,16 @@
 
                 let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
                 if (retrievedArray === null) {
-                    localStorage.setItem("cartItems", "[]");
-                    retrievedArray = [];
+                    localStorage.setItem("cartItems", "{}");
+                    retrievedArray = {};
                 }
-                retrievedArray[retrievedArray.length] = "{{result[0]}}";
+                if (retrievedArray["{{result[0]}}"] === undefined) {
+                    retrievedArray["{{result[0]}}"] = "1";
+                } else {
+                    retrievedArray["{{result[0]}}"] = (parseInt(retrievedArray["{{result[0]}}"]) + 1).toString();
+                }
+                console.log(JSON.stringify(retrievedArray));
+                // retrievedArray[retrievedArray.length] = "{{result[0]}}";
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
 
                 const cartItems = document.getElementById("cartItems");
@@ -134,7 +140,6 @@
                 // });
             }
 
-            console.log(localStorage.getItem("cartItems"));
           </script>
         {% endif %}
 

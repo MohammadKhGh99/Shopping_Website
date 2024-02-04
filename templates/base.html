@@ -121,9 +121,10 @@
           </span>
         </a>
         {% if customer %}
-          <div class="shopping-cart" title="السلة" style="display: inline-block; width: 30px; height: 30px; cursor: pointer;">
-            <form id="cart-go-form" method="post" style="display: none" action="shopping_cart">
+          <div class="shopping-cart" onclick="GoShoppingCart()" title="السلة" style="display: inline-block; width: 30px; height: 30px; cursor: pointer;">
+            <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart')}}">
               <input style="display: none" id="cart-items-input" name="cart-items-input">
+
             </form>
             <span class="material-symbols-outlined shopping-cart-icon">
               shopping_cart
@@ -286,22 +287,29 @@
           localStorage.setItem("cartCounter", "0");
       }
 
+      // localStorage.setItem("cartCounter", "0");
+      // localStorage.setItem("cartItems", "{}");
+
+
+
       // if (localStorage.getItem("cartItems") !== "[]") {
       //     counter.textContent = localStorage.getItem("cartCounter");
       // } else {
       //     localStorage.setItem("cartCounter", "0");
       // }
-      const cartDiv = document.querySelector(".shopping-cart");
-      const cart_items = localStorage.getItem("cartItems");
-      // console.log(cart_items);
+      function GoShoppingCart() {
+          const cartDiv = document.querySelector(".shopping-cart");
+          const cart_items = localStorage.getItem("cartItems");
+          console.log(cart_items);
+          document.getElementById("cart-items-input").value = cart_items;
+          cartDiv.querySelector("form").submit();
+      }
 
       // const newHref = "{{url_for('shopping_cart', cart_items=" + cart_items + ")}}";
       // cartDiv.href = newHref;
       // console.log(newHref);
-      cartDiv.addEventListener("click", function () {
-          document.getElementById("cart-items-input").value = cart_items;
-          document.getElementById("cart-go-form").submit();
-      });
+      // cartDiv.addEventListener("click", function () {
+      // });
     </script>
   {% endif %}
 

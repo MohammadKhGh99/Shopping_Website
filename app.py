@@ -158,11 +158,11 @@ def login():
 			if len(res_rows) == 1:
 				if bcrypt.check_password_hash(res_rows[0][-1], password):
 					user = load_user(res_rows[0][0])
-					print(user.is_active)
+					# print(user.is_active)
 					login_user(user)
 					flash("تم تسجيل الدخول بنجاح!", category="success")
 					if current_user.role == "admin":
-						print("1232")
+						# print("1232")
 						return redirect(url_for('admin_profile'))
 					return redirect(url_for('profile'))
 			
@@ -179,7 +179,7 @@ def login():
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
 	# flash("خطأ في تسجيل الدخول, إحدى الخانات تحتاج للتعديل", category="warning")
-	print("login")
+	# print("login")
 	return render_template('login.html', customer=customer)
 
 
@@ -407,7 +407,7 @@ def update_product():
 			product_name = request.form['product-name']
 			product_type = request.form['product-type']
 			product_img = request.files['product-img']
-			print(product_img)
+			# print(product_img)
 			product_description = request.form['product-description']
 			product_price = request.form['product-price']
 			product_items_left = request.form['product-items-left']
@@ -434,12 +434,12 @@ def update_product():
 					cursor.execute(save_product_sql)
 					connection.commit()
 					flash(f"تم تعديل المنتج رقم {product_id}", "success")
-					print("hi")
+					# print("hi")
 				except Exception as e:
-					print(e)
+					# print(e)
 					connection.rollback()
 					flash(f"حدث خطأ أثناء تعديل منتج رقم {product_id}" + f": {e}", "error")
-					print("what")
+					# print("what")
 					return redirect(url_for('update_product'))
 				# result = cursor.fetchone()
 				
@@ -497,55 +497,94 @@ def contact_us():
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
-	# result = request.args.get("cart_items")
 	result = session.get("cart-items")
-	# print(session.get("total"))
 	total = session.get("total")
+	# print(result)
 	if total is None:
 		total = 0
 	else:
 		total = int(total)
-	# total = int(session.get("total") if not None else 0)
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
 		flash("عربة التسوق فقط للزبائن", category="warning")
 		return redirect(url_for('admin_profile'))
+	
 	if request.method == 'POST':
-		total = 0
-		cart_items = [int(x) for x in request.form['cart-items-input'][1:-1].replace("\"", "").split(",")]
-		with sqlite3.connect("Shopping.db") as connection:
-			cursor = connection.cursor()
-			result = {}
-			for cur_id in cart_items:
-				try:
-					cursor.execute(f"""
-					select * from Products
-					where id_number = {cur_id}
-					""")
-					
-					cur_res_rows = cursor.fetchone()
-					# if there is already the same item in the cart
-					if cur_res_rows[0] not in result.keys():
-						result[cur_res_rows[0]] = 1, cur_res_rows
-						total += int(cur_res_rows[4])
-					else:
-						result[cur_res_rows[0]][0] += 1
-						total += int(cur_res_rows[4])
-				except Exception as e:
-					connection.rollback()
-					flash(f"error in shopping cart product num {cur_id}", "error")
-					return redirect(url_for('shopping_cart'))
-					
-			# commit when finish the loop
-			connection.commit()
+		for id_num, item in result.items():
+			print(request.form)
+			if f"select{id_num}" in request.form.keys() and request.form[f"select{id_num}"] != "":
+				result[id_num] = (request.form[f"select{id_num}"], result[id_num][1])
+		session["cart-items"] = result
+		session["total"] = 0
+		for id_num, item in result.items():
+			session["total"] += int(item[0]) * int(item[1][4])
 			
+		if "deleted-id" in request.form.keys() and request.form["deleted-id"] != "":
+			# we deleted some cart items
+			cur = result[request.form["deleted-id"]]
+			session["total"] -= cur[0] * cur[1][4]
+			del result[request.form["deleted-id"]]
 			session["cart-items"] = result
-			session["total"] = total
-			print(total)
 			return redirect(url_for('shopping_cart'))
+		elif "cart-items-input" in request.form.keys() and request.form["cart-items-input"] != "":
+			total = 0
+			cart_items = {}
+			# print(request.form['cart-items-input'])
+			for item in request.form['cart-items-input'][1:-1].replace("\"", "").split(","):
+				tmp = item.split(":")
+				cart_items[int(tmp[0])] = tmp[1]
+			# cart_items = [int(x) for x in request.form['cart-items-input'][1:-1].replace("\"", "").split(",")]
+			with sqlite3.connect("Shopping.db") as connection:
+				cursor = connection.cursor()
+				result = {}
+				for cur_id, quantity in cart_items.items():
+					try:
+						cursor.execute(f"""
+						select * from Products
+						where id_number = {cur_id}
+						""")
+						
+						cur_res_rows = cursor.fetchone()
+						# if there is already the same item in the cart
+						result[cur_id] = (quantity, cur_res_rows)
+						total += int(cur_res_rows[4]) * int(quantity)
+						# if cur_res_rows[0] not in result.keys():
+						# 	result[cur_res_rows[0]] = 1, cur_res_rows
+						# else:
+						# 	result[cur_res_rows[0]][0] += 1
+						# 	total += int(cur_res_rows[4])
+					except Exception as e:
+						connection.rollback()
+						flash(f"error in shopping cart product num {cur_id}", "error")
+						return redirect(url_for('shopping_cart'))
+					
+				# commit when finish the loop
+				connection.commit()
+				
+				session["cart-items"] = result
+				session["total"] = total
+				return redirect(url_for('shopping_cart'))
 			
 	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))
+
+
+# @app.route('/update_cart', methods=['GET', 'POST'])
+# def update_cart():
+# 	result = session.get("cart-items")
+# 	if request.method == "POST":
+# 		print(request.form)
+# 		del result[request.form["deleted-id"]]
+# 		session["cart-items"] = result
+# 		print(result)
+# 		return redirect(url_for('shopping_cart'))
+# 	customer = True
+# 	if current_user.is_authenticated and current_user.role == "admin":
+# 		customer = False
+# 		flash("عربة التسوق فقط للزبائن", category="warning")
+# 		return redirect(url_for('admin_profile'))
+#
+# 	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))
 
 
 @app.errorhandler(404)
@@ -573,7 +612,7 @@ def save_customer_func(form):
 			# successfully registered
 			flash("Succes", 'success')
 		except Exception as e:
-			print(e)
+			# print(e)
 			connection.rollback()
 			# failed to register
 			flash("Error: " + str(e), 'error')
@@ -587,3 +626,4 @@ if __name__ == "__main__":
 	# create_table()
 	# print(app.url_map)
 	app.run(host="0.0.0.0", debug=True)
+	
