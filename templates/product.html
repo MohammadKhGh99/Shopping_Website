@@ -101,43 +101,50 @@
         {% if customer %}
           <script>
             const addToCartButton = document.getElementById("add-to-cart-button");
-            const counter1 = document.getElementsByClassName("counter")[0];
+            // const counter1 = document.getElementsByClassName("counter")[0];
             addToCartButton.setAttribute("onclick", "AddToCart()");
 
-            // if (localStorage.getItem("cartCounter") !== "0") {
-            //     localStorage.setItem("cartCounter", counter1.textContent);
-            // }
-            // console.log(counter1.textContent);
             function AddToCart() {
-                const itemsLeft = document.getElementById("items-left");
+                // let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+                // if (retrievedArray === null) {
+                //     localStorage.setItem("cartItems", "{}");
+                //     retrievedArray = {};
+                // }
+
+                // checking if the user has already put the maximum number of items from this product in cart
+                const itemsLeft = document.querySelector("#items-left b");
+                console.log("items left:" + itemsLeft.textContent);
                 if (parseInt(itemsLeft.textContent) === 0) {
-                    window.alert("No Items Left");
+                    window.alert("لا يوجد المزيد من هذا المنتج");
                     console.log("No Items Left");
                     return;
+                } else if (parseInt(itemsLeft.textContent) < parseInt(retrievedArray["{{result[0]}}"]) + 1) {
+                    window.alert(`يمكنك إضافة فقط ${itemsLeft.textContent} من هذا المنتج`);
+                    return;
                 }
-                counter1.textContent = (parseInt(counter1.textContent) + 1).toString();
-                localStorage.setItem("cartCounter", counter1.textContent);
+                console.log("before " + parseInt(retrievedArray["{{result[0]}}"]));
+                console.log("product retrieve array:" + JSON.stringify(retrievedArray));
 
-                let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
-                if (retrievedArray === null) {
-                    localStorage.setItem("cartItems", "{}");
-                    retrievedArray = {};
-                }
+                // increment the shopping cart counter
+                const newCounter = parseInt(counter.textContent) + 1;
+                counter.textContent = newCounter.toString();
+                localStorage.setItem("cartCounter", counter.textContent);
+
+                // checking if there is already items from the current product
                 if (retrievedArray["{{result[0]}}"] === undefined) {
                     retrievedArray["{{result[0]}}"] = "1";
                 } else {
-                    retrievedArray["{{result[0]}}"] = (parseInt(retrievedArray["{{result[0]}}"]) + 1).toString();
+                    // increment the current amount of items from this product
+                    const newItemCounter = parseInt(retrievedArray["{{result[0]}}"]) + 1;
+                    retrievedArray["{{result[0]}}"] = newItemCounter.toString();
                 }
-                console.log(JSON.stringify(retrievedArray));
                 // retrievedArray[retrievedArray.length] = "{{result[0]}}";
+                // store the changed cart items array
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
 
-                const cartItems = document.getElementById("cartItems");
-                cartItems.value = retrievedArray;
-                // const myForm = document.getElementById("cart-form");
-                // myForm.addEventListener("submit", (event) => {
-                //    event.preventDefault();
-                // });
+                // const cartItems = document.getElementById("cart-items-input");
+                // cartItems.value = localStorage.getItem("cartItems");
+
             }
 
           </script>
@@ -145,7 +152,8 @@
 
         <br>
         <span id="items-left">
-          الكمية المتبقية: {{result[5]}}
+          الكمية المتبقية:
+          <b>{{result[5]}}</b>
         </span>
         <p>
           {{result[6]}}

@@ -257,8 +257,8 @@ def orders():
 	return redirect(url_for('profile'))
 
 
-@app.route('/<name>/<ptype>')
-def product(ptype, name):
+@app.route('/<ptype>/<name>/<id_num>')
+def product(ptype, name, id_num):
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
@@ -266,7 +266,7 @@ def product(ptype, name):
 		cursor = connection.cursor()
 		take_product = f"""
 		select * from Products
-		where name = '{name}'
+		where id_number = {id_num}
 		"""
 		res_rows = cursor.execute(take_product)
 		
@@ -499,11 +499,7 @@ def contact_us():
 def shopping_cart():
 	result = session.get("cart-items")
 	total = session.get("total")
-	# print(result)
-	if total is None:
-		total = 0
-	else:
-		total = int(total)
+	
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
@@ -511,29 +507,31 @@ def shopping_cart():
 		return redirect(url_for('admin_profile'))
 	
 	if request.method == 'POST':
-		for id_num, item in result.items():
-			print(request.form)
-			if f"select{id_num}" in request.form.keys() and request.form[f"select{id_num}"] != "":
-				result[id_num] = (request.form[f"select{id_num}"], result[id_num][1])
-		session["cart-items"] = result
-		session["total"] = 0
-		for id_num, item in result.items():
-			session["total"] += int(item[0]) * int(item[1][4])
-			
-		if "deleted-id" in request.form.keys() and request.form["deleted-id"] != "":
-			# we deleted some cart items
-			cur = result[request.form["deleted-id"]]
-			session["total"] -= cur[0] * cur[1][4]
-			del result[request.form["deleted-id"]]
-			session["cart-items"] = result
-			return redirect(url_for('shopping_cart'))
-		elif "cart-items-input" in request.form.keys() and request.form["cart-items-input"] != "":
+		# for id_num, item in result.items():
+		# 	if f"select{id_num}" in request.form.keys() and request.form[f"select{id_num}"] != "":
+		# 		result[id_num] = (request.form[f"select{id_num}"], result[id_num][1])
+		# session["cart-items"] = result
+		# session["total"] = 0
+		# for id_num, item in result.items():
+		# 	session["total"] += int(item[0]) * int(item[1][4])
+		#
+		# if "deleted-id" in request.form.keys() and request.form["deleted-id"] != "":
+		# 	# we deleted some cart items
+		# 	cur = result[request.form["deleted-id"]]
+		# 	session["total"] -= cur[0] * cur[1][4]
+		# 	del result[request.form["deleted-id"]]
+		# 	session["cart-items"] = result
+		# 	return redirect(url_for('shopping_cart'))
+		# el
+		
+		if "cart-items-input" in request.form.keys() and request.form["cart-items-input"] != "":
 			total = 0
 			cart_items = {}
-			# print(request.form['cart-items-input'])
-			for item in request.form['cart-items-input'][1:-1].replace("\"", "").split(","):
-				tmp = item.split(":")
-				cart_items[int(tmp[0])] = tmp[1]
+			print(request.form)
+			if request.form['cart-items-input'] != "{}":
+				for item in request.form['cart-items-input'][1:-1].replace("\"", "").split(","):
+					tmp = item.split(":")
+					cart_items[int(tmp[0])] = tmp[1]
 			# cart_items = [int(x) for x in request.form['cart-items-input'][1:-1].replace("\"", "").split(",")]
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
@@ -549,11 +547,6 @@ def shopping_cart():
 						# if there is already the same item in the cart
 						result[cur_id] = (quantity, cur_res_rows)
 						total += int(cur_res_rows[4]) * int(quantity)
-						# if cur_res_rows[0] not in result.keys():
-						# 	result[cur_res_rows[0]] = 1, cur_res_rows
-						# else:
-						# 	result[cur_res_rows[0]][0] += 1
-						# 	total += int(cur_res_rows[4])
 					except Exception as e:
 						connection.rollback()
 						flash(f"error in shopping cart product num {cur_id}", "error")
@@ -564,6 +557,7 @@ def shopping_cart():
 				
 				session["cart-items"] = result
 				session["total"] = total
+				print("cart items: " + str(result))
 				return redirect(url_for('shopping_cart'))
 			
 	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))

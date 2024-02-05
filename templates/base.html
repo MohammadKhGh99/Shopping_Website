@@ -46,9 +46,7 @@
             search
           </span>
         </button>
-
       </div>
-
 
       <div id="menu">
         <span id="overlay" onclick="closeMenu(true, true)"></span>
@@ -124,6 +122,7 @@
           <div class="shopping-cart" onclick="GoShoppingCart()" title="السلة" style="display: inline-block; width: 30px; height: 30px; cursor: pointer;">
             <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart')}}">
               <input style="display: none" id="cart-items-input" name="cart-items-input">
+              <input style="display: none" id="cart-update" name="cart-update" value="no">
 
             </form>
             <span class="material-symbols-outlined shopping-cart-icon">
@@ -149,6 +148,7 @@
 <!--      </li>-->
 <!--    </ul>-->
 <!--  </nav>-->
+
   {% for message in get_flashed_messages(category_filter=["success"]) %}
     <div class="flash-message" role="alert" style="color: lawngreen; text-align: center">
       <h2>
@@ -187,6 +187,36 @@
       </h2>
     </div>
   {% endfor %}
+
+  {% if customer %}
+    <script>
+        document.getElementById("cart-update").value = "No";
+
+        // define cart counter in localStorage if not defined
+        let counter = document.getElementsByClassName("counter")[0];
+        if (localStorage.getItem("cartCounter") === null) {
+            localStorage.setItem("cartCounter", "0");
+        }
+        // put the content of the counter as the stored counter value
+        counter.textContent = localStorage.getItem("cartCounter");
+
+        // define cart items in localStorage if not defined
+        if (localStorage.getItem("cartItems") === null) {
+            localStorage.setItem("cartItems", "{}");
+        }
+        // parse cartItems from localStorage as array to work with in the other html files
+        let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+
+        // localStorage.setItem("cartCounter", "0");
+        // localStorage.setItem("cartItems", "{}");
+
+        function GoShoppingCart() {
+            // get the current cart items and give it to input tag to give to python
+            document.getElementById("cart-items-input").value = localStorage.getItem("cartItems");
+            document.querySelector(".shopping-cart form").submit();
+        }
+    </script>
+  {% endif %}
 
   {% block lower_container %}
   {% endblock %}
@@ -277,41 +307,6 @@
         grandpa.removeChild(parent);
     }
   </script>
-
-  {% if customer %}
-    <script>
-      const counter = document.getElementsByClassName("counter")[0];
-      if (localStorage.getItem("cartCounter") !== "0") {
-          counter.textContent = localStorage.getItem("cartCounter");
-      } else {
-          localStorage.setItem("cartCounter", "0");
-      }
-
-      // localStorage.setItem("cartCounter", "0");
-      // localStorage.setItem("cartItems", "{}");
-
-
-
-      // if (localStorage.getItem("cartItems") !== "[]") {
-      //     counter.textContent = localStorage.getItem("cartCounter");
-      // } else {
-      //     localStorage.setItem("cartCounter", "0");
-      // }
-      function GoShoppingCart() {
-          const cartDiv = document.querySelector(".shopping-cart");
-          const cart_items = localStorage.getItem("cartItems");
-          console.log(cart_items);
-          document.getElementById("cart-items-input").value = cart_items;
-          cartDiv.querySelector("form").submit();
-      }
-
-      // const newHref = "{{url_for('shopping_cart', cart_items=" + cart_items + ")}}";
-      // cartDiv.href = newHref;
-      // console.log(newHref);
-      // cartDiv.addEventListener("click", function () {
-      // });
-    </script>
-  {% endif %}
 
 </body>
 </html>

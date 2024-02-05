@@ -175,10 +175,9 @@
     {% endblock %}
 
     {% block lower_container %}
-<!--    <br>-->
     <products class="products">
       {% for prod in products %}
-      <a href="{{url_for('product', name=prod[1], ptype=prod[2])}}" style="text-decoration: none; color: black">
+      <a href="{{url_for('product', name=prod[1], ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
             <img src="../{{prod[3]}}" alt="product">
@@ -197,7 +196,6 @@
       {% endfor %}
     </products>
   </div>
-<!--  <br>-->
   {% endblock %}
 
 </body>
