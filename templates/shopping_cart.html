@@ -138,12 +138,6 @@
                 document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}");
             </script>
           </select>
-<!--          </form>-->
-<!--          <button onclick="DeleteCartItem(this)">-->
-<!--            <span class="material-symbols-outlined">-->
-<!--              delete-->
-<!--            </span>-->
-<!--          </button>-->
         </div>
         <br>
         <button onclick="toggleUpdate()">
@@ -160,20 +154,22 @@
 
   <br>
   <div id="cart-total-price">
-      <span id="total-price">
-        المجموع الكلي:
-        <b>{{total}}</b>
-        ₪
-      </span>
+    <span id="total-price">
+      المجموع الكلي:
+      <b>{{total}}</b>
+      ₪
+    </span>
     <br>
     <span>
-        غير شامل التوصيل, سعر التوصيل يُحسب في الصفحة القادمة
-      </span>
+      غير شامل التوصيل, سعر التوصيل يُحسب في الصفحة القادمة
+    </span>
   </div>
   <br>
   <div id="cart-footer">
     <button id="checkout" onclick="InfoBeforeCheckout()">
-      لإتمام الطلب
+      <a href="{{url_for('checkout')}}">
+        لإتمام الطلب
+      </a>
     </button>
   </div>
   <br>

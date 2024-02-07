@@ -42,7 +42,9 @@ with open("static/Books_Publishers.txt", encoding="utf8") as f:
 # with open("static/Books_Others.txt", encoding="utf8") as f:
 #     other = f.readlines()
 
-
+ADMIN = 1
+REGISTERED = 2
+GUEST = 3
 NO_ACCOUNTS = True
 
 
@@ -80,16 +82,27 @@ class User(UserMixin):
 @app.route('/home')
 def home():
 	customer = True
+	# role = GUEST
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
 	return render_template('home.html', customer=customer)
 
 
 @app.route('/books')
 def books():
 	customer = True
+	# role = GUEST
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
+			
 	with sqlite3.connect("Shopping.db") as connection:
 		cursor = connection.cursor()
 		try:
@@ -128,9 +141,15 @@ def load_user(user_id):
 
 @app.route('/clothes')
 def clothes():
+	# role = GUEST
 	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
+			
 	return render_template('clothes.html', products=clothes_lst, customer=customer)
 
 
@@ -175,9 +194,13 @@ def login():
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
 	
-	customer = True
+	# role = GUEST
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
 	# flash("خطأ في تسجيل الدخول, إحدى الخانات تحتاج للتعديل", category="warning")
 	# print("login")
 	return render_template('login.html', customer=customer)
@@ -242,8 +265,15 @@ def profile():
 @app.route('/admin_profile', methods=['GET', 'POST'])
 @login_required
 def admin_profile():
-	if current_user.role == "admin":
+	# role = GUEST
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
+			
 		return render_template('admin_profile.html', current_user=current_user, customer=customer)
 	return redirect(url_for('profile'))
 
@@ -251,8 +281,14 @@ def admin_profile():
 @app.route('/admin_profile/orders', methods=['GET', 'POST'])
 @login_required
 def orders():
-	if current_user.role == "admin":
+	# role = GUEST
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+		# if current_user.role == "admin":
+		# 	role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
 		return render_template('orders.html', customer=customer)
 	return redirect(url_for('profile'))
 
@@ -260,8 +296,13 @@ def orders():
 @app.route('/<ptype>/<name>/<id_num>')
 def product(ptype, name, id_num):
 	customer = True
-	if current_user.is_authenticated and current_user.role == "admin":
-		customer = False
+	if current_user.is_authenticated:
+		if current_user.role == "admin":
+			customer = False
+			# role = ADMIN
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
+			
 	with sqlite3.connect('Shopping.db') as connection:
 		cursor = connection.cursor()
 		take_product = f"""
@@ -281,8 +322,13 @@ def product(ptype, name, id_num):
 @app.route('/admin_profile/products', methods=['GET', 'POST'])
 @login_required
 def products():
-	if current_user.role == "admin":
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
+		# role = ADMIN
 		customer = False
+		# elif current_user.role == "registered":
+		# 	role = REGISTERED
+			
 		return render_template('products.html', customer=customer)
 	return redirect(url_for('profile'))
 
@@ -294,8 +340,10 @@ def add_product():
 	name = request.args.get('name')
 	ptype = request.args.get('ptype')
 	
-	if current_user.role == "admin":
+	customer = True
+	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
+	
 		if request.method == "POST":
 			product_name = request.form['product-name']
 			product_type = request.form['product-type']
@@ -547,9 +595,23 @@ def shopping_cart():
 						# if there is already the same item in the cart
 						result[cur_id] = (quantity, cur_res_rows)
 						total += int(cur_res_rows[4]) * int(quantity)
+						
+						# cursor.execute(f"""
+						# if not exists (select 1 from Cart_Items where product_id = {cur_id})
+						# begin
+						# 	insert into Cart_Items (product_id, amount, total_price)
+						# 	values({cur_id}, {int(quantity)}, {int(quantity) * int(cur_res_rows[4])}
+						# end
+						# else
+						# begin
+						# 	update Cart_Items
+						# 	set amount = {int(quantity)}, total_price = {int(quantity) * int(cur_res_rows[4])}
+						# 	where product_id = {cur_id}
+						# end;
+						# """)
 					except Exception as e:
 						connection.rollback()
-						flash(f"error in shopping cart product num {cur_id}", "error")
+						flash(f"error in shopping cart product num {cur_id} " + str(e), "error")
 						return redirect(url_for('shopping_cart'))
 					
 				# commit when finish the loop
@@ -563,55 +625,29 @@ def shopping_cart():
 	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))
 
 
-# @app.route('/update_cart', methods=['GET', 'POST'])
-# def update_cart():
-# 	result = session.get("cart-items")
-# 	if request.method == "POST":
-# 		print(request.form)
-# 		del result[request.form["deleted-id"]]
-# 		session["cart-items"] = result
-# 		print(result)
-# 		return redirect(url_for('shopping_cart'))
-# 	customer = True
-# 	if current_user.is_authenticated and current_user.role == "admin":
-# 		customer = False
-# 		flash("عربة التسوق فقط للزبائن", category="warning")
-# 		return redirect(url_for('admin_profile'))
-#
-# 	return render_template('shopping_cart.html', customer=customer, cart_items=session.get("cart-items"), total=session.get("total"))
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+	customer = True
+	cart_items = session.get("cart_items")
+	total = session.get("total")
+	if request.method == "POST":
+		print(request.form)
+		first_name = request.form['customer-first-name']
+		last_name = request.form['customer-last-name']
+		city = request.form['customer-city']
+		address = request.form['customer-address']
+		email = request.form['customer-email']
+		phone = request.form['customer-phone']
+		backup_phone = request.form['customer-backup-phone']
+		role = "guest"
+		cart_items = session.get("cart-items")
+		
+	return render_template('checkout.html', cities=cities, customer=customer, total=total)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
 	return render_template('page_not_found.html'), 404
-
-
-def save_customer_func(form):
-	first_name = form['customer-first-name']
-	last_name = form['customer-last-name']
-	city = form['customer-city']
-	address = form['customer-address']
-	phone_number = form['customer-phone']
-	backup_phone = form['customer-backup-phone']
-	password = form['customer-password']
-	with sqlite3.connect("Shopping.db") as connection:
-		cursor = connection.cursor()
-		try:
-			cursor.execute(
-				"INSERT INTO Customers "
-				"VALUES(?, ?, ?, ?, ?, ?, ?)",
-				(phone_number, first_name, last_name, city, address, backup_phone, password)
-			)
-			connection.commit()
-			# successfully registered
-			flash("Succes", 'success')
-		except Exception as e:
-			# print(e)
-			connection.rollback()
-			# failed to register
-			flash("Error: " + str(e), 'error')
-			return False
-	return True
 
 
 if __name__ == "__main__":

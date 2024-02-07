@@ -37,22 +37,44 @@ def create_table():
 	
 	orders_table = """
 	create table if not exists Orders(
-		order_id integer primary key autoincrement,
+		id_number integer primary key autoincrement,
+		customer_id integer,
+		cart_item_id integer,
+		customer_first_name nvarchar(15),
+		customer_last_name nvarchar(15),
+		role nvarchar(10),
+		city nvarchar(20),
+		address nvarchar(50),
+		backup_phone nvarchar(10),
 		customer_phone_number char(10),
-		order_date datetime default now(),
+		order_date datetime,
 		total_amount int,
-		status nvarchar(100),
-		fk_customer_id_number foreign key integer references Customers(id_number),
-		fk_product_id_number foreign key integer references Products(id_number)
+		status nvarchar(100)
+	)
+	"""
+	
+	# ,
+	# 		fk_customer_id_number foreign key integer references Customers(id_number),
+	# 		fk_product_id_number foreign key integer references Products(id_number)
+	
+	cart_items_table = """
+	create table if not exists Cart_Items (
+		product_id integer primary key,
+		order_id integer,
+		amount int,
+		total_price int,
+		foreign key (product_id) references Products(id_number),
+		foreign key (order_id) references Orders(id_number)
 	)
 	"""
 	
 	guests_table = """
 	create table if not exists Guests(
-		id_number integer primary key autoincrement
-		phone_number char(10) primary key,
+		id_number integer primary key autoincrement,
+		phone_number char(10),
 		first_name nvarchar(15),
 		last_name nvarchar(15),
+		role nvarchar(10),
 		date_joined nvarchar(20),
 		city nvarchar(20),
 		address nvarchar(50),
@@ -92,11 +114,12 @@ def create_table():
 	with sqlite3.connect(database="Shopping.db") as connection:
 		cursor = connection.cursor()
 		try:
-			cursor.execute(customers_table)
-			# cursor.execute(guests_table)
+			# cursor.execute(customers_table)
+			cursor.execute(guests_table)
 			# cursor.execute(orders_table)
+			# cursor.execute(cart_items_table)
 			
-			cursor.execute(products_table)
+			# cursor.execute(products_table)
 			connection.commit()
 		except Exception as e:
 			print(e)
