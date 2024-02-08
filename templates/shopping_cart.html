@@ -80,6 +80,18 @@
 
   }
 
+  #checkout-button {
+    /*width: 100%;*/
+    background-color: #cce5ff;
+    font-family: "Traditional Arabic",serif;
+    border: 0;
+    cursor: pointer;
+    margin-right: 2px;
+  }
+
+  #checkout-button:hover {
+    background-color: #e5e5e5;
+  }
 
 </style>
 
@@ -166,8 +178,8 @@
   </div>
   <br>
   <div id="cart-footer">
-    <button id="checkout" onclick="InfoBeforeCheckout()">
-      <a href="{{url_for('checkout')}}">
+    <button id="checkout-button" onclick="InfoBeforeCheckout()">
+      <a href="{{url_for('checkout')}}" style="text-decoration: none;">
         لإتمام الطلب
       </a>
     </button>

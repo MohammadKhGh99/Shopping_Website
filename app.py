@@ -637,10 +637,29 @@ def checkout():
 		city = request.form['customer-city']
 		address = request.form['customer-address']
 		email = request.form['customer-email']
-		phone = request.form['customer-phone']
+		phone_number = request.form['customer-phone']
 		backup_phone = request.form['customer-backup-phone']
 		role = "guest"
 		cart_items = session.get("cart-items")
+		
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			adding_order = ""
+			if role == "guest":
+				adding_order = f"""
+				insert to table Orders(customer_first_name, customer_last_name, role, city, address, email, backup_number, customer_phone_number, order_date, total_amount, status, cart_items})
+				values({first_name}, {last_name}, {role}, {city}, {address}, {backup_phone}, {phone_number}, {datetime.datetime.now()}, {total_amount}, {status}, {cart_items})
+				"""
+			try:
+				cursor.execute(adding_order)
+				
+				
+				connection.commit()
+				return render_template("order_approved.html")
+			except Exception as e:
+				connection.rollback()
+				flash(f"error in checkout, error= " + str(e), "error")
+				return redirect(url_for('checkout'))
 		
 	return render_template('checkout.html', cities=cities, customer=customer, total=total)
 

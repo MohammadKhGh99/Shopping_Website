@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>order approved</title>
+</head>
+
+<style>
+  #approve-order-button {
+    /*width: 100%;*/
+    background-color: #cce5ff;
+    font-family: "Traditional Arabic",serif;
+    border: 0;
+    cursor: pointer;
+    margin-right: 2px;
+  }
+
+  #approve-order-button:hover {
+    background-color: #e5e5e5;
+  }
+</style>
+
+<body>
+  {% extends "base.html" %}
+
+  {% block no_search %}hidden{% endblock %}
+
+  {% block lower_container %}
+  <div id="order-approved-container">
+    <h1>تم تأكيد الطلب</h1>
+    <button id="approve-order-button">
+      <a href="{{url_for('home')}}" style="text-decoration: none">
+        للذهاب للصفحة الرئيسية
+      </a>
+    </button>
+  </div>
+  {% endblock %}
+
+
+</body>
+</html>
