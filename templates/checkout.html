@@ -64,7 +64,7 @@
     <h3>
       الرجاء إدخال معلومات الشحن الخاصة بك
     </h3>
-    <form>
+    <form method="post">
       <div class="field-holder" >
         <label for="customer-first-name" class="input_label">الاسم الأول</label><br>
         <input type="text" id="customer-first-name" class="input_field" name="customer-first-name" autocomplete="given-name" required>
@@ -102,9 +102,9 @@
         <span>
           المجموع الكلي:
           <b>{{total}}</b> ₪
-          <span style="display: none; font-size: 0.6em">
+          <span style="font-size: 0.6em">
             ({{total}} +
-            <b>25</b>
+            <b>0</b>
             رسوم شحن)
           </span>
         </span>
@@ -115,21 +115,25 @@
     </form>
   </div>
   <script>
-    function AddShipping() {
-        const totalPriceSpan = document.querySelector("#lower-checkout").children[0];
-        const totalPriceB = totalPriceSpan.querySelector("b");
-        const shippingSpan = totalPriceSpan.querySelector("span");
-        const shippingB = shippingSpan.querySelector("b");
-        let newTotal = parseInt(totalPriceB.textContent);
-        newTotal = parseInt("{{total}}") + 25;
-        totalPriceB.textContent = newTotal.toString();
-        // TODO - shipping value for each city
-        let newShippingValue = parseInt(shippingB.textContent);
-        newShippingValue = 25;
-        shippingB.textContent = newShippingValue.toString();
-        shippingSpan.style.display = "block";
+      const totalPriceSpan = document.querySelector("#lower-checkout").children[0];
+      const totalPriceB = totalPriceSpan.querySelector("b");
+      const shippingSpan = totalPriceSpan.querySelector("span");
+      const shippingB = shippingSpan.querySelector("b");
+      const cityInput = document.getElementById("customer-city");
+      if (cityInput.value !== "اختر مدينة") {
+          console.log("hio");
+          AddShipping();
+      }
 
-    }
+      function AddShipping() {
+          let newTotal = parseInt("{{total}}") + 25;
+          totalPriceB.textContent = newTotal.toString();
+          // TODO - shipping value for each city
+          let newShippingValue = parseInt(shippingB.textContent);
+          newShippingValue = 25;
+          shippingB.textContent = newShippingValue.toString();
+          // shippingSpan.style.display = "block";
+      }
   </script>
   {% endblock %}
 

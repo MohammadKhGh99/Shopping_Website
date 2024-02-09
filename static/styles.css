@@ -660,16 +660,16 @@ footer div hr {
   display: none;
 }
 
-footer div a {
+footer div a, #contact-us a {
   text-decoration: none;
 }
 
-footer div iconify-icon {
+footer div iconify-icon, #contact-us iconify-icon {
   color: black;
   padding: 7px 0;
 }
 
-footer div iconify-icon:hover {
+footer div iconify-icon, #contact-us iconify-icon:hover {
   color: white;
 }
 

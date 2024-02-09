@@ -40,16 +40,18 @@ def create_table():
 		id_number integer primary key autoincrement,
 		customer_id integer,
 		cart_item_id integer,
-		customer_first_name nvarchar(15),
-		customer_last_name nvarchar(15),
+		customer_first_name nvarchar(20),
+		customer_last_name nvarchar(20),
 		role nvarchar(10),
 		city nvarchar(20),
 		address nvarchar(50),
+		email varchar(100),
 		backup_phone nvarchar(10),
 		customer_phone_number char(10),
 		order_date datetime,
 		total_amount int,
-		status nvarchar(100)
+		status nvarchar(100),
+		cart_items varchar(150)
 	)
 	"""
 	
@@ -115,8 +117,8 @@ def create_table():
 		cursor = connection.cursor()
 		try:
 			# cursor.execute(customers_table)
-			cursor.execute(guests_table)
-			# cursor.execute(orders_table)
+			# cursor.execute(guests_table)
+			cursor.execute(orders_table)
 			# cursor.execute(cart_items_table)
 			
 			# cursor.execute(products_table)

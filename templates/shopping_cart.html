@@ -80,7 +80,7 @@
 
   }
 
-  #checkout-button {
+  .shopping-cart-buttons {
     /*width: 100%;*/
     background-color: #cce5ff;
     font-family: "Traditional Arabic",serif;
@@ -89,8 +89,13 @@
     margin-right: 2px;
   }
 
-  #checkout-button:hover {
+  .shopping-cart-buttons:hover {
     background-color: #e5e5e5;
+  }
+
+  .shopping-cart-buttons a {
+    text-decoration: none;
+    color: black;
   }
 
 </style>
@@ -152,7 +157,7 @@
           </select>
         </div>
         <br>
-        <button onclick="toggleUpdate()">
+        <button class="shopping-cart-buttons" onclick="toggleUpdate()">
           تعديل السلة
         </button>
       </td>
@@ -178,8 +183,8 @@
   </div>
   <br>
   <div id="cart-footer">
-    <button id="checkout-button" onclick="InfoBeforeCheckout()">
-      <a href="{{url_for('checkout')}}" style="text-decoration: none;">
+    <button class="shopping-cart-buttons" onclick="InfoBeforeCheckout()">
+      <a href="{{url_for('checkout')}}">
         لإتمام الطلب
       </a>
     </button>
@@ -188,6 +193,11 @@
   </div>
 
   <script>
+      console.log(localStorage.getItem("cartItems"));
+      if (localStorage.getItem("cartItems") === "{}") {
+          console.log("hi");
+          document.getElementById("cart-footer").style.display = "none";
+      }
       function DeleteCartItem(button) {
           // the wanted tag to remove from cart
           const toDelete = button.parentNode.parentNode.parentNode;
