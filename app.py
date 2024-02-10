@@ -169,12 +169,12 @@ def login():
                 """
 			res_rows = cursor.execute(check_user_existence)
 			res_rows = res_rows.fetchall()
-			# todo - in this time we have just admins
-			if res_rows[0][4] != "admin":
-				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
-				return redirect(url_for('home'))
 			
 			if len(res_rows) == 1:
+				# todo - in this time we have just admins
+				if res_rows[0][4] != "admin":
+					flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
+					return redirect(url_for('home'))
 				if bcrypt.check_password_hash(res_rows[0][-1], password):
 					user = load_user(res_rows[0][0])
 					# print(user.is_active)
@@ -187,14 +187,18 @@ def login():
 			
 			# return render_template("logged_in.html")
 			else:
-				flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
-				return redirect(url_for('register'))
+				# todo - in this time we have just admins
+				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
+				return redirect(url_for('home'))
+				# flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
+				# return redirect(url_for('register'))
 	if current_user.is_authenticated:
 		if current_user.role == "admin":
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
 	
 	# role = GUEST
+	customer = True
 	if current_user.is_authenticated and current_user.role == "admin":
 		customer = False
 	# if current_user.role == "admin":
@@ -556,23 +560,6 @@ def shopping_cart():
 		return redirect(url_for('admin_profile'))
 	
 	if request.method == 'POST':
-		# for id_num, item in result.items():
-		# 	if f"select{id_num}" in request.form.keys() and request.form[f"select{id_num}"] != "":
-		# 		result[id_num] = (request.form[f"select{id_num}"], result[id_num][1])
-		# session["cart-items"] = result
-		# session["total"] = 0
-		# for id_num, item in result.items():
-		# 	session["total"] += int(item[0]) * int(item[1][4])
-		#
-		# if "deleted-id" in request.form.keys() and request.form["deleted-id"] != "":
-		# 	# we deleted some cart items
-		# 	cur = result[request.form["deleted-id"]]
-		# 	session["total"] -= cur[0] * cur[1][4]
-		# 	del result[request.form["deleted-id"]]
-		# 	session["cart-items"] = result
-		# 	return redirect(url_for('shopping_cart'))
-		# el
-		
 		if "cart-items-input" in request.form.keys() and request.form["cart-items-input"] != "":
 			total = 0
 			cart_items = {}
@@ -581,7 +568,6 @@ def shopping_cart():
 				for item in request.form['cart-items-input'][1:-1].replace("\"", "").split(","):
 					tmp = item.split(":")
 					cart_items[int(tmp[0])] = tmp[1]
-			# cart_items = [int(x) for x in request.form['cart-items-input'][1:-1].replace("\"", "").split(",")]
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
 				result = {}
@@ -671,7 +657,31 @@ def checkout():
 				connection.rollback()
 				flash(f"error in checkout, error= " + str(e), "error")
 				return redirect(url_for('checkout'))
-	
+	if request.method == "GET":
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			# check if every item in cart we have the enough amount to sell to customer
+			for id_num, (quantity, item) in cart_items.items():
+				try:
+					cursor.execute(f"""
+					select * from Products
+					where id_number = {id_num}
+					""")
+					res_row = cursor.fetchone()
+					if res_row is None:
+						raise Exception("there is no product like this")
+					if quantity <= res_row[5]:
+						# we have the enough amount to sell
+						continue
+					else:
+						# we don't have the enough amount to sell
+						flash(f"لا يوجد كمية كافية من المنتج {item[1]}", "warning")
+						raise Exception("there is no enough amount to sell for you")
+					
+				except Exception as e:
+					connection.rollback()
+					flash(f"error in checkout, error= " + str(e), "error")
+					return redirect(url_for('checkout'))
 	return render_template('checkout.html', cities=cities, customer=customer, total=total)
 
 
