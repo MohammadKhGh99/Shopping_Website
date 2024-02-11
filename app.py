@@ -190,8 +190,8 @@ def login():
 				# todo - in this time we have just admins
 				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
 				return redirect(url_for('home'))
-				# flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
-				# return redirect(url_for('register'))
+		# flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
+		# return redirect(url_for('register'))
 	if current_user.is_authenticated:
 		if current_user.role == "admin":
 			return redirect(url_for('admin_profile'))
@@ -614,8 +614,9 @@ def shopping_cart():
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-	if current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
+	if type(current_user) is UserMixin and current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
 		return redirect(url_for('shopping_cart'))
+	
 	customer = True
 	cart_items = session.get("cart_items")
 	total = session.get("total")
@@ -628,6 +629,7 @@ def checkout():
 		email = request.form['customer-email'].strip()
 		phone_number = request.form['customer-phone'].strip()
 		backup_phone = request.form['customer-backup-phone'].strip()
+		# todo - guest and registered
 		role = "guest"
 		status = "تم الدفع"
 		total_amount = session.get("total")
@@ -639,28 +641,6 @@ def checkout():
 		
 		with sqlite3.connect("Shopping.db") as connection:
 			cursor = connection.cursor()
-			try:
-				# todo - add registered customer
-				if role == "guest":
-					cursor.execute("""
-						insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-						values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-						""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased,
-					          total_amount, status, str(cart_items))
-					               )
-				
-				connection.commit()
-				session["total"] = 0
-				session["cart-items"] = {}
-				return render_template("order_approved.html", customer=customer)
-			except Exception as e:
-				connection.rollback()
-				flash(f"error in checkout, error= " + str(e), "error")
-				return redirect(url_for('checkout'))
-	if request.method == "GET":
-		with sqlite3.connect("Shopping.db") as connection:
-			cursor = connection.cursor()
-			# check if every item in cart we have the enough amount to sell to customer
 			for id_num, (quantity, item) in cart_items.items():
 				try:
 					cursor.execute(f"""
@@ -669,19 +649,38 @@ def checkout():
 					""")
 					res_row = cursor.fetchone()
 					if res_row is None:
-						raise Exception("there is no product like this")
-					if quantity <= res_row[5]:
+						raise Exception(f"لا يوجد منتج بإسم {item[1]}")
+					if int(quantity) <= res_row[5]:
 						# we have the enough amount to sell
+						cursor.execute(f"""
+						update Products
+						set items_left = items_left - {quantity}
+						where id_number = {id_num}
+						""")
 						continue
 					else:
 						# we don't have the enough amount to sell
 						flash(f"لا يوجد كمية كافية من المنتج {item[1]}", "warning")
-						raise Exception("there is no enough amount to sell for you")
-					
+						raise Exception(f"لا يوجد كمية كافية من المنتج {item[1]}")
 				except Exception as e:
 					connection.rollback()
 					flash(f"error in checkout, error= " + str(e), "error")
 					return redirect(url_for('checkout'))
+			
+			session["total"] = 0
+			session["cart-items"] = {}
+			
+			# store the order in Orders SQL table
+			cursor.execute("""
+			insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+			values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			""", (
+			first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items))
+			               )
+			connection.commit()
+		
+		return render_template("order_approved.html", customer=customer)
+
 	return render_template('checkout.html', cities=cities, customer=customer, total=total)
 
 
