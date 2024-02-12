@@ -11,12 +11,6 @@
     padding: 20px 20px 20px 20px;
   }
 
-  cart-items {
-    display: flex;
-    flex-direction: column;
-    border-top: 2px solid #e5e5e5;
-  }
-
   #item-handle button {
     width: 30px;
     height: 30px;
@@ -115,7 +109,7 @@
   <h2 style="text-align: center">عربة التسوق</h2>
   <table>
     <tr>
-      <th style="width: 25%"></th>
+      <th>صورة المنتج</th>
       <th>
         إسم المنتج
       </th>
@@ -183,7 +177,7 @@
   </div>
   <br>
   <div id="cart-footer">
-    <button class="shopping-cart-buttons" onclick="InfoBeforeCheckout()">
+    <button class="shopping-cart-buttons">
       <a href="{{url_for('checkout')}}">
         لإتمام الطلب
       </a>
@@ -276,9 +270,6 @@
 
       function toggleUpdate() {
           document.querySelector(".shopping-cart form").submit();
-      }
-
-      function InfoBeforeCheckout() {
       }
   </script>
 

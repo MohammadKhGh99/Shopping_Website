@@ -293,7 +293,24 @@ def orders():
 		# 	role = ADMIN
 		# elif current_user.role == "registered":
 		# 	role = REGISTERED
-		return render_template('orders.html', customer=customer)
+		with sqlite3.connect('Shopping.db') as connection:
+			cursor = connection.cursor()
+			try:
+				cursor.execute("""
+				select * from Orders
+				""")
+				orders_result = cursor.fetchall()
+				connection.commit()
+			except Exception as e:
+				connection.rollback()
+				flash("problem with retrieving orders from database, error: " + str(e), "error")
+				return redirect(url_for('admin_profile'))
+		# all_orders = [convert_str_to_dic(order[-1]) for order in orders_result]
+		all_orders = []
+		for order in orders_result:
+			# print(order)
+			all_orders.append(order[:-1] + (convert_str_to_dic(order[-1]),))
+		return render_template('orders.html', customer=customer, all_orders=all_orders)
 	return redirect(url_for('profile'))
 
 
@@ -580,7 +597,7 @@ def shopping_cart():
 						
 						cur_res_rows = cursor.fetchone()
 						# if there is already the same item in the cart
-						result[cur_id] = (quantity, cur_res_rows)
+						result[cur_id] = (int(quantity), cur_res_rows)
 						total += int(cur_res_rows[4]) * int(quantity)
 					
 					# cursor.execute(f"""
@@ -615,10 +632,10 @@ def shopping_cart():
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
 	if type(current_user) is UserMixin and current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
-		return redirect(url_for('shopping_cart'))
+		return redirect(url_for('home'))
 	
 	customer = True
-	cart_items = session.get("cart_items")
+	cart_items = session.get("cart-items")
 	total = session.get("total")
 	if request.method == "POST":
 		print(request.form)
@@ -630,8 +647,14 @@ def checkout():
 		phone_number = request.form['customer-phone'].strip()
 		backup_phone = request.form['customer-backup-phone'].strip()
 		# todo - guest and registered
+		# guest
+		# registered
+		# admin
 		role = "guest"
-		status = "تم الدفع"
+		# تم تجهيز الطلب
+		# الطلب في الطريق إليك
+		# تم توصيل الطلب
+		status = "تم تأكيد الطلب"
 		total_amount = session.get("total")
 		shipping = 25
 		total_amount = str(int(total_amount) + shipping)
@@ -682,6 +705,46 @@ def checkout():
 		return render_template("order_approved.html", customer=customer)
 
 	return render_template('checkout.html', cities=cities, customer=customer, total=total)
+
+
+# converting cart_items from Orders SQL table from string to dictionary to use it in creating orders page
+def convert_str_to_dic(string: str) -> dict:
+	keys = []
+	values = []
+	# string = "{'10': ('2', (10, 'كتاب1', 'كتب', 'static/images/books/10/product2.png', '30', 12, 'asdfghjk', '2000', 'مش أنا', 'قصص أطفال')), '9': ('3', (9, 'كتاب', 'كتب', 'static/images/books/9/product1.png', '50', 5, 'asd', '2022', 'أنا', 'روايات'))}"
+	tmp = string[1:-1].split(":")
+	ind = -1
+	for i, x in enumerate(tmp):
+		last_one = True
+		if i == 0:
+			keys.append(x[1:-1])
+		elif i != len(tmp) - 1:
+			ind = x.rindex(",")
+			keys.append(x[ind + 1:].strip()[1:-1])
+			last_one = False
+			
+		if i != 0:
+			if last_one:
+				value = x[:-1].strip().replace("\'", "")
+			else:
+				value = x[:ind].strip()[1:-1].replace("\'", "")
+			item = []
+			value = value[1:] if value[0] == "(" else value
+			indx = value.index(",")
+			# print(value)
+			tup = value[:indx].strip(), value[indx + 1:].strip()
+			for j, v in enumerate(tup[1][1:-1].split(",")):
+				if j == 0 or j == 5:
+					item.append(int(v.strip()))
+				else:
+					item.append(v.strip())
+			
+			value = int(tup[0]), tuple(item)
+			values.append(value)
+	
+	dic = {keys[i]: values[i] for i in range(len(keys))}
+	# print(dic)
+	return dic
 
 
 @app.errorhandler(404)
