@@ -10,6 +10,9 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
 # from flask_jsglue import JSGlue
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
 from database_handling import *
@@ -46,6 +49,23 @@ ADMIN = 1
 REGISTERED = 2
 GUEST = 3
 NO_ACCOUNTS = True
+
+# todo - sending updates emails
+# sender_email = "mohammad.gh454@gmail.com"
+# receiver_email = "m7md.gh.99@hotmail.com"
+# password = "vnmewijhnoedhjqc"
+# subject = "حتلنة عن طلب رقم "
+# body = "تم تغيير حالة الطلب الخاص بك إلى "
+# message = MIMEMultipart()
+# message["From"] = sender_email
+# message["To"] = receiver_email
+# message["Subject"] = subject
+# message.attach(MIMEText(body, "plain"))
+# with smtplib.SMTP("smtp.gmail.com", 587) as server:
+#     server.starttls()  # Start TLS encryption
+#     server.login(sender_email, password)
+#     text = message.as_string()
+#     server.sendmail(sender_email, receiver_email, text)
 
 
 class User(UserMixin):

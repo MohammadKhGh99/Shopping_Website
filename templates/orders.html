@@ -12,23 +12,24 @@
     align-items: center;
     flex-direction: column;
     padding: 20px 20px 20px 20px;
+    max-width: 100%;
   }
 
   #all-orders-table {
     /*border: 1px solid black;*/
     border-collapse: collapse;
-    font-size: 1em;
+    font-size: 0.9em;
+    max-width: 100%;
   }
 
-  /*.order-id-td, .order-total-td, .order-status-td {*/
-  /*  width: 10%;*/
-  /*  max-width: 10%;*/
-  /*}*/
+  #all-orders-table tr th {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
 
   .order-id-td, .order-total-td, .order-status-td {
     vertical-align: top;
     text-align: center;
-    /*padding: 0;*/
     padding: 10px 0 0 0;
   }
 
@@ -52,15 +53,15 @@
     /*max-height: 20%;*/
   }
 
-  .order-content table tr:not(:first-child) {
-    height: 100px;
+  /*.order-content table tr:not(:first-child) {*/
+  /*  height: 100px;*/
 
-  }
+  /*}*/
 
-  table, th, td {
+  .each-order-table{
     border: 1px solid black;
     border-collapse: collapse;
-    font-size: 1em;
+    font-size: 0.9em;
   }
 
   table {
@@ -69,13 +70,12 @@
   }
 
   td {
-    /*display: flex;*/
-    /*border: 0;*/
-    /*justify-content: center;*/
-    /*width: 100%;*/
     text-align: center;
     vertical-align: middle;
     padding: 10px 0 10px 0;
+    border: 1px solid black;
+    border-collapse: collapse;
+    /*font-size: 0.9em;*/
   }
 
   .each-order-table {
@@ -85,19 +85,15 @@
   .each-order-table td a {
     width: 100%;
     height: 100%;
-    /*max-width: 90%;*/
-    /*max-height: 90%;*/
     display: flex;
     justify-content: center;
     align-items: center;
-    /*margin: 13px 0 0 0;*/
     padding: 0;
   }
 
   td img {
     width: 100%;
     height: 100%;
-  /*  padding: 0;*/
   }
 
 </style>
@@ -161,7 +157,6 @@
               {{order[11]}}
             </span>
           </div>
-
         </td>
         <td class="order-content">
           <table class="each-order-table">
@@ -207,11 +202,11 @@
         <td class="order-status-td">
           <div id="status-container">
             <select disabled>
-              <option value="تم التأكيد">
-                تم التأكيد
+              <option value="تم تأكيد الطلب">
+                تم تأكيد الطلب
               </option>
-              <option value="تم التجهيز">
-                تم التجهيز
+              <option value="تم تجهيز الطلب">
+                تم تجهيز الطلب
               </option>
               <option value="الطلب في الطريق">
                 الطلب في الطريق
@@ -228,9 +223,18 @@
                   }
               </script>
             </select>
-            <button onclick="UpdateStatus(this)">
+            <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px">
               تعديل الحالة
             </button>
+            <span class="material-symbols-outlined order-shipped" style="display: none">
+              local_shipping
+            </span>
+            <span class="material-symbols-outlined order-approved" style="display: none">
+              order_approve
+            </span>
+            <span class="material-symbols-outlined order-done" style="display: none">
+              check_circle
+            </span>
           </div>
         </td>
       </tr>
