@@ -112,6 +112,13 @@
     cursor: pointer;
   }
 
+  #login-method-selector {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+  }
+
 </style>
 <body>
   {% extends "base.html" %}
@@ -123,18 +130,29 @@
   <div class="sign-container">
     <div class="upper-form">
       <h2>تسجيل الدخول</h2>
-      <p>الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+      <p id="email-login-title">الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+      <p id="phone-login-title" style="display: none">الرجاء إدخال رقم الهاتف وكلمة المرور:</p>
     </div>
     <div class="form-container">
       <form method="post">
-        <div class="field-holder">
-          <label for="customer-phone" class="input_label">رقم الهاتف</label>
-          <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
+        <div id="login-method-selector">
+          <div>
+            <label for="email-login-method">البريد الإلكتروني</label>
+            <input checked type="radio" id="email-login-method" name="login-method" value="email" onchange="CheckLoginMethod()">
+          </div>
+          <div>
+            <label for="phone-login-method">رقم الهاتف</label>
+            <input type="radio" id="phone-login-method" name="login-method" value="phone" onchange="CheckLoginMethod()">
+          </div>
         </div>
-  <!--      <div class="field-holder">-->
-  <!--        <label for="customer-email" class="input_label">البريد الإلكتروني</label>-->
-  <!--        <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>-->
-  <!--      </div>-->
+        <div class="field-holder" id="phone-method-holder" style="display: none">
+          <label for="customer-phone" class="input_label">رقم الهاتف</label>
+          <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" style="text-align: right" maxlength="10">
+        </div>
+        <div class="field-holder" id="email-method-holder">
+          <label for="customer-email" class="input_label">البريد الإلكتروني</label>
+          <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>
+        </div>
         <div class="field-holder password-container">
           <label for="customer-password" class="input_label">كلمة المرور</label>
 <!--          <div class="password-div">-->
@@ -152,7 +170,7 @@
           تسجيل الدخول
         </button>
         <span style="font-size: 0.8em">
-          عميل جديد؟
+          مستخدم جديد؟
           <a href="{{url_for('register')}}" id="create-account">
             إنشاء حساب
           </a>
@@ -162,6 +180,7 @@
   </div>
   <br>
   <script>
+      CheckLoginMethod();
     function togglePasswordVisibility() {
         var passwordInput = document.getElementById('customer-password');
         var showPasswordBtn = document.querySelector('.show-password-btn');
@@ -173,6 +192,30 @@
             passwordInput.type = 'password';
             showPasswordBtn.textContent = 'visibility_off';
         }
+    }
+
+    function CheckLoginMethod() {
+      const emailMethod = document.getElementById("email-login-method");
+      const phoneMethod = document.getElementById("phone-login-method");
+      if (emailMethod.checked) {
+          document.getElementById("email-method-holder").style.display = "block";
+          document.getElementById("email-login-title").style.display = "block";
+          document.getElementById("customer-email").setAttribute("required", "true");
+
+          document.getElementById("phone-method-holder").style.display = "none";
+          document.getElementById("phone-login-title").style.display = "none";
+          document.getElementById("customer-phone").removeAttribute("required");
+
+      } else if (phoneMethod.checked) {
+          document.getElementById("phone-method-holder").style.display = "block";
+          document.getElementById("phone-login-title").style.display = "block";
+          document.getElementById("customer-phone").setAttribute("required", "true");
+
+          document.getElementById("email-method-holder").style.display = "none";
+          document.getElementById("email-login-title").style.display = "none";
+          document.getElementById("customer-email").removeAttribute("required");
+          console.log("after no email");
+      }
     }
   </script>
   {% endblock %}

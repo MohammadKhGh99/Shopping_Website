@@ -190,6 +190,9 @@
   {% block upper_container %}
   <div id="dashboard-link-bar">
     {% block link_bar %}
+    <a href="{{url_for('orders')}}">
+      الطلبات
+    </a>
     {% endblock %}
     <a href="{{url_for('profile')}}">
       الصفحة الشخصية
@@ -293,29 +296,29 @@
           </ul>
           </form>
         </li>
-        <li id="orders-info">
-          <div id="upper-orders" style="cursor: pointer" onclick="OpenOrdersInfo()">
-            <h4 style="user-select: none">
-              الطلبات
-              <span id="orders-counter" style="user-select: none">0</span>
-            </h4>
-            <button style="background-color: transparent; border: 0;">
-              <span class="material-symbols-outlined" id="orders-info-arrow">
-                expand_more
-              </span>
-            </button>
-          </div>
-          <div id="lower-orders" style="display: none; padding-bottom: 20px">
-            <div id="no-orders">
-              <p>لم تقدم أي طلبات حتى الآن</p>
-              <a href="{{url_for('home')}}">
-                <button id="go-shopping-button">
-                  إبدأ التسوق
-                </button>
-              </a>
-            </div>
-          </div>
-        </li>
+<!--        <li id="orders-info">-->
+<!--          <div id="upper-orders" style="cursor: pointer" onclick="OpenOrdersInfo()">-->
+<!--            <h4 style="user-select: none">-->
+<!--              الطلبات-->
+<!--              <span id="orders-counter" style="user-select: none">0</span>-->
+<!--            </h4>-->
+<!--            <button style="background-color: transparent; border: 0;">-->
+<!--              <span class="material-symbols-outlined" id="orders-info-arrow">-->
+<!--                expand_more-->
+<!--              </span>-->
+<!--            </button>-->
+<!--          </div>-->
+<!--          <div id="lower-orders" style="display: none; padding-bottom: 20px">-->
+<!--            <div id="no-orders">-->
+<!--              <p>لم تقدم أي طلبات حتى الآن</p>-->
+<!--              <a href="{{url_for('home')}}">-->
+<!--                <button id="go-shopping-button">-->
+<!--                  إبدأ التسوق-->
+<!--                </button>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </li>-->
       </ul>
     </div>
   </div>
@@ -357,6 +360,7 @@
 
     function updateProfileInfo() {
         const formDiv = document.querySelector("form input");
+        window.alert("لا يسمح بتعديل المعلومات الشخصية حتى الآن");
         // const paragraphDivs
     }
 

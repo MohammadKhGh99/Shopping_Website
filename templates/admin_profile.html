@@ -9,12 +9,12 @@
   {% extends "profile.html" %}
 
   {% block link_bar %}
+  <a href="{{url_for('all_customers_orders')}}">
+    جميع الطلبات
+  </a>
   <a href="{{url_for('products')}}">
     المنتجات
   </a>
-  <a href="{{url_for('orders')}}">
-      الطلبات
-    </a>
   {% endblock %}
 
   {% block admin %}

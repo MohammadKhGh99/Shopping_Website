@@ -6,7 +6,7 @@
 </head>
 
 <style>
-    #all-orders-container {
+  #all-orders-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -66,7 +66,7 @@
 
   table {
     width: 100%;
-    margin-bottom: 50px;
+    /*margin-bottom: 50px;*/
   }
 
   td {
@@ -99,11 +99,12 @@
 </style>
 
 <body>
+
   {% extends "admin_profile.html" %}
 
   {% block lower_container %}
-  <div id="orders-container">
-    <h2>الطلبات الخاصة بك</h2>
+  <div id="all-orders-container">
+    <h2>جميع الطلبات</h2>
     <table id="all-orders-table">
       <tr>
         <th style="width: 8%;">رقم الطلب</th>
@@ -199,43 +200,42 @@
 <!--          </script>-->
         </td>
         <td class="order-status-td">
-          <p>{{order[-2]}}</p>
-<!--          <div id="status-container">-->
-<!--            <select disabled>-->
-<!--              <option value="تم تأكيد الطلب">-->
-<!--                تم تأكيد الطلب-->
-<!--              </option>-->
-<!--              <option value="تم تجهيز الطلب">-->
-<!--                تم تجهيز الطلب-->
-<!--              </option>-->
-<!--              <option value="الطلب في الطريق">-->
-<!--                الطلب في الطريق-->
-<!--              </option>-->
-<!--              <option value="تم التوصيل">-->
-<!--                تم التوصيل-->
-<!--              </option>-->
-<!--              <script>-->
-<!--                  selectNode = document.currentScript.parentNode;-->
-<!--                  for (let i = 0; i < selectNode.children.length; i++) {-->
-<!--                      if (selectNode.children[i].value === "{{order[-2]}}") {-->
-<!--                          selectNode.selectedIndex = i;-->
-<!--                      }-->
-<!--                  }-->
-<!--              </script>-->
-<!--            </select>-->
-<!--            <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px">-->
-<!--              تعديل الحالة-->
-<!--            </button>-->
-<!--            <span class="material-symbols-outlined order-shipped" style="display: none">-->
-<!--              local_shipping-->
-<!--            </span>-->
-<!--            <span class="material-symbols-outlined order-approved" style="display: none">-->
-<!--              order_approve-->
-<!--            </span>-->
-<!--            <span class="material-symbols-outlined order-done" style="display: none">-->
-<!--              check_circle-->
-<!--            </span>-->
-<!--          </div>-->
+          <div id="status-container">
+            <select disabled>
+              <option value="تم تأكيد الطلب">
+                تم تأكيد الطلب
+              </option>
+              <option value="تم تجهيز الطلب">
+                تم تجهيز الطلب
+              </option>
+              <option value="الطلب في الطريق">
+                الطلب في الطريق
+              </option>
+              <option value="تم التوصيل">
+                تم التوصيل
+              </option>
+              <script>
+                  selectNode = document.currentScript.parentNode;
+                  for (let i = 0; i < selectNode.children.length; i++) {
+                      if (selectNode.children[i].value === "{{order[-2]}}") {
+                          selectNode.selectedIndex = i;
+                      }
+                  }
+              </script>
+            </select>
+            <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px">
+              تعديل الحالة
+            </button>
+            <span class="material-symbols-outlined order-shipped" style="display: none">
+              local_shipping
+            </span>
+            <span class="material-symbols-outlined order-approved" style="display: none">
+              order_approve
+            </span>
+            <span class="material-symbols-outlined order-done" style="display: none">
+              check_circle
+            </span>
+          </div>
         </td>
       </tr>
       {% endfor %}
@@ -247,9 +247,7 @@
         }
     </script>
   </div>
-  </div>
   {% endblock %}
-
 
 </body>
 </html>
