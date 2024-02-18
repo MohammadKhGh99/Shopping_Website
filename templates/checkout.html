@@ -50,8 +50,6 @@
     background-color: #e5e5e5;
   }
 
-
-
 </style>
 
 <body>
@@ -114,6 +112,25 @@
       </div>
     </form>
   </div>
+  {% if cur_user %}
+    <script>
+      document.getElementById("customer-first-name").value = "{{cur_user.first_name}}";
+      document.getElementById("customer-last-name").value = "{{cur_user.last_name}}";
+      document.getElementById("customer-phone").value = "{{cur_user.phone_number}}";
+      document.getElementById("customer-address").value = "{{cur_user.address}}";
+      document.getElementById("customer-backup-phone").value = "{{cur_user.backup_phone}}" === "None" ? "" : "{{cur_user.backup_phone}}";
+      document.getElementById("customer-email").value = "{{cur_user.email}}";
+      let citiesParent = document.getElementById("customer-city");
+      const all_cities = citiesParent.children;
+      for (let i = 0; i < all_cities.length; i++) {
+          if (all_cities[i].value.includes("{{cur_user.city}}")) {
+              citiesParent.selectedIndex = i;
+              break;
+          }
+      }
+
+    </script>
+  {% endif %}
   <script>
       const totalPriceSpan = document.querySelector("#lower-checkout").children[0];
       const totalPriceB = totalPriceSpan.querySelector("b");

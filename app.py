@@ -119,6 +119,12 @@ def books():
 	return render_template('books.html', products=all_books,customer=customer)
 
 
+@app.route('/clothes')
+def clothes():
+	customer = False if current_user.is_authenticated and current_user.is_admin() else True
+	return render_template('clothes.html', products=clothes_lst, customer=customer)
+
+
 @login_manager.user_loader
 def load_user(user_id):
 	# this function to load user using its id number
@@ -144,17 +150,9 @@ def load_user(user_id):
 			return None
 
 
-@app.route('/clothes')
-def clothes():
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
-
-	return render_template('clothes.html', products=clothes_lst, customer=customer)
-
-
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 	if request.method == 'POST':
-		
 		# checking which method the user want to login with
 		login_method = request.form['login-method']
 		email, phone_number = "", ""
@@ -184,33 +182,43 @@ def login():
 			res_rows = cursor.execute(check_user_existence)
 			# check - fetchall or fetchone, which better?
 			res_rows = res_rows.fetchall()
-			
-			# if we found more than one user with this "unique" info (will not happen, but in case...)
-			if len(res_rows) == 1:
-				# if we still don't have any users except admins
-				if NO_ACCOUNTS and res_rows[0][4] != "admin":
-					flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
-					return redirect(url_for('home'))
-				# checking the entered password with the stored password
-				# if they are identical then login the current user
-				if bcrypt.check_password_hash(res_rows[0][-2], password):
-					# load the user with the found id number
-					user = load_user(res_rows[0][0])
-					# login the current user
-					login_user(user)
-					flash("تم تسجيل الدخول بنجاح!", category="success")
-					# if the user is an admin then go to admin profile, otherwise to normal profile
-					if current_user.role == "admin":
-						return redirect(url_for('admin_profile'))
-					return redirect(url_for('profile'))
-			# if there is no user has these unique info, then go and register the new user
-			elif len(res_rows) == 0:
-				flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
-				return redirect(url_for('register'))
-			# if we found more than one user with the same info
-			else:
-				flash("حدث خطأ أثناء تسجيل الدخول (هنالك أكثر من مستخدم لديهم نفس رقم الهاتف أو البريد الإلكتروني", "error")
-				return redirect(url_for('login'))
+			connection.commit()
+		# if we found more than one user with this "unique" info (will not happen, but in case...)
+		if len(res_rows) == 1:
+			# if we still don't have any users except admins
+			if NO_ACCOUNTS and res_rows[0][4] != "admin":
+				flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
+				return redirect(url_for('home'))
+			# checking the entered password with the stored password
+			# if they are identical then login the current user
+			if bcrypt.check_password_hash(res_rows[0][-2], password):
+				# load the user with the found id number
+				user = load_user(res_rows[0][0])
+				# login the current user
+				login_user(user)
+				# todo - should I concatenate both anonymous and stored carts? I think NO
+				# store the current cart items in the database to include them in customer's database
+				# with sqlite3.connect("Shopping.db") as connection:
+				# 	cursor = connection.cursor()
+				# 	try:
+				#
+				# 	except Exception as e:
+				# 		connection.rollback()
+				# 		flash("فشل تحديث سلة المشتريات الحالية\nنوع الخطأ: " + str(e), "error")
+				# 		# todo - what happens when adding anonymous cart to stored cart
+				flash("تم تسجيل الدخول بنجاح!", category="success")
+				# if the user is an admin then go to admin profile, otherwise to normal profile
+				if current_user.role == "admin":
+					return redirect(url_for('admin_profile'))
+				return redirect(url_for('profile'))
+		# if there is no user has these unique info, then go and register the new user
+		elif len(res_rows) == 0:
+			flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
+			return redirect(url_for('register'))
+		# if we found more than one user with the same info
+		else:
+			flash("حدث خطأ أثناء تسجيل الدخول (هنالك أكثر من مستخدم لديهم نفس رقم الهاتف أو البريد الإلكتروني", "error")
+			return redirect(url_for('login'))
 			
 	# if the current user is already logged in, then go to profile
 	if current_user.is_authenticated:
@@ -239,6 +247,7 @@ def register():
 		city = form['customer-city'].strip()
 		address = form['customer-address'].strip()
 		phone_number = form['customer-phone'].strip()
+		email = form['customer-email'].strip()
 		backup_phone = form['customer-backup-phone'].strip()
 		password = form['customer-password'].strip()
 		hashed_password = bcrypt.generate_password_hash(password)
@@ -246,11 +255,18 @@ def register():
 		with sqlite3.connect("Shopping.db") as connection:
 			cursor = connection.cursor()
 			try:
-				cursor.execute(
-					"INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password) "
-					"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password)
+				cursor.execute("""
+				INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
+				VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""",(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password, email)
 				)
+				# todo - should I commit 2 times?
+				connection.commit()
+				# make initial cart items entry for the new customer
+				cursor.execute(f"""
+				insert into Cart_Items(customer_id)
+				values({cursor.lastrowid})
+				""")
 				connection.commit()
 				# successfully registered
 				flash("تم التسجيل في الموقع بنجاح", category="success")
@@ -261,6 +277,7 @@ def register():
 				return redirect(url_for("register"))
 			user = load_user(cursor.lastrowid)
 			login_user(user)
+			
 			return redirect(url_for('profile'))
 	
 	return render_template('register.html', cities=cities, customer=True)
@@ -613,11 +630,20 @@ def shopping_cart():
 					except Exception as e:
 						connection.rollback()
 						flash(f"error in shopping cart product num {cur_id} " + str(e), "error")
-						return redirect(url_for('shopping_cart'))
+						return redirect(url_for('home'))
 				
 				# commit when finish the loop
 				connection.commit()
 				# store the cart items and their value in the session
+				# todo - how can I do this!!!
+				# try:
+				# 	cursor.execute(f"""
+				#
+				# 	""")
+				# except Exception as e:
+				# 	flash("حدث خطأ أثناء تحميل سلة التسوق\nنوع الخطأ: " + str(e), "error")
+				# 	return redirect(url_for('home'))
+				
 				session["cart-items"] = result
 				session["total"] = total
 				return redirect(url_for('shopping_cart'))
@@ -680,11 +706,11 @@ def checkout():
 						continue
 					else:
 						# we don't have the enough amount to sell
-						flash(f"لا يوجد كمية كافية من المنتج {item[1]}", "warning")
+						# flash(f"لا يوجد كمية كافية من المنتج {item[1]}", "warning")
 						raise Exception(f"لا يوجد كمية كافية من المنتج {item[1]}")
 				except Exception as e:
 					connection.rollback()
-					flash(f"error in checkout, error= " + str(e), "error")
+					flash(f"حدث خطأ أثناء الدفع\nنوع الخطأ: " + str(e), "error")
 					return redirect(url_for('checkout'))
 			
 			session["total"] = 0
@@ -706,8 +732,8 @@ def checkout():
 			connection.commit()
 		
 		return render_template("order_approved.html", customer=True)
-
-	return render_template('checkout.html', cities=cities, customer=True, total=total)
+	cur_user = current_user if type(UserMixin) else None
+	return render_template('checkout.html', cities=cities, customer=True, total=total, cur_user=cur_user)
 
 
 # converting cart_items from Orders SQL table from string to dictionary to use it in creating orders page

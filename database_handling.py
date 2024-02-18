@@ -51,7 +51,7 @@ def create_table():
 		order_date datetime,
 		total_amount int,
 		status nvarchar(100),
-		cart_items varchar(150)
+		cart_items varchar(200)
 	)
 	"""
 	
@@ -61,12 +61,9 @@ def create_table():
 	
 	cart_items_table = """
 	create table if not exists Cart_Items (
-		product_id integer primary key,
-		order_id integer,
-		amount int,
+		customer_id integer primary key,
 		total_price int,
-		foreign key (product_id) references Products(id_number),
-		foreign key (order_id) references Orders(id_number)
+		cart_items varchar(200)
 	)
 	"""
 	
@@ -118,8 +115,8 @@ def create_table():
 		try:
 			# cursor.execute(customers_table)
 			# cursor.execute(guests_table)
-			cursor.execute(orders_table)
-			# cursor.execute(cart_items_table)
+			# cursor.execute(orders_table)
+			cursor.execute(cart_items_table)
 			
 			# cursor.execute(products_table)
 			connection.commit()

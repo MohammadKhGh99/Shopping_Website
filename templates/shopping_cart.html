@@ -187,9 +187,7 @@
   </div>
 
   <script>
-      console.log(localStorage.getItem("cartItems"));
       if (localStorage.getItem("cartItems") === "{}") {
-          console.log("hi");
           document.getElementById("cart-footer").style.display = "none";
       }
       function DeleteCartItem(button) {
