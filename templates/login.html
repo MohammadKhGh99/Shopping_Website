@@ -119,6 +119,19 @@
     width: 100%;
   }
 
+  .login-method {
+    background-color: #cce5ff;
+    font-family: 'Traditional Arabic', sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+    border: 0;
+    border-radius: 5px;
+  }
+
+  .login-method:hover {
+    background-color: #e5e5e5;
+  }
+
 </style>
 <body>
   {% extends "base.html" %}
@@ -130,46 +143,54 @@
   <div class="sign-container">
     <div class="upper-form">
       <h2>تسجيل الدخول</h2>
-      <p id="email-login-title">الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+      <p id="login-method-title">الرجاء اختيار طريقة الدخول المناسبة</p>
+      <p id="email-login-title" style="display: none;">الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
       <p id="phone-login-title" style="display: none">الرجاء إدخال رقم الهاتف وكلمة المرور:</p>
     </div>
     <div class="form-container">
       <form method="post">
         <div id="login-method-selector">
-          <div>
-            <label for="email-login-method">البريد الإلكتروني</label>
-            <input checked type="radio" id="email-login-method" name="login-method" value="email" onchange="CheckLoginMethod()">
-          </div>
-          <div>
-            <label for="phone-login-method">رقم الهاتف</label>
-            <input type="radio" id="phone-login-method" name="login-method" value="phone" onchange="CheckLoginMethod()">
-          </div>
+          <button type="button" class="login-method" id="email-method" onclick="CheckLoginMethod(this)">
+            البريد الإلكتروني
+          </button>
+          <button type="button" class="login-method" id="phone-method" onclick="CheckLoginMethod(this)">
+            رقم الهاتف
+          </button>
+          <input hidden="hidden" type="text" id="login-method-input" name="login-method" value="">
+<!--          <div>-->
+<!--            <label for="email-login-method">البريد الإلكتروني</label>-->
+<!--            <input checked type="radio" id="email-login-method" name="login-method" value="email" onchange="CheckLoginMethod()">-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <label for="phone-login-method">رقم الهاتف</label>-->
+<!--            <input type="radio" id="phone-login-method" name="login-method" value="phone" onchange="CheckLoginMethod()">-->
+<!--          </div>-->
         </div>
         <div class="field-holder" id="phone-method-holder" style="display: none">
           <label for="customer-phone" class="input_label">رقم الهاتف</label>
           <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" style="text-align: right" maxlength="10">
         </div>
-        <div class="field-holder" id="email-method-holder">
+        <div class="field-holder" id="email-method-holder" style="display: none">
           <label for="customer-email" class="input_label">البريد الإلكتروني</label>
           <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>
         </div>
-        <div class="field-holder password-container">
+        <div class="field-holder password-container" style="display: none">
           <label for="customer-password" class="input_label">كلمة المرور</label>
 <!--          <div class="password-div">-->
-          <input type="password" id="customer-password" class="input_field" name="customer-password" required maxlength="20">
+          <input type="password" id="customer-password" class="input_field" name="customer-password" maxlength="20">
 <!--          </div>-->
           <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
             visibility_off
           </span>
-          <a href="{{url_for('forgot_password')}}" class="forgot-password">
+          <a class="forgot-password" style="cursor: pointer" onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">
             هل نسيت كلمة المرور؟
           </a>
         </div>
         <br>
-        <button type="submit" class="sign-in-button">
+        <button type="submit" class="sign-in-button" style="display: none">
           تسجيل الدخول
         </button>
-        <span style="font-size: 0.8em">
+        <span style="font-size: 0.8em; display: none">
           مستخدم جديد؟
           <a href="{{url_for('register')}}" id="create-account">
             إنشاء حساب
@@ -180,10 +201,9 @@
   </div>
   <br>
   <script>
-      CheckLoginMethod();
     function togglePasswordVisibility() {
-        var passwordInput = document.getElementById('customer-password');
-        var showPasswordBtn = document.querySelector('.show-password-btn');
+        let passwordInput = document.getElementById('customer-password');
+        let showPasswordBtn = document.querySelector('.show-password-btn');
 
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
@@ -194,28 +214,82 @@
         }
     }
 
-    function CheckLoginMethod() {
-      const emailMethod = document.getElementById("email-login-method");
-      const phoneMethod = document.getElementById("phone-login-method");
-      if (emailMethod.checked) {
-          document.getElementById("email-method-holder").style.display = "block";
-          document.getElementById("email-login-title").style.display = "block";
-          document.getElementById("customer-email").setAttribute("required", "true");
+    function PhoneMethod() {
+        let methods = document.getElementsByClassName("login-method");
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].style.display = "none";
+        }
 
-          document.getElementById("phone-method-holder").style.display = "none";
-          document.getElementById("phone-login-title").style.display = "none";
-          document.getElementById("customer-phone").removeAttribute("required");
+        document.getElementById("login-method-title").style.display = "none";
 
-      } else if (phoneMethod.checked) {
-          document.getElementById("phone-method-holder").style.display = "block";
-          document.getElementById("phone-login-title").style.display = "block";
-          document.getElementById("customer-phone").setAttribute("required", "true");
+        document.getElementById("phone-method-holder").style.display = "block";
+        document.getElementById("phone-login-title").style.display = "block";
+        document.getElementById("customer-phone").setAttribute("required", "true");
 
-          document.getElementById("email-method-holder").style.display = "none";
-          document.getElementById("email-login-title").style.display = "none";
-          document.getElementById("customer-email").removeAttribute("required");
-          console.log("after no email");
-      }
+        document.getElementById("email-method-holder").style.display = "none";
+        document.getElementById("email-login-title").style.display = "none";
+        document.getElementById("customer-email").removeAttribute("required");
+
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+    }
+
+    function EmailMethod() {
+        let methods = document.getElementsByClassName("login-method");
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].style.display = "none";
+        }
+
+        document.getElementById("login-method-title").style.display = "none";
+
+        document.getElementById("email-method-holder").style.display = "block";
+        document.getElementById("email-login-title").style.display = "block";
+        document.getElementById("customer-email").setAttribute("required", "true");
+
+        document.getElementById("phone-method-holder").style.display = "none";
+        document.getElementById("phone-login-title").style.display = "none";
+        document.getElementById("customer-phone").removeAttribute("required");
+
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+    }
+
+    function CheckLoginMethod(button) {
+        console.log("Enter");
+        let methods = document.getElementsByClassName("login-method");
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].style.display = "none";
+        }
+
+        document.getElementById("login-method-title").style.display = "none";
+
+        if (button.id === "phone-method") {
+            document.getElementById("login-method-input").value = "phone";
+
+            document.getElementById("phone-method-holder").style.display = "block";
+            document.getElementById("phone-login-title").style.display = "block";
+            document.getElementById("customer-phone").setAttribute("required", "true");
+
+            document.getElementById("email-method-holder").style.display = "none";
+            document.getElementById("email-login-title").style.display = "none";
+            document.getElementById("customer-email").removeAttribute("required");
+        } else {
+            document.getElementById("login-method-input").value = "email";
+
+            document.getElementById("email-method-holder").style.display = "block";
+            document.getElementById("email-login-title").style.display = "block";
+            document.getElementById("customer-email").setAttribute("required", "true");
+
+            document.getElementById("phone-method-holder").style.display = "none";
+            document.getElementById("phone-login-title").style.display = "none";
+            document.getElementById("customer-phone").removeAttribute("required");
+        }
+
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
     }
   </script>
   {% endblock %}

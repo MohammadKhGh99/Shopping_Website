@@ -86,18 +86,27 @@ class User(UserMixin):
 		return True if self.role == "admin" else False
 
 
+def check_role():
+	if current_user.is_anonymous:
+		user_role = "guest"
+	else:
+		user_role = current_user.role
+		
+	return user_role
+
+
 @app.route('/home')
 def home():
 	# if the current user is guest or registered customer then True if admin then False
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
+	user_role = check_role()
 	
-	return render_template('home.html', customer=customer)
+	return render_template('home.html', user_role=user_role)
 
 
 @app.route('/books')
 def books():
 	# if the current user is guest or registered customer then True if admin then False
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
+	user_role = check_role()
 	
 	with sqlite3.connect("Shopping.db") as connection:
 		cursor = connection.cursor()
@@ -116,13 +125,13 @@ def books():
 			return redirect(url_for('books'))
 	
 	# todo - this for FILTERS feature, authors=authors, publishes=publishes, publishers=publishers, other=other)
-	return render_template('books.html', products=all_books,customer=customer)
+	return render_template('books.html', products=all_books, user_role=user_role)
 
 
 @app.route('/clothes')
 def clothes():
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
-	return render_template('clothes.html', products=clothes_lst, customer=customer)
+	user_role = check_role()
+	return render_template('clothes.html', products=clothes_lst, user_role=user_role)
 
 
 @login_manager.user_loader
@@ -226,14 +235,13 @@ def login():
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
 	
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
+	user_role = check_role()
 	
-	return render_template('login.html', customer=customer)
+	return render_template('login.html', user_role=user_role)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-	
 	if NO_ACCOUNTS:
 		flash("فقط المسؤول يمكنه الدخول", "warning")
 		return redirect(url_for('home'))
@@ -295,7 +303,7 @@ def profile():
 		return redirect(url_for('profile'))
 	if current_user.role == "admin":
 		return redirect(url_for('admin_profile'))
-	return render_template('profile.html', current_user=current_user)
+	return render_template('profile.html', current_user=current_user, customer=True)
 
 
 @app.route('/admin_profile', methods=['GET', 'POST'])
@@ -329,7 +337,7 @@ def orders():
 			return redirect(url_for('profile'))
 		
 	# check - some parsing of each cart items, because it is as string!
-	all_orders = [order[:-1] + (convert_str_to_dic(order[-1]),) for order in orders_result]
+	all_orders = [order[:-2] + (convert_str_to_dic(order[-2]), order[-1]) for order in orders_result]
 	return render_template("orders.html", customer=True, all_orders=all_orders)
 
 
@@ -356,13 +364,13 @@ def all_customers_orders():
 	# all_orders = [convert_str_to_dic(order[-1]) for order in orders_result]
 	
 	# check - some parsing of each cart items, because it is as string!
-	all_orders = [order[:-1] + (convert_str_to_dic(order[-1]),) for order in orders_result]
+	all_orders = [order[:-1] + (convert_str_to_dic(order[-2]),) for order in orders_result]
 	return render_template('all_customers_orders.html', customer=False, all_orders=all_orders)
 
 
 @app.route('/<ptype>/<name>/<id_num>')
 def product(ptype, name, id_num):
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
+	user_role = check_role()
 	
 	# retrieve the info for the current product
 	with sqlite3.connect('Shopping.db') as connection:
@@ -383,19 +391,19 @@ def product(ptype, name, id_num):
 		# take the product's image src path
 		img_src = result[3][7:]
 	
-	return render_template('product.html', customer=customer, result=result, img_src=img_src)
+	return render_template('product.html', user_role=user_role, result=result, img_src=img_src)
 
 
-@app.route('/admin_profile/products', methods=['GET', 'POST'])
+@app.route('/admin_profile/handling_products', methods=['GET', 'POST'])
 @login_required
-def products():
+def handling_products():
 	# just the admin can go to products handling page
 	if current_user.role == "admin":
-		return render_template('products.html', customer=False)
+		return render_template('handling_products.html', customer=False)
 	return redirect(url_for('profile'))
 
 
-@app.route('/admin_profile/products/add_product', methods=['GET', 'POST'])
+@app.route('/admin_profile/handling_products/add_product', methods=['GET', 'POST'])
 @login_required
 def add_product():
 	if current_user.role != "admin":
@@ -458,7 +466,7 @@ def add_product():
 	return render_template('add_product.html', customer=False, done=done, name=name, ptype=ptype)
 
 
-@app.route('/admin_profile/products/remove_product', methods=['GET', 'POST'])
+@app.route('/admin_profile/handling_products/remove_product', methods=['GET', 'POST'])
 @login_required
 def remove_product():
 	# just the admin can enter removing product page
@@ -497,7 +505,7 @@ def remove_product():
 	return render_template('remove_product.html', customer=False)
 
 
-@app.route('/admin_profile/products/search_update_product', methods=['GET', 'POST'])
+@app.route('/admin_profile/handling_products/search_update_product', methods=['GET', 'POST'])
 @login_required
 def search_update_product():
 	if current_user.role == "admin":
@@ -505,7 +513,7 @@ def search_update_product():
 	return redirect(url_for('profile'))
 
 
-@app.route('/admin_profile/products/update_product', methods=['GET', 'POST'])
+@app.route('/admin_profile/handling_products/update_product', methods=['GET', 'POST'])
 @login_required
 def update_product():
 	# just the admin can enter update product page
@@ -575,25 +583,6 @@ def update_product():
 			product_images = [img for img in os.listdir(result[3])]
 			img_src += f"/{product_images[0]}"
 		return render_template('update_product.html', customer=False, done=done, result=result, name=name, ptype=ptype, img_src=img_src)
-	
-
-@app.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-	logout_user()
-	return redirect(url_for('login'))
-
-
-@app.route('/about')
-def about():
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
-	return render_template('about.html', customer=customer)
-
-
-@app.route('/contact_us')
-def contact_us():
-	customer = False if current_user.is_authenticated and current_user.is_admin() else True
-	return render_template('contact_us.html', customer=customer)
 
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
@@ -654,7 +643,7 @@ def shopping_cart():
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
 	# admin go awaaaay
-	if type(current_user) is UserMixin and current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
+	if not current_user.is_anonymous and current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
 		return redirect(url_for('home'))
 	
 	cart_items = session.get("cart-items")
@@ -669,10 +658,7 @@ def checkout():
 		phone_number = request.form['customer-phone'].strip()
 		backup_phone = request.form['customer-backup-phone'].strip()
 		
-		if type(current_user) is UserMixin and current_user.role == "customer":
-			role = "customer"
-		else:
-			role = "guest"
+		role = "customer" if not current_user.is_anonymous and current_user.role == "customer" else "guest"
 		# تم تجهيز الطلب
 		# الطلب في الطريق إليك
 		# تم توصيل الطلب
@@ -717,7 +703,7 @@ def checkout():
 			session["cart-items"] = {}
 			
 			# store the order in Orders SQL table
-			if type(current_user) is UserMixin and current_user.role == "customer":
+			if not current_user.is_anonymous and current_user.role == "customer":
 				cursor.execute("""
 				insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
 				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -732,8 +718,27 @@ def checkout():
 			connection.commit()
 		
 		return render_template("order_approved.html", customer=True)
-	cur_user = current_user if type(UserMixin) else None
+	cur_user = current_user if not current_user.is_anonymous else None
 	return render_template('checkout.html', cities=cities, customer=True, total=total, cur_user=cur_user)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('login'))
+
+
+@app.route('/about')
+def about():
+	user_role = check_role()
+	return render_template('about.html', user_role=user_role)
+
+
+@app.route('/contact_us')
+def contact_us():
+	user_role = check_role()
+	return render_template('contact_us.html', user_role=user_role)
 
 
 # converting cart_items from Orders SQL table from string to dictionary to use it in creating orders page

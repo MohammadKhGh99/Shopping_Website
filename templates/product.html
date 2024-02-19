@@ -88,11 +88,11 @@
       </div>
       <br>
       <div id="product-left-lower">
-        {% if customer %}
+        {% if user_role != "admin" %}
           <button id="add-to-cart-button" onclick="AddToCart()">
             إضافة إلى عربة التسوق
           </button>
-          <a href="{{url_for('shopping_cart')}}" style="display: none; margin-right: 40%; font-size: 0.9em" id="go-to-shop-cart">
+          <a href="#" style="display: none; margin-right: 40%; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
             الذهاب إلى عربة التسوق
           </a>
 
@@ -130,6 +130,10 @@
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
 
                 document.getElementById("go-to-shop-cart").style.display = "block";
+            }
+
+            function ClickOnCart() {
+                document.getElementsByClassName("shopping-cart")[0].click();
             }
 
           </script>

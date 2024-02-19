@@ -6,7 +6,7 @@
 </head>
 
 <style>
-    #all-orders-container {
+    #orders-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,6 +20,8 @@
     border-collapse: collapse;
     font-size: 0.9em;
     max-width: 100%;
+    width: 100%;
+    margin-bottom: 50px;
   }
 
   #all-orders-table tr th {
@@ -27,7 +29,7 @@
     border-collapse: collapse;
   }
 
-  .order-id-td, .order-total-td, .order-status-td {
+  .order-id-td, .order-total-td, .order-status-td, .order-number {
     vertical-align: top;
     text-align: center;
     padding: 10px 0 0 0;
@@ -38,13 +40,15 @@
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
-    font-size: 0.7em;
+    font-size: 0.9em;
     margin-right: 5px;
   }
 
-  .order-status-td div {
+  .order-status-td p {
     width: 90%;
     display: inline-block;
+    font-size: 0.9em;
+    border: 1px solid black;
   }
 
   .order-content {
@@ -53,20 +57,12 @@
     /*max-height: 20%;*/
   }
 
-  /*.order-content table tr:not(:first-child) {*/
-  /*  height: 100px;*/
-
-  /*}*/
-
   .each-order-table{
     border: 1px solid black;
     border-collapse: collapse;
-    font-size: 0.9em;
-  }
-
-  table {
-    width: 100%;
+    font-size: 0.8em;
     margin-bottom: 50px;
+    width: 100%;
   }
 
   td {
@@ -76,10 +72,6 @@
     border: 1px solid black;
     border-collapse: collapse;
     /*font-size: 0.9em;*/
-  }
-
-  .each-order-table {
-    font-size: 0.8em;
   }
 
   .each-order-table td a {
@@ -99,24 +91,30 @@
 </style>
 
 <body>
-  {% extends "admin_profile.html" %}
+  {% extends "profile.html" %}
 
   {% block lower_container %}
   <div id="orders-container">
     <h2>الطلبات الخاصة بك</h2>
     <table id="all-orders-table">
+      <script>
+        let orderTotal = 0;
+        let totalNoShip = "";
+      </script>
       <tr>
+        <th style="width: 2%">#</th>
         <th style="width: 8%;">رقم الطلب</th>
         <th style="width: 20%;">معلومات الزبون</th>
         <th>محتوى الطلب</th>
-        <th style="width: 10%;">السعر الكلي</th>
+        <th style="width: 10%;">المجموع الكلي</th>
         <th style="width: 15%;">حالة الطلب</th>
       </tr>
       {% for order in all_orders %}
       <script>
-        let orderTotal = 0;
+        orderTotal = 0;
       </script>
       <tr>
+        <td class="order-number">{{loop.index}}</td>
         <td class="order-id-td">{{order[0]}}</td>
         <td class="order-customer-info" style="vertical-align: top;">
           <div>
@@ -144,7 +142,7 @@
               {{order[10]}}
             </span>
             <span id="order-customer-backup-phone">
-              هاتف إحتياطي:
+              رقم هاتف إحتياطي:
               {% if order[9] == "" %}
                   -
               {% else %}
@@ -166,7 +164,7 @@
               <th style="width: 15%">السعر</th>
               <th style="width: 10%">الكمية</th>
             </tr>
-            {% for id_num, (quantity, item) in order[-1].items() %}
+            {% for id_num, (quantity, item) in order[-2].items() %}
             <tr>
               <td style="vertical-align: top; text-decoration: Highlight">
                 {{item[0]}}
@@ -191,62 +189,33 @@
             </script>
             {% endfor %}
           </table>
+
         </td>
-        <td class="order-total-td">
-          {{order[-3]}} ₪
-<!--          <script>-->
-<!--            document.currentScript.parentNode.textContent = orderTotal.toString();-->
-<!--          </script>-->
+        <td class="order-total-td" style="font-size: 0.8em; padding-bottom: 20px">
+          <span id="subtotal">
+            مجموع جزئي:
+            <b>{{order[-4]}}</b> ₪
+            <br>
+            <script>
+                totalNoShip = parseInt("{{order[-4]}}") - parseInt("{{order[-1]}}");
+                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();
+            </script>
+          </span>
+          <span id="shipping-fee" style="border-bottom: 1px solid black;">
+            رسوم شحن:
+            <b>{{order[-1]}}</b> ₪
+          </span>
+          <br><br>
+          <b>
+            مجموع الطلب: {{order[-4]}} ₪
+          </b>
         </td>
         <td class="order-status-td">
-          <p>{{order[-2]}}</p>
-<!--          <div id="status-container">-->
-<!--            <select disabled>-->
-<!--              <option value="تم تأكيد الطلب">-->
-<!--                تم تأكيد الطلب-->
-<!--              </option>-->
-<!--              <option value="تم تجهيز الطلب">-->
-<!--                تم تجهيز الطلب-->
-<!--              </option>-->
-<!--              <option value="الطلب في الطريق">-->
-<!--                الطلب في الطريق-->
-<!--              </option>-->
-<!--              <option value="تم التوصيل">-->
-<!--                تم التوصيل-->
-<!--              </option>-->
-<!--              <script>-->
-<!--                  selectNode = document.currentScript.parentNode;-->
-<!--                  for (let i = 0; i < selectNode.children.length; i++) {-->
-<!--                      if (selectNode.children[i].value === "{{order[-2]}}") {-->
-<!--                          selectNode.selectedIndex = i;-->
-<!--                      }-->
-<!--                  }-->
-<!--              </script>-->
-<!--            </select>-->
-<!--            <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px">-->
-<!--              تعديل الحالة-->
-<!--            </button>-->
-<!--            <span class="material-symbols-outlined order-shipped" style="display: none">-->
-<!--              local_shipping-->
-<!--            </span>-->
-<!--            <span class="material-symbols-outlined order-approved" style="display: none">-->
-<!--              order_approve-->
-<!--            </span>-->
-<!--            <span class="material-symbols-outlined order-done" style="display: none">-->
-<!--              check_circle-->
-<!--            </span>-->
-<!--          </div>-->
+          <p>{{order[-3]}}</p>
         </td>
       </tr>
       {% endfor %}
     </table>
-    <script>
-        function UpdateStatus(button) {
-            const selectNode = button.parentNode.children[0];
-            selectNode.removeAttribute("disabled");
-        }
-    </script>
-  </div>
   </div>
   {% endblock %}
 

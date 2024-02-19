@@ -58,11 +58,11 @@
       <div id="menu">
         <span id="overlay" onclick="closeMenu(true, true)"></span>
         <div id="side-menu">
-          <button title="إغلاق" id="close-side-menu">
-            <span class="material-symbols-outlined" style="cursor: pointer" onclick="closeMenu()">
+<!--          <button title="إغلاق" id="close-side-menu">-->
+            <span class="material-symbols-outlined" id="close-side-menu" style="cursor: pointer" onclick="closeMenu()">
               close
             </span>
-          </button>
+<!--          </button>-->
 
           <ul role="list">
             <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
@@ -120,14 +120,25 @@
         </span>
       </div>
       <div id="header-left">
+<!--        {% if user_role != "admin" %}-->
+<!--          {% if cur_user %}-->
+<!--            <span>-->
+<!--              مرحبا {{cur_user.first_name}} {{cur_user.last_name}}-->
+<!--            </span>-->
+<!--          {% else %}-->
+<!--            <span>-->
+<!--              مرحبا ضيف-->
+<!--            </span>-->
+<!--          {% endif %}-->
+<!--        {% endif %}-->
         <a href="{{url_for('login')}}" class="profile" title="الصفحة الشخصية">
           <span class="material-symbols-outlined profile-icon">
             person
           </span>
         </a>
-        {% if customer %}
+        {% if user_role != "admin" %}
           <div class="shopping-cart" onclick="GoShoppingCart()" title="السلة">
-            <form id="cart-go-form" method="post" style="display: none"  action="{{url_for('shopping_cart')}}">
+            <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart')}}">
               <input style="display: none" id="cart-items-input" name="cart-items-input" value="">
               <input style="display: none" id="cart-update" name="cart-update" value="no">
             </form>
@@ -194,7 +205,7 @@
     </div>
   {% endfor %}
 
-  {% if customer %}
+  {% if user_role != "admin" %}
     <script>
         document.getElementById("cart-update").value = "No";
 

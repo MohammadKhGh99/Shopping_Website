@@ -180,11 +180,13 @@ header {
   text-decoration: none;
   list-style: none;
   width: 100%;
+  padding-right: 0;
+  margin-bottom: 0;
 }
 
 #side-menu ul li{
   display: flow-root;
-  padding: 15px 0;
+  padding: 15px 10px;
 }
 
 #side-menu ul li:not(:last-child){
@@ -207,15 +209,11 @@ header {
   background-color: transparent;
   border: 0;
   cursor: pointer;
-  /*padding-right: 30px;*/
-  /*cursor: pointer;*/
-  /*padding-right: 50px;*/
-  /*position: absolute;*/
-  /*top: 10px;*/
-  /*left: -30px;*/
-  width: 100%;
+  /*width: 100%;*/
   text-align: left;
-  /*margin-right: 10px;*/
+  display: inline-block;
+  position: absolute;
+  left: 10px;
 }
 
 #coming-soon {
