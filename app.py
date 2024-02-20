@@ -2,25 +2,16 @@ import os
 import sqlite3
 import datetime
 
-import flask_login
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
-# from flask_jsglue import JSGlue
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
 from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
 from database_handling import *
 
-app = Flask(__name__)  # , static_folder="static", template_folder="templates")
+app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
-# jsglue = JSGlue(app)
 
 # app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 # db = SQLAlchemy(app)
@@ -30,20 +21,6 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-# books_lst = [filename for filename in os.listdir('static/images/books')] * 4
-clothes_lst = [filename for filename in os.listdir('static/images/clothes')] * 4
-cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
-
-with open("static/Books_Authors.txt", encoding="utf8") as f:
-	authors = f.readlines()
-with open("static/Books_Dates.txt", encoding="utf8") as f:
-	publishes = f.readlines()
-with open("static/Books_Publishers.txt", encoding="utf8") as f:
-	publishers = f.readlines()
-
-# with open("static/Books_Others.txt", encoding="utf8") as f:
-#     other = f.readlines()
 
 NO_ACCOUNTS = False
 
