@@ -47,23 +47,6 @@ with open("static/Books_Publishers.txt", encoding="utf8") as f:
 
 NO_ACCOUNTS = False
 
-# todo - sending updates emails
-# sender_email = "mohammad.gh454@gmail.com"
-# receiver_email = "m7md.gh.99@hotmail.com"
-# password = "vnmewijhnoedhjqc"
-# subject = "حتلنة عن طلب رقم "
-# body = "تم تغيير حالة الطلب الخاص بك إلى "
-# message = MIMEMultipart()
-# message["From"] = sender_email
-# message["To"] = receiver_email
-# message["Subject"] = subject
-# message.attach(MIMEText(body, "plain"))
-# with smtplib.SMTP("smtp.gmail.com", 587) as server:
-#     server.starttls()  # Start TLS encryption
-#     server.login(sender_email, password)
-#     text = message.as_string()
-#     server.sendmail(sender_email, receiver_email, text)
-
 
 class User(UserMixin):
 	def __init__(self, id_number, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email):
