@@ -16,7 +16,6 @@
   }
 
   #all-orders-table {
-    /*border: 1px solid black;*/
     border-collapse: collapse;
     font-size: 0.9em;
     max-width: 100%;
@@ -52,17 +51,16 @@
   }
 
   .order-content {
-    /*height: 20vh;*/
     padding: 0;
-    /*max-height: 20%;*/
   }
 
   .each-order-table{
     border: 1px solid black;
     border-collapse: collapse;
     font-size: 0.8em;
-    margin-bottom: 50px;
     width: 100%;
+    height: 100%;
+    min-height: 100%;
   }
 
   td {
@@ -71,7 +69,6 @@
     padding: 10px 0 10px 0;
     border: 1px solid black;
     border-collapse: collapse;
-    /*font-size: 0.9em;*/
   }
 
   .each-order-table td a {
@@ -102,7 +99,7 @@
         let totalNoShip = "";
       </script>
       <tr>
-        <th style="width: 2%">#</th>
+        <th style="width: 3%">#</th>
         <th style="width: 8%;">رقم الطلب</th>
         <th style="width: 20%;">معلومات الزبون</th>
         <th>محتوى الطلب</th>
@@ -114,7 +111,7 @@
         orderTotal = 0;
       </script>
       <tr>
-        <td class="order-number">{{loop.index}}</td>
+        <td class="order-number">#{{loop.index}}</td>
         <td class="order-id-td">{{order[0]}}</td>
         <td class="order-customer-info" style="vertical-align: top;">
           <div>
@@ -197,7 +194,7 @@
             <b>{{order[-4]}}</b> ₪
             <br>
             <script>
-                totalNoShip = parseInt("{{order[-4]}}") - parseInt("{{order[-1]}}");
+                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");
                 document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();
             </script>
           </span>

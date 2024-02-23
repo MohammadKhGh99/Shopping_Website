@@ -16,10 +16,11 @@
   }
 
   #all-orders-table {
-    /*border: 1px solid black;*/
     border-collapse: collapse;
     font-size: 0.9em;
     max-width: 100%;
+    width: 100%;
+    margin-bottom: 50px;
   }
 
   #all-orders-table tr th {
@@ -38,35 +39,24 @@
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
-    font-size: 0.7em;
+    font-size: 0.9em;
     margin-right: 5px;
   }
 
   .order-status-td div {
     width: 90%;
     display: inline-block;
+    font-size: 0.9em;
   }
 
   .order-content {
-    /*height: 20vh;*/
     padding: 0;
-    /*max-height: 20%;*/
   }
-
-  /*.order-content table tr:not(:first-child) {*/
-  /*  height: 100px;*/
-
-  /*}*/
 
   .each-order-table{
     border: 1px solid black;
     border-collapse: collapse;
-    font-size: 0.9em;
-  }
-
-  table {
-    width: 100%;
-    /*margin-bottom: 50px;*/
+    font-size: 0.8em;
   }
 
   td {
@@ -75,11 +65,6 @@
     padding: 10px 0 10px 0;
     border: 1px solid black;
     border-collapse: collapse;
-    /*font-size: 0.9em;*/
-  }
-
-  .each-order-table {
-    font-size: 0.8em;
   }
 
   .each-order-table td a {
@@ -107,17 +92,23 @@
     <h2>جميع الطلبات</h2>
     <table id="all-orders-table">
       <tr>
+        <th style="width: 3%">#</th>
         <th style="width: 8%;">رقم الطلب</th>
         <th style="width: 20%;">معلومات الزبون</th>
         <th>محتوى الطلب</th>
         <th style="width: 10%;">السعر الكلي</th>
         <th style="width: 15%;">حالة الطلب</th>
       </tr>
-      {% for order in all_orders %}
       <script>
         let orderTotal = 0;
+        let initialValue = "";
+      </script>
+      {% for order in all_orders %}
+      <script>
+        orderTotal = 0;
       </script>
       <tr>
+        <td class="order-number">#{{loop.index}}</td>
         <td class="order-id-td">{{order[0]}}</td>
         <td class="order-customer-info" style="vertical-align: top;">
           <div>
@@ -167,7 +158,7 @@
               <th style="width: 15%">السعر</th>
               <th style="width: 10%">الكمية</th>
             </tr>
-            {% for id_num, (quantity, item) in order[-1].items() %}
+            {% for id_num, (quantity, item) in order[-2].items() %}
             <tr>
               <td style="vertical-align: top; text-decoration: Highlight">
                 {{item[0]}}
@@ -193,14 +184,27 @@
             {% endfor %}
           </table>
         </td>
-        <td class="order-total-td">
-          {{order[-3]}} ₪
-<!--          <script>-->
-<!--            document.currentScript.parentNode.textContent = orderTotal.toString();-->
-<!--          </script>-->
+        <td class="order-total-td" style="font-size: 0.8em; padding-bottom: 20px">
+          <span id="subtotal">
+            مجموع جزئي:
+            <b>{{order[-4]}}</b> ₪
+            <br>
+            <script>
+                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");
+                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();
+            </script>
+          </span>
+          <span id="shipping-fee" style="border-bottom: 1px solid black;">
+            رسوم شحن:
+            <b>{{order[-1]}}</b> ₪
+          </span>
+          <br><br>
+          <b>
+            مجموع الطلب: {{order[-4]}} ₪
+          </b>
         </td>
         <td class="order-status-td">
-          <div id="status-container">
+          <div id="status-container{{loop.index}}">
             <select disabled>
               <option value="تم تأكيد الطلب">
                 تم تأكيد الطلب
@@ -217,7 +221,7 @@
               <script>
                   selectNode = document.currentScript.parentNode;
                   for (let i = 0; i < selectNode.children.length; i++) {
-                      if (selectNode.children[i].value === "{{order[-2]}}") {
+                      if (selectNode.children[i].value === "{{order[-3]}}") {
                           selectNode.selectedIndex = i;
                       }
                   }
@@ -226,26 +230,38 @@
             <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px">
               تعديل الحالة
             </button>
-            <span class="material-symbols-outlined order-shipped" style="display: none">
-              local_shipping
-            </span>
-            <span class="material-symbols-outlined order-approved" style="display: none">
-              order_approve
-            </span>
-            <span class="material-symbols-outlined order-done" style="display: none">
-              check_circle
-            </span>
+<!--            <span class="material-symbols-outlined order-shipped" style="display: none">-->
+<!--              local_shipping-->
+<!--            </span>-->
+<!--            <span class="material-symbols-outlined order-approved" style="display: none">-->
+<!--              order_approve-->
+<!--            </span>-->
+<!--            <span class="material-symbols-outlined order-done" style="display: none">-->
+<!--              check_circle-->
+<!--            </span>-->
+            <form method="post" style="display: none" id="status-form">
+              <input id="order-status-update" type="hidden" name="order-status-update">
+            </form>
           </div>
         </td>
+        <script>
+            initialValue = document.getElementById("status-container{{loop.index}}").children[0].value;
+            function UpdateStatus(button) {
+                const selectNode = button.parentNode.children[0];
+                if (selectNode.hasAttribute("disabled")) {
+                    selectNode.removeAttribute("disabled");
+                } else {
+                    selectNode.setAttribute("disabled", "true");
+                    if (selectNode.value !== initialValue) {
+                        document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[0].textContent + "," + selectNode.value;
+                        document.getElementById("status-form").submit();
+                    }
+                }
+            }
+        </script>
       </tr>
       {% endfor %}
     </table>
-    <script>
-        function UpdateStatus(button) {
-            const selectNode = button.parentNode.children[0];
-            selectNode.removeAttribute("disabled");
-        }
-    </script>
   </div>
   {% endblock %}
 

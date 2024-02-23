@@ -168,40 +168,40 @@
 
   {% for message in get_flashed_messages(category_filter=["success"]) %}
     <div class="flash-message" role="alert" style="color: lawngreen; text-align: center">
-      <h2>
+      <h3>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
             close
           </span>
         </button>
-      </h2>
+      </h3>
     </div>
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["error"]) %}
     <div class="error-flash-message" role="alert" style="color: red; text-align: center">
-      <h2>
+      <h3>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
             close
           </span>
         </button>
-      </h2>
+      </h3>
     </div>
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["warning"]) %}
     <div class="flash-message" role="alert" style="color: orange; text-align: center">
-      <h2>
+      <h3>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
             close
           </span>
         </button>
-      </h2>
+      </h3>
     </div>
   {% endfor %}
 

@@ -107,7 +107,9 @@
 {% block lower_container %}
 <div id="shopping-cart-container">
   <h2 style="text-align: center">عربة التسوق</h2>
-  <h4 style="text-align: center;">إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع <a href="{{url_for('register')}}">إضغط هنا</a></h4>
+  {% if user_role == "guest" %}
+    <h4 style="text-align: center;">إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع <a href="{{url_for('register')}}">إضغط هنا</a></h4>
+  {% endif %}
   <table>
     <tr>
       <th>صورة المنتج</th>
@@ -198,7 +200,7 @@
           const parenOftDeleted = toDelete.parentNode;
           // take id, price and quantity from 3 hidden td tags
           const itemId = toDelete.querySelectorAll("td")[1].textContent;
-          const price = parseInt(toDelete.querySelectorAll("td")[2].textContent);
+          const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
           const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
           console.log("item id:" + itemId.toString());
           // put the value of the hidden input tag as the wanted item's id to remove from cart
@@ -220,7 +222,7 @@
           document.getElementById("cart-items-input").value = localStorage.getItem("cartItems")
           // take the total of the cart
           const totalDiv = document.getElementById("total-price").querySelector("b");
-          const beforeSum = parseInt(totalDiv.textContent);
+          const beforeSum = parseFloat(totalDiv.textContent);
           // modify the total of the cart as required
           const totalSum = beforeSum - (quantity * price);
           totalDiv.textContent = totalSum.toString();
@@ -251,11 +253,11 @@
           counter.textContent = newCounter.toString();
           quantityDiv.textContent = newQuantity;
           const totalDiv = document.getElementById("total-price").querySelector("b");
-          let newTotal = parseInt(totalDiv.textContent);
-          newTotal += parseInt(price) * diff;
+          let newTotal = parseFloat(totalDiv.textContent);
+          newTotal += parseFloat(price) * diff;
           totalDiv.textContent = newTotal.toString();
 
-          // update cart itme array
+          // update cart item array
           retrievedArray[curId] = (parseInt(retrievedArray[curId]) + diff).toString();
           if (retrievedArray[curId] === "0") {
               delete retrievedArray[curId];

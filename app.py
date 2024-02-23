@@ -24,6 +24,8 @@ login_manager.login_view = "login"
 
 NO_ACCOUNTS = False
 
+cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
+
 
 class User(UserMixin):
 	def __init__(self, id_number, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email):
@@ -91,6 +93,8 @@ def books():
 @app.route('/clothes')
 def clothes():
 	user_role = check_role()
+	# check this
+	clothes_lst = []
 	return render_template('clothes.html', products=clothes_lst, user_role=user_role)
 
 
@@ -121,6 +125,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+	user_role = check_role()
 	if request.method == 'POST':
 		# checking which method the user want to login with
 		login_method = request.form['login-method']
@@ -177,9 +182,12 @@ def login():
 				# 		# todo - what happens when adding anonymous cart to stored cart
 				flash("تم تسجيل الدخول بنجاح!", category="success")
 				# if the user is an admin then go to admin profile, otherwise to normal profile
-				if current_user.role == "admin":
+				if user_role == "admin":
 					return redirect(url_for('admin_profile'))
 				return redirect(url_for('profile'))
+			else:
+				flash("خطأ في إحدى الخانات (رقم الهاتف/البريد الإلكتروني أو كلمة المرور) الرجاء المحاولة مرة أخرى", "warning")
+				return redirect(url_for('login'))
 		# if there is no user has these unique info, then go and register the new user
 		elif len(res_rows) == 0:
 			flash("لم تقم بالتسجيل في الموقع من قبل, تفضّل بالتسجيل في الموقع", category="warning")
@@ -191,17 +199,20 @@ def login():
 			
 	# if the current user is already logged in, then go to profile
 	if current_user.is_authenticated:
-		if current_user.role == "admin":
+		if user_role == "admin":
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
-	
-	user_role = check_role()
-	
+		
 	return render_template('login.html', user_role=user_role)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+	user_role = check_role()
+	# registered users cannot register while they are logged in
+	if user_role != "guest":
+		return redirect(url_for('profile'))
+	
 	if NO_ACCOUNTS:
 		flash("فقط المسؤول يمكنه الدخول", "warning")
 		return redirect(url_for('home'))
@@ -248,37 +259,44 @@ def register():
 			
 			return redirect(url_for('profile'))
 	
-	return render_template('register.html', cities=cities, customer=True)
+	user_role = check_role()
+	return render_template('register.html', cities=cities, user_role=user_role)
 
 
 @app.route('/forgot_password')
 def forgot_password():
-	return render_template('forgot_password.html')
+	# todo - not implemented yet
+	return redirect(url_for('home'))
+	# return render_template('forgot_password.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
+	user_role = check_role()
 	if request.method == 'POST':
 		return redirect(url_for('profile'))
-	if current_user.role == "admin":
+	# admin go to your own profile
+	if user_role == "admin":
 		return redirect(url_for('admin_profile'))
-	return render_template('profile.html', current_user=current_user, customer=True)
+	return render_template('profile.html', current_user=current_user, user_role=user_role)
 
 
 @app.route('/admin_profile', methods=['GET', 'POST'])
 @login_required
 def admin_profile():
-	if current_user.role == "admin":
-		return render_template('admin_profile.html', current_user=current_user, customer=False)
+	user_role = check_role()
+	if user_role == "admin":
+		return render_template('admin_profile.html', current_user=current_user, user_role=user_role)
 	return redirect(url_for('profile'))
 
 
 @app.route('/profile/orders', methods=['GET', 'POST'])
 @login_required
 def orders():
+	user_role = check_role()
 	# the admin cannot enter the customer orders page
-	if current_user.role == "admin":
+	if user_role == "admin":
 		return redirect(url_for('all_customers_orders'))
 	
 	# retrieve all the orders of the current user
@@ -298,15 +316,21 @@ def orders():
 		
 	# check - some parsing of each cart items, because it is as string!
 	all_orders = [order[:-2] + (convert_str_to_dic(order[-2]), order[-1]) for order in orders_result]
-	return render_template("orders.html", customer=True, all_orders=all_orders)
+	return render_template("orders.html", user_role=user_role, all_orders=all_orders)
 
 
 @app.route('/admin_profile/all_customers_orders', methods=['GET', 'POST'])
 @login_required
 def all_customers_orders():
+	user_role = check_role()
 	# the customer cannot enter the admin orders page
-	if current_user.role == "customer":
+	if user_role == "customer":
 		return redirect(url_for('orders'))
+	order_id = -1
+	new_status = ""
+	if request.method == 'POST':
+		order_id, new_status = request.form["order-status-update"].split(",")
+		order_id = int(order_id)
 	
 	# retrieve all the orders of all the users for the admin to handle
 	with sqlite3.connect('Shopping.db') as connection:
@@ -317,15 +341,27 @@ def all_customers_orders():
 			""")
 			orders_result = cursor.fetchall()
 			connection.commit()
+			if request.method == 'POST':
+				cursor.execute(f"""
+				update Orders
+				set status = '{new_status}'
+				where id_number = {order_id}
+				""")
+				connection.commit()
 		except Exception as e:
 			connection.rollback()
 			flash("problem with retrieving orders from database, error: " + str(e), "error")
 			return redirect(url_for('admin_profile'))
-	# all_orders = [convert_str_to_dic(order[-1]) for order in orders_result]
-	
-	# check - some parsing of each cart items, because it is as string!
-	all_orders = [order[:-1] + (convert_str_to_dic(order[-2]),) for order in orders_result]
-	return render_template('all_customers_orders.html', customer=False, all_orders=all_orders)
+		# check - some parsing of each cart items, because it is as string!
+		
+		all_orders = []
+		for order in orders_result:
+			if order[0] == order_id:
+				all_orders.append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
+			else:
+				all_orders.append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
+			
+	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders)
 
 
 @app.route('/<ptype>/<name>/<id_num>')
@@ -357,16 +393,19 @@ def product(ptype, name, id_num):
 @app.route('/admin_profile/handling_products', methods=['GET', 'POST'])
 @login_required
 def handling_products():
+	user_role = check_role()
 	# just the admin can go to products handling page
-	if current_user.role == "admin":
-		return render_template('handling_products.html', customer=False)
+	if user_role == "admin":
+		return render_template('handling_products.html', user_role=user_role)
 	return redirect(url_for('profile'))
 
 
 @app.route('/admin_profile/handling_products/add_product', methods=['GET', 'POST'])
 @login_required
 def add_product():
-	if current_user.role != "admin":
+	user_role = check_role()
+	# just admin can add products
+	if user_role != "admin":
 		return redirect(url_for('profile'))
 		
 	done = request.args.get('done')
@@ -423,14 +462,15 @@ def add_product():
 				return redirect(url_for('add_product'))
 	
 	# if we arrive now to add product page
-	return render_template('add_product.html', customer=False, done=done, name=name, ptype=ptype)
+	return render_template('add_product.html', user_role=user_role, done=done, name=name, ptype=ptype)
 
 
 @app.route('/admin_profile/handling_products/remove_product', methods=['GET', 'POST'])
 @login_required
 def remove_product():
+	user_role = check_role()
 	# just the admin can enter removing product page
-	if current_user.role != "admin":
+	if user_role != "admin":
 		return redirect(url_for('profile'))
 		
 	if request.method == "POST":
@@ -462,22 +502,24 @@ def remove_product():
 				flash(f"حدث خطأ أثناء إزالة منتج رقم {product_id}" + f": {e}", "error")
 				return redirect(url_for('remove_product'))
 	
-	return render_template('remove_product.html', customer=False)
+	return render_template('remove_product.html', user_role=user_role)
 
 
 @app.route('/admin_profile/handling_products/search_update_product', methods=['GET', 'POST'])
 @login_required
 def search_update_product():
-	if current_user.role == "admin":
-		return render_template("search_update_product.html", customer=False)
+	user_role = check_role()
+	if user_role == "admin":
+		return render_template("search_update_product.html", user_role=user_role)
 	return redirect(url_for('profile'))
 
 
 @app.route('/admin_profile/handling_products/update_product', methods=['GET', 'POST'])
 @login_required
 def update_product():
+	user_role = check_role()
 	# just the admin can enter update product page
-	if current_user.role != "admin":
+	if user_role != "admin":
 		return redirect(url_for('profile'))
 		
 	done = request.args.get('done')
@@ -542,13 +584,14 @@ def update_product():
 			img_src = result[3][7:]
 			product_images = [img for img in os.listdir(result[3])]
 			img_src += f"/{product_images[0]}"
-		return render_template('update_product.html', customer=False, done=done, result=result, name=name, ptype=ptype, img_src=img_src)
+		return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, img_src=img_src)
 
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
+	user_role = check_role()
 	# prevent admin from entering the shopping cart, it is for customeeeers
-	if current_user.is_authenticated and current_user.role == "admin":
+	if current_user.is_authenticated and user_role == "admin":
 		flash("عربة التسوق فقط للزبائن", category="warning")
 		return redirect(url_for('admin_profile'))
 		
@@ -596,14 +639,14 @@ def shopping_cart():
 				session["cart-items"] = result
 				session["total"] = total
 				return redirect(url_for('shopping_cart'))
-	
-	return render_template('shopping_cart.html', customer=True, cart_items=session.get("cart-items"), total=session.get("total"))
+	return render_template('shopping_cart.html', user_role=user_role, cart_items=session.get("cart-items"), total=session.get("total"))
 
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+	user_role = check_role()
 	# admin go awaaaay
-	if not current_user.is_anonymous and current_user.role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
+	if user_role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
 		return redirect(url_for('home'))
 	
 	cart_items = session.get("cart-items")
@@ -618,7 +661,7 @@ def checkout():
 		phone_number = request.form['customer-phone'].strip()
 		backup_phone = request.form['customer-backup-phone'].strip()
 		
-		role = "customer" if not current_user.is_anonymous and current_user.role == "customer" else "guest"
+		role = "customer" if user_role == "customer" else "guest"
 		# تم تجهيز الطلب
 		# الطلب في الطريق إليك
 		# تم توصيل الطلب
@@ -663,7 +706,7 @@ def checkout():
 			session["cart-items"] = {}
 			
 			# store the order in Orders SQL table
-			if not current_user.is_anonymous and current_user.role == "customer":
+			if user_role == "customer":
 				cursor.execute("""
 				insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
 				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -677,9 +720,10 @@ def checkout():
 			
 			connection.commit()
 		
-		return render_template("order_approved.html", customer=True)
-	cur_user = current_user if not current_user.is_anonymous else None
-	return render_template('checkout.html', cities=cities, customer=True, total=total, cur_user=cur_user)
+		return render_template("order_approved.html", user_role=user_role)
+	 
+	cur_user = current_user if user_role != "guest" else None
+	return render_template('checkout.html', cities=cities, user_role=user_role, total=total, cur_user=cur_user)
 
 
 @app.route('/logout', methods=['GET', 'POST'])

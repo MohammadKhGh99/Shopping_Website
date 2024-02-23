@@ -70,11 +70,9 @@
       <img src="{{url_for('static', filename=img_src)}}" alt="" style="width: 90%; height: 90%; object-fit: fill">
     </div>
     <div id="product-left-side">
-      {% if not customer %}
-        <h5 style="background-color: #e5e5e5; width: 150px; text-align: center">
-          رقم المنتج: {{result[0]}}
-        </h5>
-      {% endif %}
+      <h5 style="background-color: #e5e5e5; width: 150px; text-align: center">
+        رقم المنتج: {{result[0]}}
+      </h5>
       <div id="product-left-upper">
         <h1 style="margin-top: 0; line-height: 1">
           {{result[1]}}
