@@ -25,7 +25,8 @@ def create_table():
 		city nvarchar(20),
 		address nvarchar(50),
 		backup_phone nvarchar(10),
-		password nvarchar(80)
+		password nvarchar(80),
+		email nvarchar(50)
 	 )
 	"""
 	# check (length(phone_number) == 10),

@@ -28,7 +28,7 @@
     border-collapse: collapse;
   }
 
-  .order-id-td, .order-total-td, .order-status-td {
+  .order-id-td, .order-total-td, .order-status-td, .order-number {
     vertical-align: top;
     text-align: center;
     padding: 10px 0 0 0;
@@ -253,7 +253,7 @@
                 } else {
                     selectNode.setAttribute("disabled", "true");
                     if (selectNode.value !== initialValue) {
-                        document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[0].textContent + "," + selectNode.value;
+                        document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[1].textContent + "," + selectNode.value;
                         document.getElementById("status-form").submit();
                     }
                 }

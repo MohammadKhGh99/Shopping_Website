@@ -92,7 +92,10 @@
         </div>
         <div class="field-holder">
           <label for="product-img">صورة المنتج</label><br>
-          <img src="{{url_for('static', filename=img_src)}}" alt="img"><br>
+          {% for image in images %}
+            <img src="{{url_for('static', filename=image)}}" alt="img"><br>
+          
+          {% endfor %}
           <input type="file" accept="image/*" multiple id="product-img" name="product-img" class="input_field">
         </div>
         <div class="field-holder">

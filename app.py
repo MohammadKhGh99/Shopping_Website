@@ -13,8 +13,8 @@ app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
-# db = SQLAlchemy(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
+db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
 
@@ -25,6 +25,20 @@ login_manager.login_view = "login"
 NO_ACCOUNTS = False
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
+
+
+class Customers(db.Model):
+	__tablename__ = "customers"
+	id_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	phone_number = db.Column(db.NVARCHAR(10), unique=True)
+	first_name = db.Column(db.NVARCHAR(15))
+	last_name = db.Column(db.NVARCHAR(15))
+	role = db.Column(db.NVARCHAR(10))
+	date_joined = db.Column(db.NVARCHAR(20))
+	city = db.Column(db.NVARCHAR(20))
+	address = db.Column(db.NVARCHAR(50))
+	backup_phone = db.Column(db.NVARCHAR(10))
+	password = db.Column(db.NVARCHAR(80))
 
 
 class User(UserMixin):
@@ -53,8 +67,14 @@ def check_role():
 		user_role = "guest"
 	else:
 		user_role = current_user.role
-		
+	
 	return user_role
+
+
+@app.route("/")
+def index():
+	# Redirect to the actual homepage
+	return redirect('/home')
 
 
 @app.route('/home')
@@ -196,13 +216,13 @@ def login():
 		else:
 			flash("حدث خطأ أثناء تسجيل الدخول (هنالك أكثر من مستخدم لديهم نفس رقم الهاتف أو البريد الإلكتروني", "error")
 			return redirect(url_for('login'))
-			
+	
 	# if the current user is already logged in, then go to profile
 	if current_user.is_authenticated:
 		if user_role == "admin":
 			return redirect(url_for('admin_profile'))
 		return redirect(url_for('profile'))
-		
+	
 	return render_template('login.html', user_role=user_role)
 
 
@@ -237,8 +257,8 @@ def register():
 				cursor.execute("""
 				INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
 				VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				""",(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password, email)
-				)
+				""", (phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password, email)
+				               )
 				# todo - should I commit 2 times?
 				connection.commit()
 				# make initial cart items entry for the new customer
@@ -267,7 +287,9 @@ def register():
 def forgot_password():
 	# todo - not implemented yet
 	return redirect(url_for('home'))
-	# return render_template('forgot_password.html')
+
+
+# return render_template('forgot_password.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -313,7 +335,7 @@ def orders():
 			connection.rollback()
 			flash("problem with retrieving orders from database, error: " + str(e), "error")
 			return redirect(url_for('profile'))
-		
+	
 	# check - some parsing of each cart items, because it is as string!
 	all_orders = [order[:-2] + (convert_str_to_dic(order[-2]), order[-1]) for order in orders_result]
 	return render_template("orders.html", user_role=user_role, all_orders=all_orders)
@@ -360,7 +382,7 @@ def all_customers_orders():
 				all_orders.append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
 			else:
 				all_orders.append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
-			
+	
 	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders)
 
 
@@ -376,7 +398,7 @@ def product(ptype, name, id_num):
 				select * from Products
 				where id_number = {id_num}
 				""")
-		
+			
 			result = res_rows.fetchone()
 			connection.commit()
 		except Exception as e:
@@ -385,9 +407,9 @@ def product(ptype, name, id_num):
 			return redirect(request.referrer)
 		
 		# take the product's image src path
-		img_src = result[3][7:]
+		img_src = [img[7:] for img in result[3].split(",")]
 	
-	return render_template('product.html', user_role=user_role, result=result, img_src=img_src)
+	return render_template('product.html', user_role=user_role, result=result, images=img_src)
 
 
 @app.route('/admin_profile/handling_products', methods=['GET', 'POST'])
@@ -407,7 +429,7 @@ def add_product():
 	# just admin can add products
 	if user_role != "admin":
 		return redirect(url_for('profile'))
-		
+	
 	done = request.args.get('done')
 	name = request.args.get('name')
 	ptype = request.args.get('ptype')
@@ -416,7 +438,8 @@ def add_product():
 	if request.method == "POST":
 		product_name = request.form['product-name']
 		product_type = request.form['product-type']
-		product_img = request.files['product-img']
+		product_images = request.files.getlist('product-img')
+		product_img = ""
 		product_description = request.form['product-description']
 		product_price = request.form['product-price']
 		product_items_left = request.form['product-items-left']
@@ -437,17 +460,20 @@ def add_product():
 				)
 				
 				# validating filename and creating img src path to store in database
-				filename = secure_filename(product_img.filename)
-				product_folder = 'books' if product_type == "كتب" else "clothes"
-				img_path = f'static/images/{product_folder}'
-				if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
-					os.mkdir(img_path + f"/{cursor.lastrowid}")
-				img_path += f"/{cursor.lastrowid}/{filename}"
-				product_img.save(img_path)
+				for img_file in product_images:
+					filename = secure_filename(img_file.filename)
+					product_folder = 'books' if product_type == "كتب" else "clothes"
+					img_path = f'static/images/{product_folder}'
+					if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
+						os.mkdir(img_path + f"/{cursor.lastrowid}")
+					img_path += f"/{cursor.lastrowid}/{filename}"
+					img_file.save(img_path)
+					product_img += img_path + ","
+				product_img = product_img[:-1]
 				
 				cursor.execute(f"""
 				update Products
-				set img_path = '{img_path}'
+				set img_path = '{product_img}'
 				where id_number = {cursor.lastrowid}
 				""")
 				
@@ -472,7 +498,7 @@ def remove_product():
 	# just the admin can enter removing product page
 	if user_role != "admin":
 		return redirect(url_for('profile'))
-		
+	
 	if request.method == "POST":
 		product_id = request.form["search-product-id-input"]
 		# if the user didn't enter any number to search for
@@ -521,7 +547,7 @@ def update_product():
 	# just the admin can enter update product page
 	if user_role != "admin":
 		return redirect(url_for('profile'))
-		
+	
 	done = request.args.get('done')
 	name = request.args.get('name')
 	ptype = request.args.get('ptype')
@@ -530,6 +556,7 @@ def update_product():
 		product_id = request.form['product-id-input']
 		product_name = request.form['product-name']
 		product_type = request.form['product-type']
+		product_images = request.files.getlist('product-img')
 		product_img = request.files['product-img']
 		product_description = request.form['product-description']
 		product_price = request.form['product-price']
@@ -565,14 +592,13 @@ def update_product():
 			return redirect(url_for('update_product', done=True, name=product_name, ptype=product_type, id_num=product_id))
 	elif request.method == "GET":
 		id_num = int(request.args.get('id_num'))
-		search_for_id = f"""
-			select * from Products
-			where id_number = {id_num}
-			"""
 		with sqlite3.connect("Shopping.db") as connection:
 			cursor = connection.cursor()
 			try:
-				cursor.execute(search_for_id)
+				cursor.execute(f"""
+				select * from Products
+				where id_number = {id_num}
+				""")
 				connection.commit()
 				flash(f"تم إيجاد المنتج رقم {id_num}", "success")
 			except Exception as e:
@@ -581,10 +607,13 @@ def update_product():
 				return redirect(url_for('update_product'))
 			
 			result = cursor.fetchone()
-			img_src = result[3][7:]
-			product_images = [img for img in os.listdir(result[3])]
-			img_src += f"/{product_images[0]}"
-		return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, img_src=img_src)
+			img_src = [img[7:] for img in result[3].split(",")]
+			# todo - for multiple images
+			# img_src = image_path[7:]
+			# product_images = [img for img in os.listdir(result[3][:image_path.rindex("/")])]
+			# print(product_images)
+			# img_src += f"/{product_images[0]}"
+		return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, images=img_src)
 
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
@@ -594,7 +623,7 @@ def shopping_cart():
 	if current_user.is_authenticated and user_role == "admin":
 		flash("عربة التسوق فقط للزبائن", category="warning")
 		return redirect(url_for('admin_profile'))
-		
+	
 	if request.method == 'POST':
 		if "cart-items-input" in request.form.keys() and request.form["cart-items-input"] != "":
 			total = 0
@@ -604,7 +633,7 @@ def shopping_cart():
 				for item in request.form['cart-items-input'][1:-1].replace("\"", "").split(","):
 					tmp = item.split(":")
 					cart_items[int(tmp[0])] = tmp[1]
-					
+			
 			# retrieve all the products corresponds to the cart items, to display them
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
@@ -710,18 +739,21 @@ def checkout():
 				cursor.execute("""
 				insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
 				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				""", (current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
+				""", (
+				current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount,
+				status, str(cart_items)))
 			#  guest
 			else:
 				cursor.execute("""
 				insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
 				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
+				""", (
+				first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
 			
 			connection.commit()
 		
 		return render_template("order_approved.html", user_role=user_role)
-	 
+	
 	cur_user = current_user if user_role != "guest" else None
 	return render_template('checkout.html', cities=cities, user_role=user_role, total=total, cur_user=cur_user)
 
@@ -760,7 +792,7 @@ def convert_str_to_dic(string: str) -> dict:
 			ind = x.rindex(",")
 			keys.append(x[ind + 1:].strip()[1:-1])
 			last_one = False
-			
+		
 		if i != 0:
 			if last_one:
 				value = x[:-1].strip().replace("\'", "")
