@@ -64,6 +64,22 @@
     background-color: #e5e5e5;
   }
 
+  .img-holder {
+    position: relative;
+    margin-right: 20%;
+  }
+
+  .image-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .image-delete:hover {
+    color: #cce5ff;
+  }
+
 </style>
 
 <body>
@@ -72,8 +88,8 @@
 
   {% block lower_container %}
   <div id="updating-products-container">
-  {% if not done %}
-    <form method="post" enctype="multipart/form-data">
+  {% if not done_updating %}
+    <form method="post" enctype="multipart/form-data" id="update-form">
       <h4 id="add-title">تعديل منتج رقم {{result[0]}}</h4>
       <div id="form-container">
         <input id="product-id-input" name="product-id-input" style="display: none" type="number" value="{{result[0]}}">
@@ -86,18 +102,49 @@
           <select id="product-type" name="product-type" class="input_field" style="width: 363px">
             <option>أزياء</option>
             <option>كتب</option>
-<!--            <option></option>-->
           </select>
-<!--          <input type="text" id="product-type" name="product-type" class="input_field">-->
         </div>
+        <script>
+            const productType = document.getElementById("product-type");
+            const realType = "{{result[2]}}";
+            for (let i = 0; i < productType.children.length; i++) {
+                if (productType.children[i].value === realType) {
+                    productType.children[i].setAttribute("selected", "true");
+                }
+            }
+
+            // const allTypes = productType.querySelector("option");
+            // console.log(productType.children);
+            // console.log(productType.querySelector("option"));
+            // for (const childrenKey in productType.children) {
+            //     if (childrenKey === realType) {
+            //
+            //     }
+            // }
+        </script>
         <div class="field-holder">
-          <label for="product-img">صورة المنتج</label><br>
+          <label for="product-img" style="margin-right: 40%">صور المنتج</label><br>
+          <br>
           {% for image in images %}
-            <img src="{{url_for('static', filename=image)}}" alt="img"><br>
-          
+            <div class="img-holder">
+<!--              <span class="material-symbols-outlined image-delete" onclick="DeleteImage(this)">-->
+<!--                delete-->
+<!--              </span>-->
+              <img src="{{url_for('static', filename=image)}}" alt="img"><br>
+            </div>
           {% endfor %}
           <input type="file" accept="image/*" multiple id="product-img" name="product-img" class="input_field">
+          <form method="post" id="delete-img-form">
+            <input type="hidden" id="delete-img" name="delete-img">
+          </form>
         </div>
+        <script>
+            function DeleteImage(span) {
+                document.getElementById("delete-img").value = "{{result[0]}}," + span.parentNode.children[1].src;
+                console.log(document.getElementById("delete-img-form"));
+                document.getElementById("update-form").submit();
+            }
+        </script>
         <div class="field-holder">
           <label for="product-description">وصف المنتج</label><br>
           <textarea id="product-description" name="product-description" class="input_field">{{result[6]}}</textarea>
@@ -131,33 +178,16 @@
       </div>
     </form>
   {% endif %}
-  {% if done %}
+  {% if done_updating %}
     <button id="go-new-added-button">
-      <a href="{{url_for('product', name=name, ptype=ptype)}}">
+      <a href="{{url_for('product', id_num=id_num, name=name, ptype=ptype)}}">
         الإنتقال للمنتج المُعدّل حديثًا
       </a>
     </button>
   {% endif %}
   </div>
 
-  <script>
-    const productType = document.getElementById("product-type");
-    const realType = "{{result[2]}}";
-    for (let i = 0; i < productType.children.length; i++) {
-        if (productType.children[i].value === realType) {
-            productType.children[i].setAttribute("selected", "true");
-        }
-    }
 
-    // const allTypes = productType.querySelector("option");
-    // console.log(productType.children);
-    // console.log(productType.querySelector("option"));
-    // for (const childrenKey in productType.children) {
-    //     if (childrenKey === realType) {
-    //
-    //     }
-    // }
-  </script>
 
   {% endblock %}
 

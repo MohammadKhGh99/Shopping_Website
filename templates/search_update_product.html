@@ -54,15 +54,20 @@
     <button id="search-product-id-button" onclick="SearchForID()">
       بحث
     </button>
+    <form method="post" style="display: none" id="search-form" action="update_product">
+      <input type="hidden" id="searched-update-id" name="searched-update-id">
+    </form>
 <!--    </form>-->
   </div>
   <script>
     function SearchForID() {
         const searchInput = document.getElementById("search-product-id-input");
 
-        const string = `url_for('update_product', id_num=${searchInput.value})`;
-        console.log(string);
-        window.location.href = "/admin_profile/handling_products/update_product?id_num=" + searchInput.value;
+        document.getElementById("searched-update-id").value = searchInput.value;
+        document.getElementById("search-form").submit();
+        // const string = `url_for('update_product', id_num=${searchInput.value})`;
+        // console.log(string);
+        // window.location.href = "/admin_profile/handling_products/update_product?id_num=" + searchInput.value;
     }
   </script>
   {% endblock %}
