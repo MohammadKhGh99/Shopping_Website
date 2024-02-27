@@ -447,6 +447,12 @@ def add_product():
 		product_publish_year = request.form['product-publish-year']
 		product_author = request.form['product-author']
 		product_categories = request.form['product-categories']
+		product_on_sale = request.form['product-on-sale']
+		product_sale_price = request.form['product-sale-price']
+		
+		print(product_on_sale)
+		print(product_sale_price)
+		
 		categories = [x.strip() for x in product_categories.split(',')]
 		
 		# add the entered product info to the database
@@ -454,10 +460,10 @@ def add_product():
 			cursor = connection.cursor()
 			try:
 				cursor.execute(
-					"INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories) "
-					"VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+					"INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories, on_sale, sale_price) "
+					"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 					(product_name, product_type, product_price, product_items_left, product_description, product_publish_year, product_author,
-					 product_categories)
+					 product_categories, product_on_sale, product_sale_price)
 				)
 				
 				# validating filename and creating img src path to store in database
@@ -578,7 +584,8 @@ def update_product():
 				img_src = [img[7:] for img in result[3].split(",")]
 			return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, images=img_src)
 		# deleting image
-		elif request.form.get('delete-img') is not None:
+		elif request.form.get('delete-img').strip() != "" :
+			print(request.form.get('delete-img'))
 			tmp = request.form['delete-img'].split(',')
 			id_num = int(tmp[0])
 			images = set(tmp[1:])
@@ -620,18 +627,26 @@ def update_product():
 			product_publish_year = request.form['product-publish-year']
 			product_author = request.form['product-author']
 			product_categories = request.form['product-categories']
+			product_on_sale = request.form['product-on-sale']
+			product_sale_price = request.form['product-sale-price']
 			
+			print(product_on_sale)
+			print(product_sale_price)
+			
+			# todo - update images
 			save_product_sql = f"""
 			update Products
 			set name = '{product_name}',
 			type = '{product_type}',
-			
+		
 			price = '{product_price}',
 			items_left = {product_items_left},
 			description = '{product_description}',
 			publish_year = '{product_publish_year}',
 			author_name = '{product_author}',
-			categories = '{product_categories}'
+			categories = '{product_categories}',
+			on_sale = '{product_on_sale}',
+			sale_price = '{product_sale_price}'
 			where id_number = {product_id}
 			"""
 			with sqlite3.connect("Shopping.db") as connection:

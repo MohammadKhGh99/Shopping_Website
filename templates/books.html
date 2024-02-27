@@ -187,9 +187,20 @@
               {{ prod[1] }}
             </span>
             <hr>
-            <span>
-              {{ prod[4] }} ₪
-            </span>
+            {% if prod[10] == 'on' %}
+            <div>
+              <span style="text-decoration: line-through">
+                {{ prod[4] }} ₪
+              </span>
+              <span>
+                {{ prod[11] }} ₪
+              </span>
+            </div>
+            {% else %}
+              <span>
+                {{ prod[4] }} ₪
+              </span>
+            {% endif %}
           </div>
 <!--          <script>-->
 <!--            if (parseInt("{{prod[5]}}") === 0) {-->
