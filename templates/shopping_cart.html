@@ -127,7 +127,7 @@
     <tr>
       <td style="justify-content: center; align-items: center">
         <a href="{{url_for('product', name=item[1], ptype=item[2], id_num=item[0])}}">
-          <img src="../{{item[3]}}" alt="item">
+          <img src="../{{item[3][:item[3].index(',')]}}" alt="item">
         </a>
       </td>
       <td style="display: none">{{item[0]}}</td>

@@ -67,6 +67,9 @@
 
   .slides {
     display: none;
+    /*transition: width 0.5s ease-in-out;*/
+    width: 100%;
+    height: 100%;
   }
 
   .prev,
@@ -89,20 +92,18 @@
   }
 
   .next {
-    left: 0;
+    right: 0;
     border-radius: 3px 0 0 3px;
   }
 
   .prev {
-    right: 0;
+    left: 0;
   }
 
   .prev:hover,
   .next:hover {
     background-color: rgba(0, 0, 0, 0.8);
   }
-
-
 
 </style>
 
@@ -118,31 +119,36 @@
           <img src="{{url_for('static', filename=image)}}" alt="" style="width: 100%; height: 100%; object-fit: fill">
         </div>
         {% endfor %}
-        <a class="prev" onclick="MoveSlides(-1)">&#10094;</a>
-        <a class="next" onclick="MoveSlides(1)">&#10095;</a>
+        <a class="next" onclick="MoveSlides(1)">&#10094;</a>
+        <a class="prev" onclick="MoveSlides(-1)">&#10095;</a>
       </div>
       <script>
-          let slideIndex = 1;
-          showSlides(slideIndex);
+          let slideIndex = 0;
+          let slides = document.getElementsByClassName("slides");
+          MoveSlides();
 
-          // Next/previous controls
-          function MoveSlides(n) {
-            showSlides(slideIndex += n);
+          function HideSlides(avoid) {
+              for (let i = 0; i < slides.length; i++) {
+                  if (i === avoid) continue;
+                  slides[i].style.display = "none";
+              }
           }
 
-          function showSlides(n) {
-            let i;
-            let slides = document.getElementsByClassName("slides");
-            if (n > slides.length) {
-                slideIndex = 1;
-            }
-            if (n < 1) {
-                slideIndex = slides.length;
-            }
-            for (i = 0; i < slides.length; i++) {
-              slides[i].style.display = "none";
-            }
-            slides[slideIndex-1].style.display = "block";
+          function MoveSlides(n=0) {
+              if (n === 0) {
+                  HideSlides(0);
+                  slides[0].style.display = "block";
+              }
+              else if (n === 1 && slideIndex + 1 < slides.length) {
+                  slideIndex++;
+                  HideSlides(slideIndex);
+                  slides[slideIndex].style.display = "block";
+              }
+              else if (n === -1 && slideIndex > 0) {
+                  slideIndex--;
+                  HideSlides(slideIndex);
+                  slides[slideIndex].style.display = "block";
+              }
           }
       </script>
     </div>
@@ -175,11 +181,15 @@
           <a href="#" style="display: none; margin-right: 40%; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
             الذهاب إلى عربة التسوق
           </a>
-
+          <form method="post" id="update-cart-form">
+            <input type="hidden" name="cart-item-id-update" id="cart-item-id-update">
+            <input type="hidden" name="cart-items-update" id="cart-items-update">
+            <input type="hidden" name="item-price-update" id="item-price-update">
+          </form>
           <script>
-            const addToCartButton = document.getElementById("add-to-cart-button");
+            // const addToCartButton = document.getElementById("add-to-cart-button");
             // const counter1 = document.getElementsByClassName("counter")[0];
-            addToCartButton.setAttribute("onclick", "AddToCart()");
+            // addToCartButton.setAttribute("onclick", "AddToCart()");
 
             function AddToCart() {
                 // checking if the user has already put the maximum number of items from this product in cart
@@ -210,6 +220,11 @@
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
 
                 document.getElementById("go-to-shop-cart").style.display = "block";
+
+                document.getElementById("cart-item-id-update").value = "{{result[0]}}";
+                document.getElementById("cart-items-update").value = localStorage.getItem("cartItems");
+                document.getElementById("item-price-update").value = "{{result[4]}}";
+                // document.getElementById("update-cart-form").submit();
             }
 
             function ClickOnCart() {

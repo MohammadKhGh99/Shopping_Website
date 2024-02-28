@@ -23,6 +23,7 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 NO_ACCOUNTS = False
+STORE_CART = False
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 
@@ -387,9 +388,61 @@ def all_customers_orders():
 	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders)
 
 
-@app.route('/<ptype>/<name>/<id_num>')
+@app.route('/<ptype>/<name>/<id_num>', methods=['POST', 'GET'])
 def product(ptype, name, id_num):
 	user_role = check_role()
+	
+	# add to cart functionality
+	if STORE_CART and request.method == "POST" and user_role == "customer":
+		product_id = int(request.form['cart-item-id-update'])
+		cart_items_tmp = request.form['cart-items-update']
+		product_price = float(request.form['item-price-update'])
+		# cart_items = {}
+		# for item in cart_items_tmp[1:-1].replace("\"", "").split(","):
+		# 	tmp = item.split(":")
+		# 	cart_items[int(tmp[0])] = tmp[1]
+		
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			try:
+				
+				cursor.execute(f"""
+				select * from Cart_Items
+				where customer_id = {current_user.id_number}
+				""")
+				
+				searching_result = cursor.fetchone()
+				connection.commit()
+				print(searching_result)
+				# add new row to Cart_Items table
+				if searching_result is None:
+					cursor.execute("""
+					insert into Cart_Items(customer_id, total, cart_items)
+					values(?, ?, ?)
+					""", (current_user.id_number, product_price, cart_items_tmp))
+				else:
+					print("hi")
+					cursor.execute(f"""
+					update Cart_Items
+					set total = total + {product_price},
+					cart_items = '{cart_items_tmp}'
+					where customer_id = {current_user.id_number}
+					""")
+					
+				# cursor.execute(f"""
+				# insert into Cart_Items (customer_id, total, cart_items)
+				# values({int(product_id)}, {float(product_price)}, '{cart_items_tmp}')
+				# on duplicate key update
+				# 	total = values(total + {float(product_price)}),
+				# 	cart_items = values('{cart_items_tmp}')
+				# """)
+				
+				connection.commit()
+				flash("تم إضافة المنتج للسلة", "success")
+				return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
+			except Exception as e:
+				flash(f"حدث خطأ أثناء إضافة المنتج رقم {product_id} إلى سلة التسوق\nخطأ:" + str(e), "error")
+				return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
 	
 	# retrieve the info for the current product
 	with sqlite3.connect('Shopping.db') as connection:
@@ -629,9 +682,6 @@ def update_product():
 			product_categories = request.form['product-categories']
 			product_on_sale = request.form['product-on-sale']
 			product_sale_price = request.form['product-sale-price']
-			
-			print(product_on_sale)
-			print(product_sale_price)
 			
 			# todo - update images
 			save_product_sql = f"""
