@@ -416,7 +416,6 @@ def product(ptype, name, id_num):
 				
 				searching_result = cursor.fetchone()
 				connection.commit()
-				print(searching_result)
 				# add new row to Cart_Items table
 				if searching_result is None:
 					cursor.execute("""
@@ -424,7 +423,6 @@ def product(ptype, name, id_num):
 					values(?, ?, ?)
 					""", (current_user.id_number, product_price, cart_items_tmp))
 				else:
-					print("hi")
 					cursor.execute(f"""
 					update Cart_Items
 					set total = total + {product_price},
@@ -503,11 +501,8 @@ def add_product():
 		product_publish_year = request.form['product-publish-year']
 		product_author = request.form['product-author']
 		product_categories = request.form['product-categories']
-		product_on_sale = request.form['product-on-sale']
-		product_sale_price = request.form['product-sale-price']
-		
-		print(product_on_sale)
-		print(product_sale_price)
+		# product_on_sale = request.form['product-on-sale']
+		# product_sale_price = request.form['product-sale-price']
 		
 		categories = [x.strip() for x in product_categories.split(',')]
 		
@@ -516,10 +511,10 @@ def add_product():
 			cursor = connection.cursor()
 			try:
 				cursor.execute(
-					"INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories, on_sale, sale_price) "
-					"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					"INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories) "
+					"VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
 					(product_name, product_type, product_price, product_items_left, product_description, product_publish_year, product_author,
-					 product_categories, product_on_sale, product_sale_price)
+					 product_categories)
 				)
 				
 				# validating filename and creating img src path to store in database
@@ -617,7 +612,6 @@ def update_product():
 	result = session.get('result')
 	
 	if request.method == "POST":
-		print(request.form)
 		# search for product
 		if request.form.get('searched-update-id') and request.form.get('searched-update-id').strip() != "":
 			id_num = int(request.form.get('searched-update-id'))
@@ -642,12 +636,9 @@ def update_product():
 		# deleting image
 		elif request.form.get('delete-img') and request.form.get('delete-img').strip() != "":
 			tmp = request.form['delete-img'].split(',')
-			print(f"tmp {tmp}")
 			id_num = int(tmp[0])
 			static_index = tmp[1].index("static")
-			print(f"id: {id_num}")
 			to_delete_img = tmp[1][static_index:]
-			print(f"img path: {to_delete_img}")
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
 				try:
@@ -657,12 +648,10 @@ def update_product():
 					""")
 					
 					result = cursor.fetchone()
-					print(f"result {result}")
 					connection.commit()
 					cur_images = result[0].split(',')
 					cur_images.remove(to_delete_img)
 					new_images = ','.join(cur_images)
-					print(f"new images {new_images}")
 					
 					cursor.execute(f"""
 					update Products
@@ -724,7 +713,6 @@ def update_product():
 				
 				return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type, id_num=product_id)
 	img_src = [img[7:] for img in result[3].split(",")]
-	print(f"result after: {result}")
 	return render_template('update_product.html', done_updating=False, result=result, images=img_src)
 		
 
@@ -913,7 +901,6 @@ def convert_str_to_dic(string: str) -> dict:
 			item = []
 			value = value[1:] if value[0] == "(" else value
 			indx = value.index(",")
-			# print(value)
 			tup = value[:indx].strip(), value[indx + 1:].strip()
 			for j, v in enumerate(tup[1][1:-1].split(",")):
 				if j == 0 or j == 5:
@@ -925,7 +912,6 @@ def convert_str_to_dic(string: str) -> dict:
 			values.append(value)
 	
 	dic = {keys[i]: values[i] for i in range(len(keys))}
-	# print(dic)
 	return dic
 
 
@@ -938,5 +924,4 @@ if __name__ == "__main__":
 	# webbrowser.open("http://127.0.0.1:5000/home")
 	# app.run()
 	# create_table()
-	# print(app.url_map)
 	app.run(host="0.0.0.0", debug=True)
