@@ -121,6 +121,14 @@
         {% endfor %}
         <a class="next" onclick="MoveSlides(1)">&#10094;</a>
         <a class="prev" onclick="MoveSlides(-1)">&#10095;</a>
+        <script>
+            // hide the next and prev symbols if there is just one image
+            const productImages = "{{result[3]}}";
+            if (productImages.indexOf(",") === -1) {
+                document.getElementsByClassName("next")[0].style.display = "none";
+                document.getElementsByClassName("prev")[0].style.display = "none";
+            }
+        </script>
       </div>
       <script>
           let slideIndex = 0;

@@ -127,24 +127,14 @@
           <br>
           {% for image in images %}
             <div class="img-holder">
-<!--              <span class="material-symbols-outlined image-delete" onclick="DeleteImage(this)">-->
-<!--                delete-->
-<!--              </span>-->
+              <span class="material-symbols-outlined image-delete" onclick="DeleteImage(this)">
+                delete
+              </span>
               <img src="{{url_for('static', filename=image)}}" alt="img"><br>
             </div>
           {% endfor %}
           <input type="file" accept="image/*" multiple id="product-img" name="product-img" class="input_field">
-          <form method="post" id="delete-img-form">
-            <input type="hidden" id="delete-img" name="delete-img">
-          </form>
         </div>
-        <script>
-            function DeleteImage(span) {
-                document.getElementById("delete-img").value = "{{result[0]}}," + span.parentNode.children[1].src;
-                console.log(document.getElementById("delete-img-form"));
-                document.getElementById("update-form").submit();
-            }
-        </script>
         <div class="field-holder">
           <label for="product-description">وصف المنتج</label><br>
           <textarea id="product-description" name="product-description" class="input_field">{{result[6]}}</textarea>
@@ -196,6 +186,16 @@
           }
       </script>
     </form>
+    <form method="post" id="delete-img-form">
+      <input type="hidden" id="delete-img" name="delete-img">
+    </form>
+    <script>
+        function DeleteImage(span) {
+            document.getElementById("delete-img").value = "{{result[0]}}," + span.parentNode.children[1].src;
+            console.log(document.getElementById("delete-img-form"));
+            document.getElementById("delete-img-form").submit();
+        }
+    </script>
   {% endif %}
   {% if done_updating %}
     <button id="go-new-added-button">

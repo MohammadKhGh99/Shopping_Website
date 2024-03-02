@@ -24,6 +24,7 @@ login_manager.login_view = "login"
 
 NO_ACCOUNTS = False
 STORE_CART = False
+NO_CLOTHES = True
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 
@@ -114,6 +115,8 @@ def books():
 
 @app.route('/clothes')
 def clothes():
+	if NO_CLOTHES:
+		return redirect(url_for('home'))
 	user_role = check_role()
 	# check this
 	clothes_lst = []
@@ -248,6 +251,8 @@ def register():
 		city = form['customer-city'].strip()
 		address = form['customer-address'].strip()
 		phone_number = form['customer-phone'].strip()
+		if phone_number == "0543818223":
+			role = "admin"
 		email = form['customer-email'].strip()
 		backup_phone = form['customer-backup-phone'].strip()
 		password = form['customer-password'].strip()
@@ -289,8 +294,6 @@ def register():
 def forgot_password():
 	# todo - not implemented yet
 	return redirect(url_for('home'))
-
-
 # return render_template('forgot_password.html')
 
 
@@ -616,7 +619,7 @@ def update_product():
 	if request.method == "POST":
 		print(request.form)
 		# search for product
-		if request.form.get('searched-update-id') is not None:
+		if request.form.get('searched-update-id') and request.form.get('searched-update-id').strip() != "":
 			id_num = int(request.form.get('searched-update-id'))
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
@@ -637,11 +640,14 @@ def update_product():
 				img_src = [img[7:] for img in result[3].split(",")]
 			return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, images=img_src)
 		# deleting image
-		elif request.form.get('delete-img').strip() != "" :
-			print(request.form.get('delete-img'))
+		elif request.form.get('delete-img') and request.form.get('delete-img').strip() != "":
 			tmp = request.form['delete-img'].split(',')
+			print(f"tmp {tmp}")
 			id_num = int(tmp[0])
-			images = set(tmp[1:])
+			static_index = tmp[1].index("static")
+			print(f"id: {id_num}")
+			to_delete_img = tmp[1][static_index:]
+			print(f"img path: {to_delete_img}")
 			with sqlite3.connect("Shopping.db") as connection:
 				cursor = connection.cursor()
 				try:
@@ -651,15 +657,26 @@ def update_product():
 					""")
 					
 					result = cursor.fetchone()
+					print(f"result {result}")
 					connection.commit()
-					tmp = set(result[0].split(','))
-					new_imgs = ','.join(tmp.difference(images))
+					cur_images = result[0].split(',')
+					cur_images.remove(to_delete_img)
+					new_images = ','.join(cur_images)
+					print(f"new images {new_images}")
 					
 					cursor.execute(f"""
 					update Products
-					set img_path = '{new_imgs}'
+					set img_path = '{new_images}'
 					where id_number = {id_num}
 					""")
+					
+					cursor.execute(f"""
+					select * from Products
+					where id_number = {id_num}
+					""")
+					
+					result = cursor.fetchone()
+					session['result'] = result
 					
 					connection.commit()
 					return redirect(url_for('update_product'))
@@ -668,7 +685,7 @@ def update_product():
 					return redirect(url_for('update_product'))
 					
 		# updating product
-		elif request.form.get('product-id-input') is not None:
+		elif request.form.get('product-id-input') is not None and request.form.get('product-id-input').strip() != "":
 			product_id = request.form['product-id-input']
 			product_name = request.form['product-name']
 			product_type = request.form['product-type']
@@ -680,23 +697,18 @@ def update_product():
 			product_publish_year = request.form['product-publish-year']
 			product_author = request.form['product-author']
 			product_categories = request.form['product-categories']
-			product_on_sale = request.form['product-on-sale']
-			product_sale_price = request.form['product-sale-price']
 			
 			# todo - update images
 			save_product_sql = f"""
 			update Products
 			set name = '{product_name}',
 			type = '{product_type}',
-		
 			price = '{product_price}',
 			items_left = {product_items_left},
 			description = '{product_description}',
 			publish_year = '{product_publish_year}',
 			author_name = '{product_author}',
-			categories = '{product_categories}',
-			on_sale = '{product_on_sale}',
-			sale_price = '{product_sale_price}'
+			categories = '{product_categories}'
 			where id_number = {product_id}
 			"""
 			with sqlite3.connect("Shopping.db") as connection:
@@ -711,8 +723,9 @@ def update_product():
 					return redirect(url_for('update_product'))
 				
 				return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type, id_num=product_id)
-			
-	return render_template('update_product.html', done_updating=False, result=result)
+	img_src = [img[7:] for img in result[3].split(",")]
+	print(f"result after: {result}")
+	return render_template('update_product.html', done_updating=False, result=result, images=img_src)
 		
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
