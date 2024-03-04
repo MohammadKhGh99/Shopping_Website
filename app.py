@@ -83,7 +83,6 @@ def index():
 def home():
 	# if the current user is guest or registered customer then True if admin then False
 	user_role = check_role()
-	
 	return render_template('home.html', user_role=user_role)
 
 
@@ -108,7 +107,7 @@ def books():
 			flash("خطأ في تحميل الكتب\nنوع الخطأ: " + str(e), "error")
 			return redirect(url_for('books'))
 	
-	all_books = [book[:3] + (book[3].split(','),) + book[4:] for book in all_books]
+	all_books = [book[:3] + (book[3].split('&'),) + book[4:] for book in all_books]
 	# todo - this for FILTERS feature, authors=authors, publishes=publishes, publishers=publishers, other=other)
 	return render_template('books.html', products=all_books, user_role=user_role)
 
@@ -268,12 +267,12 @@ def register():
 				               )
 				# todo - should I commit 2 times?
 				connection.commit()
-				# make initial cart items entry for the new customer
-				cursor.execute(f"""
-				insert into Cart_Items(customer_id)
-				values({cursor.lastrowid})
-				""")
-				connection.commit()
+				# todo - make initial cart items entry for the new customer
+				# cursor.execute(f"""
+				# insert into Cart_Items(customer_id)
+				# values({cursor.lastrowid})
+				# """)
+				# connection.commit()
 				# successfully registered
 				flash("تم التسجيل في الموقع بنجاح", category="success")
 			except Exception as e:
@@ -294,6 +293,8 @@ def register():
 def forgot_password():
 	# todo - not implemented yet
 	return redirect(url_for('home'))
+
+
 # return render_template('forgot_password.html')
 
 
@@ -391,8 +392,8 @@ def all_customers_orders():
 	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders)
 
 
-@app.route('/<ptype>/<name>/<id_num>', methods=['POST', 'GET'])
-def product(ptype, name, id_num):
+@app.route('/<ptype>/<id_num>', methods=['POST', 'GET'])
+def product(ptype, id_num):
 	user_role = check_role()
 	
 	# add to cart functionality
@@ -400,50 +401,50 @@ def product(ptype, name, id_num):
 		product_id = int(request.form['cart-item-id-update'])
 		cart_items_tmp = request.form['cart-items-update']
 		product_price = float(request.form['item-price-update'])
-		# cart_items = {}
-		# for item in cart_items_tmp[1:-1].replace("\"", "").split(","):
-		# 	tmp = item.split(":")
-		# 	cart_items[int(tmp[0])] = tmp[1]
+		cart_items = {}
+		for item in cart_items_tmp[1:-1].replace("\"", "").split(","):
+			tmp = item.split(":")
+			cart_items[int(tmp[0])] = tmp[1]
 		
-		with sqlite3.connect("Shopping.db") as connection:
-			cursor = connection.cursor()
-			try:
-				
-				cursor.execute(f"""
-				select * from Cart_Items
-				where customer_id = {current_user.id_number}
-				""")
-				
-				searching_result = cursor.fetchone()
-				connection.commit()
-				# add new row to Cart_Items table
-				if searching_result is None:
-					cursor.execute("""
-					insert into Cart_Items(customer_id, total, cart_items)
-					values(?, ?, ?)
-					""", (current_user.id_number, product_price, cart_items_tmp))
-				else:
-					cursor.execute(f"""
-					update Cart_Items
-					set total = total + {product_price},
-					cart_items = '{cart_items_tmp}'
-					where customer_id = {current_user.id_number}
-					""")
-					
-				# cursor.execute(f"""
-				# insert into Cart_Items (customer_id, total, cart_items)
-				# values({int(product_id)}, {float(product_price)}, '{cart_items_tmp}')
-				# on duplicate key update
-				# 	total = values(total + {float(product_price)}),
-				# 	cart_items = values('{cart_items_tmp}')
-				# """)
-				
-				connection.commit()
-				flash("تم إضافة المنتج للسلة", "success")
-				return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
-			except Exception as e:
-				flash(f"حدث خطأ أثناء إضافة المنتج رقم {product_id} إلى سلة التسوق\nخطأ:" + str(e), "error")
-				return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
+		# with sqlite3.connect("Shopping.db") as connection:
+		# 	cursor = connection.cursor()
+		# 	try:
+		#
+		# 		cursor.execute(f"""
+		# 		select * from Cart_Items
+		# 		where customer_id = {current_user.id_number}
+		# 		""")
+		#
+		# 		searching_result = cursor.fetchone()
+		# 		connection.commit()
+		# 		# add new row to Cart_Items table
+		# 		if searching_result is None:
+		# 			cursor.execute("""
+		# 			insert into Cart_Items(customer_id, total, cart_items)
+		# 			values(?, ?, ?)
+		# 			""", (current_user.id_number, product_price, cart_items_tmp))
+		# 		else:
+		# 			cursor.execute(f"""
+		# 			update Cart_Items
+		# 			set total = total + {product_price},
+		# 			cart_items = '{cart_items_tmp}'
+		# 			where customer_id = {current_user.id_number}
+		# 			""")
+		#
+		# 		# cursor.execute(f"""
+		# 		# insert into Cart_Items (customer_id, total, cart_items)
+		# 		# values({int(product_id)}, {float(product_price)}, '{cart_items_tmp}')
+		# 		# on duplicate key update
+		# 		# 	total = values(total + {float(product_price)}),
+		# 		# 	cart_items = values('{cart_items_tmp}')
+		# 		# """)
+		#
+		# 		connection.commit()
+		# 		flash("تم إضافة المنتج للسلة", "success")
+		# 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
+		# 	except Exception as e:
+		# 		flash(f"حدث خطأ أثناء إضافة المنتج رقم {product_id} إلى سلة التسوق\nخطأ:" + str(e), "error")
+		# 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
 	
 	# retrieve the info for the current product
 	with sqlite3.connect('Shopping.db') as connection:
@@ -462,7 +463,7 @@ def product(ptype, name, id_num):
 			return redirect(request.referrer)
 		
 		# take the product's image src path
-		img_src = [img[7:] for img in result[3].split(",")]
+		img_src = [img[7:] for img in result[3].split("&")]
 	
 	return render_template('product.html', user_role=user_role, result=result, images=img_src)
 
@@ -631,7 +632,7 @@ def update_product():
 				
 				result = cursor.fetchone()
 				session['result'] = result
-				img_src = [img[7:] for img in result[3].split(",")]
+				img_src = [img[7:] for img in result[3].split("&")]
 			return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, ptype=ptype, images=img_src)
 		# deleting image
 		elif request.form.get('delete-img') and request.form.get('delete-img').strip() != "":
@@ -649,7 +650,7 @@ def update_product():
 					
 					result = cursor.fetchone()
 					connection.commit()
-					cur_images = result[0].split(',')
+					cur_images = result[0].split('&')
 					cur_images.remove(to_delete_img)
 					new_images = ','.join(cur_images)
 					
@@ -672,7 +673,7 @@ def update_product():
 				except Exception as e:
 					flash("حدث خطأ أثناء إزالة الصورة\nخطأ:" + str(e), "error")
 					return redirect(url_for('update_product'))
-					
+		
 		# updating product
 		elif request.form.get('product-id-input') is not None and request.form.get('product-id-input').strip() != "":
 			product_id = request.form['product-id-input']
@@ -712,9 +713,9 @@ def update_product():
 					return redirect(url_for('update_product'))
 				
 				return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type, id_num=product_id)
-	img_src = [img[7:] for img in result[3].split(",")]
+	img_src = [img[7:] for img in result[3].split("&")]
 	return render_template('update_product.html', done_updating=False, result=result, images=img_src)
-		
+
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
@@ -790,7 +791,7 @@ def checkout():
 		phone_number = request.form['customer-phone'].strip()
 		backup_phone = request.form['customer-backup-phone'].strip()
 		
-		role = "customer" if user_role == "customer" else "guest"
+		role = user_role
 		# تم تجهيز الطلب
 		# الطلب في الطريق إليك
 		# تم توصيل الطلب
@@ -800,11 +801,43 @@ def checkout():
 		total_amount = str(int(total_amount) + shipping)
 		cart_items = session.get("cart-items")
 		date_purchased = datetime.datetime.now()
+		date_joined = "زبون منذ " + str(date_purchased.date())
 		date_purchased = date_purchased.strftime("%Y-%m-%d %H:%M")
+		
+		password = request.form['customer-password'].strip()
+		hashed_password = bcrypt.generate_password_hash(password)
 		
 		with sqlite3.connect("Shopping.db") as connection:
 			cursor = connection.cursor()
-			# iterate over all th ecart items to store in the order info
+			# register the guest customer to the website
+			if user_role != "customer":
+				role = "customer"
+				try:
+					cursor.execute("""
+					INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
+					VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					""", (phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, hashed_password, email))
+					
+					# todo - should I commit 2 times?
+					connection.commit()
+					# make initial cart items entry for the new customer
+					cursor.execute(f"""
+					insert into Cart_Items(customer_id)
+					values({cursor.lastrowid})
+					""")
+					connection.commit()
+					# successfully registered
+					flash("تم التسجيل في الموقع بنجاح", category="success")
+					user = load_user(cursor.lastrowid)
+					login_user(user)
+				except Exception as e:
+					connection.rollback()
+					# failed to register
+					flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
+					return redirect(url_for("checkout"))
+			 
+			# now add the order to the Orders table (after registering the guest customer)
+			# iterate over all the cart items to store in the order info
 			for id_num, (quantity, item) in cart_items.items():
 				try:
 					cursor.execute(f"""
@@ -835,21 +868,21 @@ def checkout():
 			session["cart-items"] = {}
 			
 			# store the order in Orders SQL table
-			if user_role == "customer":
-				cursor.execute("""
-				insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				""", (
-				current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount,
-				status, str(cart_items)))
+			# if user_role == "customer":
+			cursor.execute(f"""
+			insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+			values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			""", (current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number,
+			      date_purchased, total_amount, status, str(cart_items)))
 			#  guest
-			else:
-				cursor.execute("""
-				insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-				values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				""", (
-				first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
-			
+			# else:
+			# 	# delete - i think... because we will force guest to register to website
+			# 	cursor.execute(f"""
+			# 	insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+			# 	values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			# 	""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status,
+			# 	      str(cart_items)))
+		
 			connection.commit()
 		
 		return render_template("order_approved.html", user_role=user_role)

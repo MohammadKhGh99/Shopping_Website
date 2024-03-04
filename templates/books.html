@@ -177,7 +177,7 @@
     {% block lower_container %}
     <products class="products">
       {% for prod in products %}
-      <a href="{{url_for('product', name=prod[1], ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">
+      <a href="{{url_for('product', ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
             <img src="../{{prod[3][0]}}" alt="product">
@@ -187,27 +187,10 @@
               {{ prod[1] }}
             </span>
             <hr>
-            {% if prod[10] == 'on' %}
-            <div>
-              <span style="text-decoration: line-through">
-                {{ prod[4] }} ₪
-              </span>
-              <span>
-                {{ prod[11] }} ₪
-              </span>
-            </div>
-            {% else %}
-              <span>
-                {{ prod[4] }} ₪
-              </span>
-            {% endif %}
+            <span>
+              {{ prod[4] }} ₪
+            </span>
           </div>
-<!--          <script>-->
-<!--            if (parseInt("{{prod[5]}}") === 0) {-->
-<!--                console.log("Entered");-->
-<!--                document.currentScript.parentNode.parentNode.style.cursor = "not-allowed";-->
-<!--            }-->
-<!--          </script>-->
         </product>
       </a>
       {% endfor %}

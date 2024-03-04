@@ -136,21 +136,9 @@
     </div>
     <div class="form-container">
       <form method="post" id="sign-up-form">
-        <div class="otp-process">
-          <div class="field-holder">
-            <label for="customer-phone" class="input_label">رقم الهاتف الشخصي <span style="font-size: 0.6em">(يستخدم في تسجيل الدخول للموقع)</span></label>
-            <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
-          </div>
-<!--          <button hidden onclick="callOTP()" id="check-otp-button" class="sign-up-button" style="width: 250px; margin-right: 55px">-->
-<!--            للحصول على كود التحقق-->
-<!--          </button>-->
-<!--          <div class="field-holder" style="display: none" hidden>-->
-<!--            <label for="otp-code" class="input_label">كود التحقق</label>-->
-<!--            <input type="text" id="otp-code" class="input_field" name="otp-code" required style="text-align: right" maxlength="10">-->
-<!--          </div>-->
-<!--          <button hidden onclick="checkOTP()" class="sign-up-button" style="width: 250px; margin-right: 55px; display: none">-->
-<!--            التحقق-->
-<!--          </button>-->
+        <div class="field-holder">
+          <label for="customer-phone" class="input_label">رقم الهاتف الشخصي <span style="font-size: 0.6em">(يستخدم في تسجيل الدخول للموقع)</span></label>
+          <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
         </div>
         <div class="field-holder">
           <label for="customer-email" class="input_label">البريد الإلكتروني <span style="font-size: 0.6em">(يستخدم في تسجيل الدخول للموقع)</span></label>
@@ -167,7 +155,7 @@
         <div class="field-holder" >
           <label for="customer-city" class="input_label">البلد</label>
           <select id="customer-city" class="input_field" name="customer-city" required style="width: 365px; background-color: white">
-            <option value="اختر مدينة">اختر مدينة</option>
+            <option value="اختر بلد">اختر بلد</option>
             {% for city in cities %}
               <option value="{{city}}">{{city}}</option>
             {% endfor %}
@@ -225,8 +213,8 @@
     }
 
     function togglePasswordVisibility() {
-        var passwordInput = document.getElementById('customer-password');
-        var showPasswordBtn = document.querySelector('.show-password-btn');
+        const passwordInput = document.getElementById('customer-password');
+        const showPasswordBtn = document.querySelector('.show-password-btn');
 
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
@@ -237,7 +225,7 @@
         }
     }
 
-    var inputField = document.getElementById('customer-city');
+    const inputField = document.getElementById('customer-city');
     const initialValue = inputField.value;
     inputField.addEventListener('input', function () {
         // var x =inputField.initialValue;
@@ -251,8 +239,8 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        var form = document.getElementById('sign-up-form');
-        var inputField = document.getElementById('customer-city');
+        const form = document.getElementById('sign-up-form');
+        const inputField = document.getElementById('customer-city');
 
         // Add a submit event listener to the form
         form.addEventListener('submit', function (event) {

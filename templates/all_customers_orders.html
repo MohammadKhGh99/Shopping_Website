@@ -97,7 +97,7 @@
         <th style="width: 20%;">معلومات الزبون</th>
         <th>محتوى الطلب</th>
         <th style="width: 10%;">السعر الكلي</th>
-        <th style="width: 15%;">حالة الطلب</th>
+        <th style="width: 10%;">حالة الطلب</th>
       </tr>
       <script>
         let orderTotal = 0;
@@ -116,9 +116,6 @@
               إسم الزبون:
               {{order[3]}} {{order[4]}}
             </span>
-  <!--          <span id="order-customer-role">-->
-  <!--            {{order[5]}}-->
-  <!--          </span>-->
             <span id="order-customer-city">
               البلد:
               {{order[6]}}
@@ -164,9 +161,9 @@
                 {{item[0]}}
               </td>
               <td>
-                <a href="{{url_for('product', name=item[1], ptype=item[2], id_num=item[0])}}">
-                  {% if item[3].find(',') != -1 %}
-                    <img src="{{url_for('static', filename=item[3][:item[3].index(',')][7:])}}" alt="item">
+                <a href="{{url_for('product', ptype=item[2], id_num=item[0])}}">
+                  {% if item[3].find('&') != -1 %}
+                    <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
                   {% else %}
                     <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
                   {% endif %}

@@ -107,7 +107,7 @@
   .show-password-btn {
     position: absolute;
     left: 5px;
-    top: 50%;
+    top: 68%;
     transform: translateY(-50%);
     cursor: pointer;
   }
@@ -182,7 +182,7 @@
           <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
             visibility_off
           </span>
-          <a class="forgot-password" style="cursor: pointer" onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">
+          <a class="forgot-password" style="display: none; cursor: pointer" onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">
             هل نسيت كلمة المرور؟
           </a>
         </div>
@@ -190,7 +190,7 @@
         <button type="submit" class="sign-in-button" style="display: none">
           تسجيل الدخول
         </button>
-        <span style="font-size: 0.8em;">
+        <span id="new-user" style="font-size: 0.8em; display: none">
           مستخدم جديد؟
           <a href="{{url_for('register')}}" id="create-account">
             إنشاء حساب
@@ -287,6 +287,7 @@
             document.getElementById("customer-phone").removeAttribute("required");
         }
 
+        document.getElementById("new-user").style.display = "block";
         document.getElementsByClassName("password-container")[0].style.display = "block";
         document.getElementById("customer-password").setAttribute("required", "true");
         document.getElementsByClassName("sign-in-button")[0].style.display = "block";

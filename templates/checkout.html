@@ -50,6 +50,22 @@
     background-color: #e5e5e5;
   }
 
+  .password-container {
+    position: relative;
+  }
+
+  .error-border {
+      border-color: red !important; /* Red border color */
+  }
+
+  .show-password-btn {
+    position: absolute;
+    left: 5px;
+    top: 68%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
 </style>
 
 <body>
@@ -62,7 +78,7 @@
     <h3>
       الرجاء إدخال معلومات الشحن الخاصة بك
     </h3>
-    <form method="post">
+    <form method="post" id="checkout-form">
       <div class="field-holder" >
         <label for="customer-first-name" class="input_label">الاسم الأول</label><br>
         <input type="text" id="customer-first-name" class="input_field" name="customer-first-name" autocomplete="given-name" required>
@@ -74,7 +90,7 @@
       <div class="field-holder">
         <label for="customer-city" class="input_label">البلد</label><br>
         <select id="customer-city" class="input_field" name="customer-city" required style="width: 365px; background-color: white" onchange="AddShipping()">
-          <option value="اختر مدينة">اختر مدينة</option>
+          <option value="اختر بلد">اختر بلد</option>
           {% for city in cities %}
             <option value="{{city}}">{{city}}</option>
           {% endfor %}
@@ -93,8 +109,18 @@
         <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" required style="text-align: right" maxlength="10">
       </div>
       <div class="field-holder" >
-        <label for="customer-backup-phone" class="input_label">رقم هاتف إحتياطي</label><br>
+        <label for="customer-backup-phone" class="input_label">رقم هاتف إحتياطي (إختياري)</label><br>
         <input type="tel" id="customer-backup-phone" class="input_field" name="customer-backup-phone" autocomplete="phone" style="text-align: right" maxlength="10">
+      </div>
+      <div class="field-holder password-container" >
+        <label for="customer-password" class="input_label">كلمة المرور</label>
+        <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20" required>
+        <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+          visibility_off
+        </span>
+        <span style="font-size: 0.7em; color: #9d9898;">
+          طول كلمة المرور  8 - 20 رقم أو حرف
+        </span>
       </div>
       <div id="lower-checkout">
         <span>
@@ -137,7 +163,7 @@
       const shippingSpan = totalPriceSpan.querySelector("span");
       const shippingB = shippingSpan.querySelector("b");
       const cityInput = document.getElementById("customer-city");
-      if (cityInput.value !== "اختر مدينة") {
+      if (cityInput.value !== "اختر بلد") {
           AddShipping();
       }
 
@@ -150,6 +176,49 @@
           shippingB.textContent = newShippingValue.toString();
           // shippingSpan.style.display = "block";
       }
+
+      function togglePasswordVisibility() {
+          const passwordInput = document.getElementById('customer-password');
+          const showPasswordBtn = document.querySelector('.show-password-btn');
+
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordBtn.textContent = 'visibility';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordBtn.textContent = 'visibility_off';
+        }
+    }
+
+    const inputField = document.getElementById('customer-city');
+    const initialValue = inputField.value;
+    inputField.addEventListener('input', function () {
+        // var x =inputField.initialValue;
+        console.log(inputField.value);
+        if (inputField.value === initialValue) {
+            inputField.classList.add('error-border');
+        } else {
+            inputField.classList.remove('error-border');
+        }
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('checkout-form');
+        const inputField = document.getElementById('customer-city');
+
+        // Add a submit event listener to the form
+        form.addEventListener('submit', function (event) {
+            if (inputField.value === initialValue) {
+                // Prevent form submission if content is not changed
+                inputField.classList.add('error-border');
+                event.preventDefault();
+                alert('Please change the city before submitting.');
+            } else {
+                inputField.classList.remove('error-border');
+            }
+        });
+    });
   </script>
   {% endblock %}
 
