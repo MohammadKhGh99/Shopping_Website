@@ -671,6 +671,7 @@ def update_product():
 					connection.commit()
 					return redirect(url_for('update_product'))
 				except Exception as e:
+					connection.rollback()
 					flash("حدث خطأ أثناء إزالة الصورة\nخطأ:" + str(e), "error")
 					return redirect(url_for('update_product'))
 		
@@ -890,6 +891,28 @@ def checkout():
 	cur_user = current_user if user_role != "guest" else None
 	return render_template('checkout.html', cities=cities, user_role=user_role, total=total, cur_user=cur_user)
 
+
+@app.route('/<parent>/order_info/<order_id>', methods=['GET', 'POST'])
+@login_required
+def order_info(parent, order_id):
+	with sqlite3.connect("Shopping.db") as connection:
+		cursor = connection.cursor()
+		try:
+			cursor.execute(f"""
+			select * from Orders
+			where id_number = {order_id}
+			""")
+			
+			result = cursor.fetchone()
+			connection.commit()
+		except Exception as e:
+			flash("حدث خطأ أثناء تحميل صفحة الطلب\n خطأ: " + str(e), "error")
+			connection.rollback()
+			return redirect(request.referrer)
+	result = result[:-2] + (convert_str_to_dic(result[-2]), result[-1])
+	
+	return render_template('order_info.html', order=result, cur_user=current_user)
+	
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required

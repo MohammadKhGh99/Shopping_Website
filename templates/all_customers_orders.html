@@ -28,10 +28,10 @@
     border-collapse: collapse;
   }
 
-  .order-id-td, .order-total-td, .order-status-td, .order-number {
-    vertical-align: top;
+  .order-id-td, .order-total-td, .order-date-td, .order-status-td, .order-number {
+    vertical-align: middle;
     text-align: center;
-    padding: 10px 0 0 0;
+    /*padding: 10px 0 0 0;*/
   }
 
   .order-customer-info div{
@@ -81,6 +81,23 @@
     height: 100%;
   }
 
+  #order-info-button {
+    color: black;
+    background-color: #cce5ff;
+    cursor: pointer;
+    border: 0;
+    text-decoration: none;
+    padding: 5px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 10px 0 10px;
+  }
+
+  #order-info-button:hover {
+    background-color: #e5e5e5;
+  }
+
 </style>
 
 <body>
@@ -92,12 +109,14 @@
     <h2>جميع الطلبات</h2>
     <table id="all-orders-table">
       <tr>
-        <th style="width: 3%">#</th>
-        <th style="width: 8%;">رقم الطلب</th>
-        <th style="width: 20%;">معلومات الزبون</th>
-        <th>محتوى الطلب</th>
-        <th style="width: 10%;">السعر الكلي</th>
-        <th style="width: 10%;">حالة الطلب</th>
+<!--        <th style="width: 3%">#</th>-->
+        <th style="width: 20%;">رقم الطلب</th>
+<!--        <th style="width: 20%;">معلومات الزبون</th>-->
+<!--        <th>محتوى الطلب</th>-->
+        <th style="width: 20%;">تاريخ الطلب</th>
+        <th style="width: 20%;">السعر الكلي</th>
+        <th style="width: 20%;">حالة الطلب</th>
+        <th style="width: 20%;">معلومات الطلب</th>
       </tr>
       <script>
         let orderTotal = 0;
@@ -108,100 +127,102 @@
         orderTotal = 0;
       </script>
       <tr>
-        <td class="order-number">#{{loop.index}}</td>
+<!--        <td class="order-number">#{{loop.index}}</td>-->
         <td class="order-id-td">{{order[0]}}</td>
-        <td class="order-customer-info" style="vertical-align: top;">
-          <div>
-            <span id="order-customer-fullname">
-              إسم الزبون:
-              {{order[3]}} {{order[4]}}
-            </span>
-            <span id="order-customer-city">
-              البلد:
-              {{order[6]}}
-            </span>
-            <span id="order-customer-address">
-              العنوان:
-              {{order[7]}}
-            </span>
-            <span id="order-customer-email">
-              إيميل:
-              {{order[8]}}
-            </span>
-            <span id="order-customer-phone-number">
-              رقم الهاتف الشخصي:
-              {{order[10]}}
-            </span>
-            <span id="order-customer-backup-phone">
-              هاتف إحتياطي:
-              {% if order[9] == "" %}
-                  -
-              {% else %}
-                {{order[9]}}
-              {% endif %}
-            </span>
-            <span id="order-customer-order-date">
-              تاريخ الطلب:
-              {{order[11]}}
-            </span>
-          </div>
-        </td>
-        <td class="order-content">
-          <table class="each-order-table">
-            <tr>
-              <th style="width: 10%">رقم المنتج</th>
-              <th style="width: 20%">صورة المنتج</th>
-              <th>إسم المنتج</th>
-              <th style="width: 15%">السعر</th>
-              <th style="width: 10%">الكمية</th>
-            </tr>
-            {% for id_num, (quantity, item) in order[-2].items() %}
-            <tr>
-              <td style="vertical-align: top; text-decoration: Highlight">
-                {{item[0]}}
-              </td>
-              <td>
-                <a href="{{url_for('product', ptype=item[2], id_num=item[0])}}">
-                  {% if item[3].find('&') != -1 %}
-                    <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
-                  {% else %}
-                    <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
-                  {% endif %}
-                </a>
-              </td>
-              <td style="vertical-align: top">
-                {{item[1]}}
-              </td>
-              <td style="vertical-align: top">
-                {{item[4]}} ₪
-              </td>
-              <td style="vertical-align: top">
-                {{quantity}}
-              </td>
-            </tr>
-            <script>
-              orderTotal += parseInt("{{quantity}}") * parseFloat("{{item[4]}}");
-            </script>
-            {% endfor %}
-          </table>
-        </td>
+        <td class="order-date-td">{{order[11]}}</td>
+<!--        <td class="order-customer-info" style="vertical-align: top;">-->
+<!--          <div>-->
+<!--            <span id="order-customer-fullname">-->
+<!--              إسم الزبون:-->
+<!--              {{order[3]}} {{order[4]}}-->
+<!--            </span>-->
+<!--            <span id="order-customer-city">-->
+<!--              البلد:-->
+<!--              {{order[6]}}-->
+<!--            </span>-->
+<!--            <span id="order-customer-address">-->
+<!--              العنوان:-->
+<!--              {{order[7]}}-->
+<!--            </span>-->
+<!--            <span id="order-customer-email">-->
+<!--              البريد الإلكتروني:-->
+<!--              {{order[8]}}-->
+<!--            </span>-->
+<!--            <span id="order-customer-phone-number">-->
+<!--              رقم الهاتف الشخصي:-->
+<!--              {{order[10]}}-->
+<!--            </span>-->
+<!--            <span id="order-customer-backup-phone">-->
+<!--              هاتف إحتياطي:-->
+<!--              {% if order[9] == "" %}-->
+<!--                  - -->
+<!--              {% else %}-->
+<!--                {{order[9]}}-->
+<!--              {% endif %}-->
+<!--            </span>-->
+<!--            <span id="order-customer-order-date">-->
+<!--              تاريخ الطلب:-->
+<!--              {{order[11]}}-->
+<!--            </span>-->
+<!--          </div>-->
+<!--        </td>-->
+<!--        <td class="order-content">-->
+<!--          <table class="each-order-table">-->
+<!--            <tr>-->
+<!--              <th style="width: 10%">رقم المنتج</th>-->
+<!--              <th style="width: 20%">صورة المنتج</th>-->
+<!--              <th>إسم المنتج</th>-->
+<!--              <th style="width: 15%">السعر</th>-->
+<!--              <th style="width: 10%">الكمية</th>-->
+<!--            </tr>-->
+<!--            {% for id_num, (quantity, item) in order[-2].items() %}-->
+<!--            <tr>-->
+<!--              <td style="vertical-align: top; text-decoration: Highlight">-->
+<!--                {{item[0]}}-->
+<!--              </td>-->
+<!--              <td>-->
+<!--                <a href="{{url_for('product', ptype=item[2], id_num=item[0])}}">-->
+<!--                  {% if item[3].find('&') != -1 %}-->
+<!--                    <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">-->
+<!--                  {% else %}-->
+<!--                    <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">-->
+<!--                  {% endif %}-->
+<!--                </a>-->
+<!--              </td>-->
+<!--              <td style="vertical-align: top">-->
+<!--                {{item[1]}}-->
+<!--              </td>-->
+<!--              <td style="vertical-align: top">-->
+<!--                {{item[4]}} ₪-->
+<!--              </td>-->
+<!--              <td style="vertical-align: top">-->
+<!--                {{quantity}}-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            <script>-->
+<!--              orderTotal += parseInt("{{quantity}}") * parseFloat("{{item[4]}}");-->
+<!--            </script>-->
+<!--            {% endfor %}-->
+<!--          </table>-->
+<!--        </td>-->
         <td class="order-total-td" style="font-size: 0.8em; padding-bottom: 20px">
-          <span id="subtotal">
-            مجموع جزئي:
-            <b>{{order[-4]}}</b> ₪
-            <br>
-            <script>
-                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");
-                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();
-            </script>
-          </span>
-          <span id="shipping-fee" style="border-bottom: 1px solid black;">
-            رسوم شحن:
-            <b>{{order[-1]}}</b> ₪
-          </span>
-          <br><br>
+<!--          <span id="subtotal">-->
+<!--            مجموع جزئي:-->
+<!--            <b>{{order[-4]}}</b> ₪-->
+<!--            <br>-->
+<!--            <script>-->
+<!--                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");-->
+<!--                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();-->
+<!--            </script>-->
+<!--          </span>-->
+<!--          <span id="shipping-fee" style="border-bottom: 1px solid black;">-->
+<!--            رسوم شحن:-->
+<!--            <b>{{order[-1]}}</b> ₪-->
+<!--          </span>-->
+<!--          <br><br>-->
           <b>
-            مجموع الطلب: {{order[-4]}} ₪
+
+            ₪ {{order[-4]}}
           </b>
         </td>
         <td class="order-status-td">
@@ -245,6 +266,14 @@
             </form>
           </div>
         </td>
+        <td class="order-info-link">
+          <a href="{{url_for('order_info', parent='all_customers_orders', order_id=order[0])}}" id="order-info-button">
+            معاينة الطلب
+            <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+              visibility
+            </span>
+          </a>
+        </td>
         <script>
             initialValue = document.getElementById("status-container{{loop.index}}").children[0].value;
             function UpdateStatus(button) {
@@ -254,7 +283,7 @@
                 } else {
                     selectNode.setAttribute("disabled", "true");
                     if (selectNode.value !== initialValue) {
-                        document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[1].textContent + "," + selectNode.value;
+                        document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[0].textContent + "," + selectNode.value;
                         document.getElementById("status-form").submit();
                     }
                 }

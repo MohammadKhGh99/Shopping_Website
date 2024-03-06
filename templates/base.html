@@ -14,11 +14,20 @@
 </head>
 
 <style>
+  .flash-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .error-flash-message {
     background-color: #e5e5e5;
   }
+  .warning-flash-message {
+    background-color: #e5e5e5;
+  }
 
-  .flash-message {
+  .success-flash-message {
     animation: fadeOut 15s ease-in-out forwards;
     opacity: 1;
     background-color: #e5e5e5;
@@ -120,17 +129,21 @@
         </span>
       </div>
       <div id="header-left">
-<!--        {% if user_role != "admin" %}-->
-<!--          {% if cur_user %}-->
-<!--            <span>-->
-<!--              مرحبا {{cur_user.first_name}} {{cur_user.last_name}}-->
-<!--            </span>-->
-<!--          {% else %}-->
-<!--            <span>-->
-<!--              مرحبا ضيف-->
-<!--            </span>-->
-<!--          {% endif %}-->
-<!--        {% endif %}-->
+        {% if user_role == "admin" %}
+          <span style="padding: 3px; border-radius: 30%; background-color: lawngreen">
+            مسؤول
+          </span>
+        {% endif %}
+        {% if user_role == "customer" %}
+          <span style="padding: 3px; border-radius: 30%; background-color: #e5e5e5">
+            زبون
+          </span>
+        {% endif %}
+        {% if user_role == "guest" %}
+          <span style="padding: 3px; border-radius: 30%; background-color: gray">
+            ضيف
+          </span>
+        {% endif %}
         <a href="{{url_for('login')}}" class="profile" title="الصفحة الشخصية">
           <span class="material-symbols-outlined profile-icon">
             person
@@ -167,20 +180,20 @@
 <!--  </nav>-->
 
   {% for message in get_flashed_messages(category_filter=["success"]) %}
-    <div class="flash-message" role="alert" style="color: lawngreen; text-align: center">
+    <div class="success-flash-message flash-message" role="alert" style="color: lawngreen; text-align: center">
       <h3>
         {{ message }}
-        <button title="إغلاق" style="background-color: transparent; border: 0">
-          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
-            close
-          </span>
-        </button>
       </h3>
+      <button title="إغلاق" style="background-color: transparent; border: 0">
+        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeFlash(this)">
+          close
+        </span>
+      </button>
     </div>
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["error"]) %}
-    <div class="error-flash-message" role="alert" style="color: red; text-align: center">
+    <div class="error-flash-message flash-message" role="alert" style="color: red; text-align: center">
       <h3>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">
@@ -193,7 +206,7 @@
   {% endfor %}
 
   {% for message in get_flashed_messages(category_filter=["warning"]) %}
-    <div class="flash-message" role="alert" style="color: orange; text-align: center">
+    <div class="warning-flash-message flash-message" role="alert" style="color: orange; text-align: center">
       <h3>
         {{ message }}
         <button title="إغلاق" style="background-color: transparent; border: 0">

@@ -18,8 +18,8 @@
   #all-orders-table {
     border-collapse: collapse;
     font-size: 0.9em;
-    max-width: 80%;
-    width: 80%;
+    max-width: 100%;
+    width: 100%;
     margin-bottom: 50px;
   }
 
@@ -28,10 +28,10 @@
     border-collapse: collapse;
   }
 
-  .order-id-td, .order-total-td, .order-number {
-    vertical-align: top;
+  .order-id-td, .order-total-td, .order-date-td, .order-number {
+    vertical-align: middle;
     text-align: center;
-    padding: 10px 0 0 0;
+    /*padding: 10px 0 0 0;*/
   }
 
   .order-customer-info div{
@@ -91,6 +91,23 @@
     height: 100%;
   }
 
+  #order-info-button {
+    color: black;
+    background-color: #cce5ff;
+    cursor: pointer;
+    border: 0;
+    text-decoration: none;
+    padding: 5px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 10px 0 10px;
+  }
+
+  #order-info-button:hover {
+    background-color: #e5e5e5;
+  }
+
 </style>
 
 <body>
@@ -141,7 +158,7 @@
 <!--              {{order[7]}}-->
 <!--            </span>-->
 <!--            <span id="order-customer-email">-->
-<!--              إيميل:-->
+<!--              البريد الإلكتروني:-->
 <!--              {{order[8]}}-->
 <!--            </span>-->
 <!--            <span id="order-customer-phone-number">-->
@@ -203,29 +220,35 @@
 
 <!--        </td>-->
         <td class="order-total-td" style="font-size: 0.8em; padding-bottom: 20px">
-          <span id="subtotal">
-            مجموع جزئي:
-            <b>{{order[-4]}}</b> ₪
-            <br>
-            <script>
-                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");
-                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();
-            </script>
-          </span>
-          <span id="shipping-fee" style="border-bottom: 1px solid black;">
-            رسوم شحن:
-            <b>{{order[-1]}}</b> ₪
-          </span>
-          <br><br>
+<!--          <span id="subtotal">-->
+<!--            مجموع جزئي:-->
+<!--            <b>{{order[-4]}}</b> ₪-->
+<!--            <br>-->
+<!--            <script>-->
+<!--                totalNoShip = parseFloat("{{order[-4]}}") - parseFloat("{{order[-1]}}");-->
+<!--                document.currentScript.parentNode.children[0].textContent = totalNoShip.toString();-->
+<!--            </script>-->
+<!--          </span>-->
+<!--          <span id="shipping-fee" style="border-bottom: 1px solid black;">-->
+<!--            رسوم شحن:-->
+<!--            <b>{{order[-1]}}</b> ₪-->
+<!--          </span>-->
+<!--          <br><br>-->
           <b>
-            مجموع الطلب: {{order[-4]}} ₪
+<!--            مجموع الطلب: -->
+            ₪ {{order[-4]}}
           </b>
         </td>
         <td class="order-status-td">
           <p>{{order[-3]}}</p>
         </td>
         <td class="order-info-link">
-          <a>لرؤية الطلب كاملًا</a>
+          <a href="{{url_for('order_info', parent='orders', order_id=order[0])}}" id="order-info-button">
+            معاينة الطلب
+            <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+              visibility
+            </span>
+          </a>
         </td>
       </tr>
       {% endfor %}

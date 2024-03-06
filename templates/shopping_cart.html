@@ -127,8 +127,8 @@
     <tr>
       <td style="justify-content: center; align-items: center">
         <a href="{{url_for('product', name=item[1], ptype=item[2], id_num=item[0])}}">
-          {% if item[3].find(',') != -1 %}
-            <img src="{{url_for('static', filename=item[3][:item[3].index(',')][7:])}}" alt="item">
+          {% if item[3].find('&') != -1 %}
+            <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
           {% else %}
             <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
           {% endif %}
