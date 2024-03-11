@@ -105,6 +105,24 @@
     background-color: rgba(0, 0, 0, 0.8);
   }
 
+  #wish-product {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .wish-button {
+    border: 1px solid black;
+    border-radius: 50%;
+    padding: 3px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .wish-button:hover {
+    background-color: #f15252;
+  }
+
 </style>
 
 <body>
@@ -168,6 +186,23 @@
         <h2 style="background-color: #f64f4f; width: 100%; text-align: center; margin-top: 0; height: 50px">
           نفد المخزون
         </h2>
+        <form method="post" id="wish-product-form">
+          <input type="hidden" value="{{result[0]}}" id="wish-product-id" name="wish-product-id">
+        </form>
+<!--        <div id="wish-product">-->
+<!--          <span style="background-color: #ddc36c">-->
+<!--            إن كنت مهتمًّا بإعادة هذا المنتج إلى المخزون-->
+<!--          </span>-->
+<!--          <span class="material-symbols-outlined wish-button" onclick="WishProduct()">-->
+<!--            favorite-->
+<!--          </span>-->
+<!--        </div>-->
+<!--        <script>-->
+<!--          function WishProduct() {-->
+<!--              document.getElementById("wish-product").style.display = "none";-->
+<!--              document.getElementById("wish-product-form").submit();-->
+<!--          }-->
+<!--        </script>-->
       {% endif %}
       <div id="product-left-upper">
         <h1 style="margin-top: 0; line-height: 1">

@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import datetime
+import smtplib
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -8,6 +9,8 @@ from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
 from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
 from database_handling import *
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
@@ -27,6 +30,7 @@ STORE_CART = False
 NO_CLOTHES = True
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
+statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
 
 
 class Customers(db.Model):
@@ -63,6 +67,27 @@ class User(UserMixin):
 	def is_admin(self):
 		return True if self.role == "admin" else False
 
+
+def send_email(sender, app_password, to, subject, message_text):
+	# Create a secure connection to the Gmail SMTP server
+	with smtplib.SMTP('smtp.gmail.com', 587) as smtp_server:
+		# smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
+		# smtp_server.starttls()
+		
+		# Log in to your Gmail account using the App Password
+		smtp_server.login(sender, app_password)
+		
+		msg = MIMEMultipart()
+		msg['From'] = sender
+		msg['To'] = to
+		msg['Subject'] = subject
+		msg.attach(MIMEText(message_text, 'plain'))
+		
+		# send email
+		smtp_server.send_message(msg)
+	
+	# smtp_server.quit()
+	
 
 def check_role():
 	if current_user.is_anonymous:
@@ -275,15 +300,15 @@ def register():
 				# connection.commit()
 				# successfully registered
 				flash("تم التسجيل في الموقع بنجاح", category="success")
+				user = load_user(cursor.lastrowid)
+				login_user(user)
+				send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"), "m7md.gh.99@hotmail.com", "تم تسحيل زبون جديد", f"زبون جديد بإسم {first_name} {last_name}\n email: {email}\nphone: {phone_number}")
+				return redirect(url_for('profile'))
 			except Exception as e:
 				connection.rollback()
 				# failed to register
 				flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
 				return redirect(url_for("register"))
-			user = load_user(cursor.lastrowid)
-			login_user(user)
-			
-			return redirect(url_for('profile'))
 	
 	user_role = check_role()
 	return render_template('register.html', cities=cities, user_role=user_role)
@@ -315,7 +340,24 @@ def profile():
 def admin_profile():
 	user_role = check_role()
 	if user_role == "admin":
-		return render_template('admin_profile.html', current_user=current_user, user_role=user_role)
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			# try:
+			cursor.execute(f"""
+			select * from Customers
+			where role = 'customer'
+			""")
+			customers_num = len(cursor.fetchall())
+			connection.commit()
+			cursor.execute(f"""
+			select * from Customers
+			where role = 'admin'
+			""")
+			admins_num = len(cursor.fetchall())
+			connection.commit()
+			# except Exception as e:
+			
+		return render_template('admin_profile.html', current_user=current_user, user_role=user_role, customers_num=customers_num, admins_num=admins_num)
 	return redirect(url_for('profile'))
 
 
@@ -344,7 +386,10 @@ def orders():
 	
 	# check - some parsing of each cart items, because it is as string!
 	all_orders = [order[:-2] + (convert_str_to_dic(order[-2]), order[-1]) for order in orders_result]
-	return render_template("orders.html", user_role=user_role, all_orders=all_orders)
+	all_orders_dict = {status: [] for status in statuses}
+	for order in orders_result:
+		all_orders_dict[order[12]].append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
+	return render_template("orders.html", user_role=user_role, all_orders=all_orders, orders_num=len(all_orders), all_orders_dict=all_orders_dict)
 
 
 @app.route('/admin_profile/all_customers_orders', methods=['GET', 'POST'])
@@ -383,21 +428,40 @@ def all_customers_orders():
 		# check - some parsing of each cart items, because it is as string!
 		
 		all_orders = []
+		all_orders_dict = {status: [] for status in statuses}
 		for order in orders_result:
 			if order[0] == order_id:
-				all_orders.append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
+				all_orders_dict[new_status].append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
+				# all_orders.append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
 			else:
-				all_orders.append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
-	
-	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders)
+				all_orders_dict[order[12]].append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
+				# all_orders.append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
+	# print(all_orders_dict["تم تأكيد الطلب"])
+	return render_template('all_customers_orders.html', user_role=user_role, all_orders=all_orders, orders_num=len(all_orders), statuses=statuses, all_orders_dict=all_orders_dict)
 
 
 @app.route('/<ptype>/<id_num>', methods=['POST', 'GET'])
 def product(ptype, id_num):
 	user_role = check_role()
 	
+	if request.method == 'POST' and request.form.get('wish-product-id') and request.form.get('wish-product-id').strip() != "":
+		# wish the product
+		with sqlite3.connect("Shopping.db") as connection:
+			cursor = connection.cursor()
+			try:
+				cursor.execute(f"""
+				update Products
+				set wished_num = wished_num + 1
+				where id_number = {id_num}
+				""")
+				connection.commit()
+				return redirect(request.referrer)
+			except Exception as e:
+				flash("حدث حطأ أثناء الإهتمام بالمنتج\n خطأ: " + str(e), "error")
+				return redirect(request.referrer)
+				
 	# add to cart functionality
-	if STORE_CART and request.method == "POST" and user_role == "customer":
+	elif STORE_CART and request.method == "POST" and user_role == "customer":
 		product_id = int(request.form['cart-item-id-update'])
 		cart_items_tmp = request.form['cart-items-update']
 		product_price = float(request.form['item-price-update'])
@@ -831,6 +895,8 @@ def checkout():
 					flash("تم التسجيل في الموقع بنجاح", category="success")
 					user = load_user(cursor.lastrowid)
 					login_user(user)
+					send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"), "m7md.gh.99@hotmail.com", "تم تسحيل زبون جديد",
+					           f"زبون جديد بإسم {first_name} {last_name}\n email: {email}\nphone: {phone_number}")
 				except Exception as e:
 					connection.rollback()
 					# failed to register
@@ -885,7 +951,8 @@ def checkout():
 			# 	      str(cart_items)))
 		
 			connection.commit()
-		
+			send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"), "m7md.gh.99@hotmail.com", f"طلب جديد برقم {cursor.lastrowid}",
+			           f"طلب جديد برقم {cursor.lastrowid}للزبون {first_name} {last_name}\n email: {email}\nphone: {phone_number}")
 		return render_template("order_approved.html", user_role=user_role)
 	
 	cur_user = current_user if user_role != "guest" else None
@@ -911,7 +978,7 @@ def order_info(parent, order_id):
 			return redirect(request.referrer)
 	result = result[:-2] + (convert_str_to_dic(result[-2]), result[-1])
 	
-	return render_template('order_info.html', order=result, cur_user=current_user)
+	return render_template('order_info.html', order=result, cur_user=current_user, user_role=current_user.role)
 	
 
 @app.route('/logout', methods=['GET', 'POST'])

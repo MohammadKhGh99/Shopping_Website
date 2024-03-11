@@ -130,17 +130,17 @@
       </div>
       <div id="header-left">
         {% if user_role == "admin" %}
-          <span style="padding: 3px; border-radius: 30%; background-color: lawngreen">
+          <span style="padding: 3px; color: lawngreen">
             مسؤول
           </span>
         {% endif %}
         {% if user_role == "customer" %}
-          <span style="padding: 3px; border-radius: 30%; background-color: #e5e5e5">
+          <span style="padding: 3px;color: #e5e5e5">
             زبون
           </span>
         {% endif %}
         {% if user_role == "guest" %}
-          <span style="padding: 3px; border-radius: 30%; background-color: gray">
+          <span style="padding: 3px; color: gray">
             ضيف
           </span>
         {% endif %}
@@ -249,6 +249,9 @@
         }
     </script>
   {% endif %}
+
+  {% block users_count %}
+  {% endblock %}
 
   {% block lower_container %}
   {% endblock %}

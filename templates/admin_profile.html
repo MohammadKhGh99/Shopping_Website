@@ -5,6 +5,15 @@
   <title>admin profile</title>
 </head>
 
+<style>
+  #users-count {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding-right: 20px;
+  }
+</style>
+
 <body>
   {% extends "profile.html" %}
 
@@ -18,7 +27,20 @@
   {% endblock %}
 
   {% block admin %}
-  <span style="background-color: lawngreen; border-radius: 30%; font-size: 0.6em">مسؤول</span>
+  <span style="color: lawngreen; border-radius: 30%; font-size: 0.6em">مسؤول</span>
+  {% endblock %}
+
+  {% block users_count %}
+  <div id="users-count">
+    <span style="color: lawngreen">
+      عدد المسؤولين الحاليين:
+      {{admins_num}}
+    </span>
+    <span>
+      عدد الزبائن الحاليين:
+      {{customers_num}}
+    </span>
+  </div>
   {% endblock %}
 
 
