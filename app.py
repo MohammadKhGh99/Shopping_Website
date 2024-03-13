@@ -31,6 +31,7 @@ NO_CLOTHES = True
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
+types = ["كتب", "أزياء", "إكسسوارات"]
 
 
 class Customers(db.Model):
@@ -145,6 +146,16 @@ def clothes():
 	# check this
 	clothes_lst = []
 	return render_template('clothes.html', products=clothes_lst, user_role=user_role)
+
+
+@app.route('/accessories')
+def accessories():
+	if NO_CLOTHES:
+		return redirect(url_for('home'))
+	user_role = check_role()
+	# check this
+	accessories_lst = []
+	return render_template('accessories.html', products=accessories_lst, user_role=user_role)
 
 
 @login_manager.user_loader
@@ -611,7 +622,7 @@ def add_product():
 				return redirect(url_for('add_product'))
 	
 	# if we arrive now to add product page
-	return render_template('add_product.html', user_role=user_role, done=done, name=name, ptype=ptype)
+	return render_template('add_product.html', user_role=user_role, done=done, name=name, ptype=ptype, types=types)
 
 
 @app.route('/admin_profile/handling_products/remove_product', methods=['GET', 'POST'])
@@ -779,7 +790,7 @@ def update_product():
 				
 				return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type, id_num=product_id)
 	img_src = [img[7:] for img in result[3].split("&")]
-	return render_template('update_product.html', done_updating=False, result=result, images=img_src)
+	return render_template('update_product.html', done_updating=False, result=result, images=img_src, types=types)
 
 
 @app.route('/shopping_cart', methods=['GET', 'POST'])

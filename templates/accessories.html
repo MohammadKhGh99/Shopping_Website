@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  {% extends "base.html" %}
+
+  {% block lower_container %}
+  <products class="products">
+    {% for prod in products %}
+      <a href="{{url_for('product', ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">
+        <product class="product">
+          <div class="upper-product">
+            <img src="../{{prod[3][0]}}" alt="product">
+          </div>
+          <div class="lower-product">
+            <span>
+              {{ prod[1] }}
+            </span>
+            <hr>
+            <span>
+              {{ prod[4] }} ₪
+            </span>
+          </div>
+        </product>
+      </a>
+    {% endfor %}
+  </products>
+  {% endblock %}
+</body>
+</html>

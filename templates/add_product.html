@@ -86,9 +86,12 @@
         <div class="field-holder">
           <label for="product-type">نوع المنتج</label><br>
           <select id="product-type" name="product-type" class="input_field" style="width: 363px">
-            <option>كتب</option>
-            <option>أزياء</option>
-<!--            <option></option>-->
+            {% for type in types %}
+             <option value="{{type}}">{{type}}</option>
+            {% endfor %}
+<!--            <option value="كتب">كتب</option>-->
+<!--            <option value="أزياء">أزياء</option>-->
+<!--            <option value="إكسسوارات">إكسسوارات</option>-->
           </select>
 <!--          <input type="text" id="product-type" name="product-type" class="input_field">-->
         </div>
