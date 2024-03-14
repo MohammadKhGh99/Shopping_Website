@@ -313,8 +313,6 @@ header {
 #search-menu ul li{
   display: flex;
   width: 100%;
-  /*justify-content: flex-start;*/
-  /*padding: 15px 0;*/
   border-bottom: 1px solid gray;
   user-select: none;
 }
@@ -329,14 +327,8 @@ header {
 #close-search-menu {
   background-color: transparent;
   border: 0;
-  /*cursor: pointer;*/
-  /*padding-right: 50px;*/
-  /*position: absolute;*/
-  /*top: 10px;*/
-  /*left: -30px;*/
   width: 100%;
   text-align: left;
-  /*margin-right: 10px;*/
 }
 
 .container {
@@ -345,63 +337,36 @@ header {
   align-items: center;
   width: 100%;
   padding: 35px 0 35px 0;
-  /*margin-right: 20px;*/
-  /*margin-left: 20px;*/
-  /*padding-top: 35px;*/
-  /*padding-bottom: 35px;*/
   gap: 20px;
 }
 
 .books-shopping {
-  width: 25vw;
-  /*height: 40vh;*/
-  text-align: center;
-  border-radius: 10%;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
-              -2px -2px 2px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  display: block;
 }
 
-.books-shopping a {
-  width: 100%;
-  height: 100%;
-  display: block;
-  text-decoration: none;
-}
-
-.books-shopping a img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  /*margin-top: 5px;*/
-  border-radius: 20%;
-}
-
-.clothes-shopping, .accessories-shopping {
+.clothes-shopping, .accessories-shopping, .books-shopping {
   width: 25vw;
-  /*height: 40vh;*/
   text-align: center;
   border-radius: 10%;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
               -2px -2px 2px rgba(0, 0, 0, 0.2);
   /*cursor: pointer;*/
   display: block;
+  /* todo - this line when it is in "coming soon" mode, when it done, delete it */
   position: relative;
 }
 
-.clothes-shopping a, .accessories-shopping a {
+.clothes-shopping a, .accessories-shopping a, .books-shopping a {
   width: 100%;
   height: 100%;
   display: block;
   text-decoration: none;
 }
 
-.clothes-shopping a img, .accessories-shopping a img {
+.clothes-shopping a img, .accessories-shopping a img, .books-shopping a img {
   width: 100%;
   height: 100%;
   display: block;
-  /*margin-top: 5px;*/
   border-radius: 20%;
 }
 
@@ -640,7 +605,7 @@ footer #footer-top {
   display: flex;
   justify-content: space-around;
   padding-top: 20px;
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 
 footer div div {
@@ -672,7 +637,7 @@ footer div iconify-icon, #contact-us iconify-icon:hover {
 }
 
 #footer-bottom {
-  font-size: 0.8em;
+  font-size: 0.9em;
   position: absolute;
   bottom: 20px;
   right: 20px;

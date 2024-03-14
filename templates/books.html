@@ -2,8 +2,26 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>موقع كتب</title>
+  <title>ورثة الأنبياء</title>
 </head>
+
+<style>
+  #books-upper {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    padding: 50px 50px 0 50px;
+    text-align: center;
+  }
+
+  #books-upper b{
+    font-size: 2em;
+    margin-top: 50px;
+  }
+
+</style>
+
 <body>
   {% extends "base.html" %}
 
@@ -175,6 +193,12 @@
     {% endblock %}
 
     {% block lower_container %}
+    <div id="books-upper">
+      <img src="https://drive.google.com/thumbnail?id=1XpJE7jA6rDo9xYkDnXy5_ETs7WsOFxvy&sz=w1000" alt="ورثة الأنبياء">
+      <b>
+        الكتب
+      </b>
+    </div>
     <products class="products">
       {% for prod in products %}
       <a href="{{url_for('product', ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">

@@ -3,7 +3,7 @@ import sqlite3
 import datetime
 import smtplib
 
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
@@ -17,7 +17,7 @@ app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
 
@@ -34,18 +34,18 @@ statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم ا
 types = ["كتب", "أزياء", "إكسسوارات"]
 
 
-class Customers(db.Model):
-	__tablename__ = "customers"
-	id_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
-	phone_number = db.Column(db.NVARCHAR(10), unique=True)
-	first_name = db.Column(db.NVARCHAR(15))
-	last_name = db.Column(db.NVARCHAR(15))
-	role = db.Column(db.NVARCHAR(10))
-	date_joined = db.Column(db.NVARCHAR(20))
-	city = db.Column(db.NVARCHAR(20))
-	address = db.Column(db.NVARCHAR(50))
-	backup_phone = db.Column(db.NVARCHAR(10))
-	password = db.Column(db.NVARCHAR(80))
+# class Customers(db.Model):
+# 	__tablename__ = "customers"
+# 	id_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
+# 	phone_number = db.Column(db.NVARCHAR(10), unique=True)
+# 	first_name = db.Column(db.NVARCHAR(15))
+# 	last_name = db.Column(db.NVARCHAR(15))
+# 	role = db.Column(db.NVARCHAR(10))
+# 	date_joined = db.Column(db.NVARCHAR(20))
+# 	city = db.Column(db.NVARCHAR(20))
+# 	address = db.Column(db.NVARCHAR(50))
+# 	backup_phone = db.Column(db.NVARCHAR(10))
+# 	password = db.Column(db.NVARCHAR(80))
 
 
 class User(UserMixin):
@@ -71,23 +71,23 @@ class User(UserMixin):
 
 def send_email(sender, app_password, to, subject, message_text):
 	# Create a secure connection to the Gmail SMTP server
-	with smtplib.SMTP('smtp.gmail.com', 587) as smtp_server:
-		# smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
-		# smtp_server.starttls()
-		
-		# Log in to your Gmail account using the App Password
-		smtp_server.login(sender, app_password)
-		
-		msg = MIMEMultipart()
-		msg['From'] = sender
-		msg['To'] = to
-		msg['Subject'] = subject
-		msg.attach(MIMEText(message_text, 'plain'))
-		
-		# send email
-		smtp_server.send_message(msg)
+	# with smtplib.SMTP('smtp.gmail.com', 587) as smtp_server:
+	smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
+	smtp_server.starttls()
+
+	# Log in to your Gmail account using the App Password
+	smtp_server.login(sender, app_password)
+
+	msg = MIMEMultipart()
+	msg['From'] = sender
+	msg['To'] = to
+	msg['Subject'] = subject
+	msg.attach(MIMEText(message_text, 'plain'))
+
+	# send email
+	smtp_server.send_message(msg)
 	
-	# smtp_server.quit()
+	smtp_server.quit()
 	
 
 def check_role():
@@ -319,7 +319,8 @@ def register():
 				connection.rollback()
 				# failed to register
 				flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
-				return redirect(url_for("register"))
+				raise e
+				# return redirect(url_for("register"))
 	
 	user_role = check_role()
 	return render_template('register.html', cities=cities, user_role=user_role)
@@ -897,11 +898,11 @@ def checkout():
 					# todo - should I commit 2 times?
 					connection.commit()
 					# make initial cart items entry for the new customer
-					cursor.execute(f"""
-					insert into Cart_Items(customer_id)
-					values({cursor.lastrowid})
-					""")
-					connection.commit()
+					# cursor.execute(f"""
+					# insert into Cart_Items(customer_id)
+					# values({cursor.lastrowid})
+					# """)
+					# connection.commit()
 					# successfully registered
 					flash("تم التسجيل في الموقع بنجاح", category="success")
 					user = load_user(cursor.lastrowid)
