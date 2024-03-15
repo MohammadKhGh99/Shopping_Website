@@ -11,6 +11,7 @@
     align-items: flex-start;
     flex-direction: column;
     padding-right: 20px;
+    font-size: 0.9em;
   }
 </style>
 
@@ -18,6 +19,9 @@
   {% extends "profile.html" %}
 
   {% block link_bar %}
+<!--  <a href="{{url_for('all_customers')}}">-->
+<!--    حميع المستخدمين-->
+<!--  </a>-->
   <a href="{{url_for('all_customers_orders')}}">
     جميع الطلبات
   </a>
@@ -27,12 +31,12 @@
   {% endblock %}
 
   {% block admin %}
-  <span style="color: lawngreen; border-radius: 30%; font-size: 0.6em">مسؤول</span>
+  <span style="color: #428403; border-radius: 30%; font-size: 0.6em">مسؤول</span>
   {% endblock %}
 
   {% block users_count %}
   <div id="users-count">
-    <span style="color: lawngreen">
+    <span style="color: #428403">
       عدد المسؤولين الحاليين:
       {{admins_num}}
     </span>

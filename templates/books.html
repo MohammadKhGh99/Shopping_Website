@@ -6,6 +6,13 @@
 </head>
 
 <style>
+  #container {
+    display: block;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   #books-upper {
     display: flex;
     justify-content: center;
@@ -18,6 +25,170 @@
   #books-upper b{
     font-size: 2em;
     margin-top: 50px;
+  }
+
+  #filters-button {
+    position: sticky;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    border: 0;
+    cursor: pointer;
+    height: 40px;
+    border-bottom: 1px solid #f2e4d7;
+  }
+
+  #filters-button:hover {
+    background-color: #e5e5e5
+  }
+
+  #filters-button.sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .filters-icon {
+    color: #AD7765;
+  }
+
+  filters {
+    position: fixed; /* Position absolutely */
+    right: -1000px; /* Hide off-screen */
+    top: 0;
+    bottom: 0;
+    width: 50vw;
+    background-color: #ffffff;
+    transition: right 0.3s ease-in-out; /* Smooth animation */
+    z-index: 3;
+    display: block;
+    padding-top: 15px;
+    overflow: auto;
+  }
+
+  filters.open {
+    right: 0; /* Slide into view */
+  }
+
+  #filters-close-side-menu {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    padding-right: 30px;
+  }
+
+  filters ul {
+    text-decoration: none;
+    list-style: none;
+  }
+
+  filters ul li{
+    user-select: none;
+    display: block;
+    padding: 15px 15px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+
+  filters ul li:first-child {
+    cursor: initial;
+  }
+
+  filters ul li .filter-upper {
+    display: flex;
+    justify-content: space-between;
+    user-select: none;
+  }
+
+  filters ul li:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+  }
+
+  filters ul li:not(:last-child){
+    border-bottom: 1px solid gray;
+  }
+
+  @media (max-width: 767px) {
+    products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      margin: 35px 0 35px 0;
+      row-gap: 20px;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    products a {
+      max-width: 90%;
+      padding-right: 10px;
+    }
+
+    product .upper-product {
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+      width: 100%;
+      height: 70%;
+    }
+
+    product .upper-product img {
+      width: 80%;
+      height: 100%;
+    }
+
+  }
+
+  @media (min-width: 767px) {
+    products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 35px 20px 50px 20px;
+      column-gap: 40px;
+      row-gap: 40px;
+      max-width: 100%;
+    }
+    product .upper-product {
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+      width: 100%;
+      height: 70%;
+      padding-bottom: 5px;
+    }
+    product .upper-product img {
+      width: 80%;
+      height: 100%;
+    }
+  }
+
+  product {
+    display: block;
+    text-align: center;
+    border-radius: 5%;
+    color: #AD7765;
+    background-color: white;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
+    -2px -2px 2px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding-bottom: 10px;
+  }
+
+  product:hover {
+    background-color: #e5e5e5;
+  }
+
+  product hr {
+    height: 1px;
+    width: 70%;
+    background-color: gray;
+    color: gray;
   }
 
 </style>
@@ -194,7 +365,8 @@
 
     {% block lower_container %}
     <div id="books-upper">
-      <img src="https://drive.google.com/thumbnail?id=1XpJE7jA6rDo9xYkDnXy5_ETs7WsOFxvy&sz=w1000" alt="ورثة الأنبياء">
+      <img src="https://scontent.ftlv6-1.fna.fbcdn.net/v/t39.30808-6/417553044_122106937820225102_5706067762254993856_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xLL4SasaR-UAX8h9jRI&_nc_ht=scontent.ftlv6-1.fna&oh=00_AfCxlWyjg8d8R5hduAr1vxXirhjopW_jFa5b_rRdrc_doQ&oe=65F9388A" alt="ورثة الأنبياء">
+<!--      https://drive.google.com/thumbnail?id=1XpJE7jA6rDo9xYkDnXy5_ETs7WsOFxvy&sz=w1000-->
       <b>
         الكتب
       </b>
@@ -214,6 +386,11 @@
             <span>
               {{ prod[4] }} ₪
             </span>
+            {% if prod[5] == 0 %}
+              <span style="background-color: #f64f4f; font-size: 1.5em">
+                 نفد المخزون
+              </span>
+            {% endif %}
           </div>
         </product>
       </a>

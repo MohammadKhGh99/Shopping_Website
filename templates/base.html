@@ -138,7 +138,7 @@
       </div>
       <div id="header-left">
         {% if user_role == "admin" %}
-          <span style="padding: 3px; color: lawngreen">
+          <span style="padding: 3px; color: #428403">
             مسؤول
           </span>
         {% endif %}
@@ -188,7 +188,7 @@
 <!--  </nav>-->
 
   {% for message in get_flashed_messages(category_filter=["success"]) %}
-    <div class="success-flash-message flash-message" role="alert" style="color: lawngreen; text-align: center">
+    <div class="success-flash-message flash-message" role="alert" style="color: #428403; text-align: center">
       <h3>
         {{ message }}
       </h3>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>جميع الزبائن</title>
+</head>
+
+<style>
+  #all-users-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 20px 20px 20px;
+    max-width: 100%;
+  }
+
+  table {
+    border-collapse: collapse;
+    font-size: 0.9em;
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+  table tr th  {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+  @media (max-width: 767px) {
+    td {
+      font-size: 0.7em;
+    }
+    td button {
+      font-size: 0.7em;
+
+    }
+    th {
+      font-size: 0.8em;
+    }
+  }
+  @media (min-width: 767px) {
+    td {
+      font-size: 1em;
+    }
+  }
+
+  td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px 0 10px 0;
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+</style>
+
+<body>
+{% extends "admin_profile.html" %}
+
+{% block users_count %}
+{% endblock %}
+
+{% block lower_container %}
+<div id="all-users-container">
+  <h2>
+    حميع المستخدمين - {{ users_num }}
+  </h2>
+  <table>
+    <tr>
+      <th style="width: 7%">الرقم التسلسلي</th>
+      <th>إسم المستخدم</th>
+      <th style="width: 10%">وظيفة المستخدم</th>
+      <th style="width: 13%">رقم الهاتف</th>
+      <th>البريد الإلكتروني</th>
+      <th style="width: 12%">معلومات أكثر</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>
+        {{ user[0] }}
+      </td>
+      <td>
+        {{ user[2] }} {{ user[3] }}
+      </td>
+      {% if user[4] == 'admin' %}
+        <td style="color: #428403">
+          {{ user[4] }}
+        </td>
+      {% else %}
+        <td>
+          {{ user[4] }}
+        </td>
+      {% endif %}
+      <td>
+        {{ user[1] }}
+      </td>
+      <td>
+        {{ user[10] }}
+      </td>
+      <td>
+        <button type="button" id="user-more-info-button">
+          معلومات أكثر
+        </button>
+      </td>
+
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
+</body>
+</html>

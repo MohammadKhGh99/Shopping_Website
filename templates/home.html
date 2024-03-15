@@ -12,6 +12,74 @@
   <title>متجر إرتقاء</title>
 </head>
 
+<style>
+  .container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    padding: 35px 0 35px 0;
+    gap: 20px;
+  }
+
+  .books-shopping {
+    cursor: pointer;
+  }
+
+  .clothes-shopping, .accessories-shopping, .books-shopping {
+    width: 25vw;
+    text-align: center;
+    border-radius: 10%;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
+    -2px -2px 2px rgba(0, 0, 0, 0.2);
+    /*cursor: pointer;*/
+    display: block;
+    /* todo - this line when it is in "coming soon" mode, when it done, delete it */
+    position: relative;
+  }
+
+  .clothes-shopping a, .accessories-shopping a, .books-shopping a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    text-decoration: none;
+  }
+
+  .clothes-shopping a img, .accessories-shopping a img, .books-shopping a img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 20%;
+  }
+
+  .coming-soon {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: absolute;
+    text-align: center;
+    /*top: 0;*/
+    /*bottom: 0;*/
+    left: 0;
+    /*right: 0;*/
+    border-radius: 10%;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-color: rgba(0,0,0,0.7);
+  }
+
+  .coming-soon span {
+    color: white;
+    font-size: 4em;
+    display: inline-block;
+    transform: rotate(-45deg);
+    user-select: none;
+  }
+
+
+</style>
+
 <body>
   {% extends "base.html" %}
 
@@ -23,7 +91,8 @@
   <div class="container">
     <div class="books-shopping" title="كتب">
       <a href="{{url_for('books')}}">
-        <img src="https://drive.google.com/thumbnail?id=1Hc2iQOr5Xn3ZZumoy_EW-Jj7AstRT-wm&sz=w1000" alt="books">
+        <img src="https://scontent.ftlv6-1.fna.fbcdn.net/v/t39.30808-6/431090400_122106935594225102_2766070768437430038_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=XZWk-6L25scAX-TJuST&_nc_ht=scontent.ftlv6-1.fna&oh=00_AfDHmFqVihk-0LBaJT_4O2FFJUJ3F151DO1ZzNqHHRnroA&oe=65F8E6DE" alt="books">
+<!--        https://drive.google.com/thumbnail?id=1Hc2iQOr5Xn3ZZumoy_EW-Jj7AstRT-wm&sz=w1000-->
         <span style="color: black; font-size: 0.9em; font-family: 'Reem Kufi', sans-serif">مكتبة ورثة الأنبياء</span>
       </a>
     </div>
