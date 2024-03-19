@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>عربة التسوق</title>
+  <title>سلة التسوق</title>
 </head>
 
 <style>
@@ -101,12 +101,12 @@
 
 {% block breadcrumb_link %}
 /
-<a href="{{url_for('shopping_cart')}}">عربة التسوق</a>
+<a href="{{url_for('shopping_cart')}}">سلة التسوق</a>
 {% endblock %}
 
 {% block lower_container %}
 <div id="shopping-cart-container">
-  <h2 style="text-align: center">عربة التسوق</h2>
+  <h2 style="text-align: center">سلة التسوق</h2>
   {% if user_role == "guest" %}
     <h4 style="text-align: center;">إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع <a href="{{url_for('register')}}">إضغط هنا</a></h4>
   {% endif %}
@@ -147,21 +147,62 @@
       <td>
         <div id="item-quantity">
 <!--          <form id="update-form{{item[0]}}" method="post">-->
+          {% if item[5] == 0 %}
+          <span style="background-color: #f64f4f; font-size: 1.5em">
+             نفد المخزون
+          </span>
+          {% endif %}
           <select id="select{{item[0]}}" name="select{{item[0]}}" onchange="UpdateCart(this)">
             <option value="0">0</option>
             {% for x in range(item[5]) %}
             <option value="{{ x + 1 }}">{{ x + 1 }}</option>
             {% endfor %}
             <script>
-                document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}");
+                if (parseInt("{{item[5]}}") === 0)
+                  document.currentScript.parentNode.selectedIndex = 0;
+                else
+                  document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}");
             </script>
+            {% if item[5] == 0 %}
+            <script>
+                document.currentScript.parentNode.setAttribute("disabled", "true");
+            </script>
+            {% endif %}
           </select>
         </div>
         <br>
         <button class="shopping-cart-buttons" onclick="toggleUpdate()">
           تعديل السلة
+          {% if item[5] == 0 %}
+            <script>
+              document.currentScript.parentNode.setAttribute("disabled", "true");
+            </script>
+          {% endif %}
         </button>
       </td>
+      <script>
+        if (parseInt("{{item[5]}}") === 0) {
+            document.currentScript.parentNode.style.opacity = 0.5;
+
+        }
+      </script>
+      <script>
+          retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+          console.log("{{item[5]}}");
+          if (parseInt("{{item[5]}}") === 0) {
+              console.log("hi");
+              delete retrievedArray["{{item[0]}}"];
+              localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+              const tempCounter = parseInt(counter.textContent);
+              const newCounter = tempCounter - parseInt("{{quantity}}");
+              counter.textContent = newCounter.toString();
+              localStorage.setItem("cartCounter", counter.textContent);
+              console.log(retrievedArray);
+              console.log(tempCounter);
+              console.log(newCounter);
+
+          }
+      </script>
     </tr>
     {% endfor %}
   </table>
@@ -197,44 +238,45 @@
       if (localStorage.getItem("cartItems") === "{}") {
           document.getElementById("cart-footer").style.display = "none";
       }
-      function DeleteCartItem(button) {
-          // the wanted tag to remove from cart
-          const toDelete = button.parentNode.parentNode.parentNode;
-          // the parent of the wanted tag to remove child
-          const parenOftDeleted = toDelete.parentNode;
-          // take id, price and quantity from 3 hidden td tags
-          const itemId = toDelete.querySelectorAll("td")[1].textContent;
-          const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
-          const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
-          console.log("item id:" + itemId.toString());
-          // put the value of the hidden input tag as the wanted item's id to remove from cart
-          // document.getElementById("deleted-id").value = itemId;
 
-          // change the cart counter as the quantity of the removed product
-          const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
-          counter.textContent = newCounter.toString();
-          // store the new cart counter
-          localStorage.setItem("cartCounter", newCounter.toString());
-
-          // const newCartItems = JSON.parse(localStorage.getItem("cartItems"));
-          // check this line when running
-          // remove the product from cart items array
-          delete retrievedArray[itemId];
-          // store the new array
-          localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
-          // put the changed array in the hidden input to retrieve in python
-          document.getElementById("cart-items-input").value = localStorage.getItem("cartItems")
-          // take the total of the cart
-          const totalDiv = document.getElementById("total-price").querySelector("b");
-          const beforeSum = parseFloat(totalDiv.textContent);
-          // modify the total of the cart as required
-          const totalSum = beforeSum - (quantity * price);
-          totalDiv.textContent = totalSum.toString();
-
-          // const deleteForm = document.getElementById("delete-form");
-          parenOftDeleted.removeChild(toDelete);
-          // deleteForm.submit();
-      }
+      // function DeleteCartItem(button) {
+      //     // the wanted tag to remove from cart
+      //     const toDelete = button.parentNode.parentNode.parentNode;
+      //     // the parent of the wanted tag to remove child
+      //     const parenOftDeleted = toDelete.parentNode;
+      //     // take id, price and quantity from 3 hidden td tags
+      //     const itemId = toDelete.querySelectorAll("td")[1].textContent;
+      //     const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
+      //     const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
+      //     console.log("item id:" + itemId.toString());
+      //     // put the value of the hidden input tag as the wanted item's id to remove from cart
+      //     // document.getElementById("deleted-id").value = itemId;
+      //
+      //     // change the cart counter as the quantity of the removed product
+      //     const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
+      //     counter.textContent = newCounter.toString();
+      //     // store the new cart counter
+      //     localStorage.setItem("cartCounter", newCounter.toString());
+      //
+      //     // const newCartItems = JSON.parse(localStorage.getItem("cartItems"));
+      //     // check this line when running
+      //     // remove the product from cart items array
+      //     delete retrievedArray[itemId];
+      //     // store the new array
+      //     localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+      //     // put the changed array in the hidden input to retrieve in python
+      //     document.getElementById("cart-items-input").value = localStorage.getItem("cartItems")
+      //     // take the total of the cart
+      //     const totalDiv = document.getElementById("total-price").querySelector("b");
+      //     const beforeSum = parseFloat(totalDiv.textContent);
+      //     // modify the total of the cart as required
+      //     const totalSum = beforeSum - (quantity * price);
+      //     totalDiv.textContent = totalSum.toString();
+      //
+      //     // const deleteForm = document.getElementById("delete-form");
+      //     parenOftDeleted.removeChild(toDelete);
+      //     // deleteForm.submit();
+      // }
 
       function UpdateCart(select) {
           // the parent of hidden td tags

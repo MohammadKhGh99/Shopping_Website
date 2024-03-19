@@ -808,7 +808,7 @@ def shopping_cart():
     user_role = check_role()
     # prevent admin from entering the shopping cart, it is for customeeeers
     if current_user.is_authenticated and user_role == "admin":
-        flash("عربة التسوق فقط للزبائن", category="warning")
+        flash("سلة التسوق فقط للزبائن", category="warning")
         return redirect(url_for('admin_profile'))
 
     if request.method == 'POST':
@@ -833,6 +833,7 @@ def shopping_cart():
                         """)
 
                         cur_res_rows = cursor.fetchone()
+                        # if cur_res_rows[5] > 0:
                         result[cur_id] = (int(quantity), cur_res_rows)
                         total += int(cur_res_rows[4]) * int(quantity)
                     except Exception as e:
@@ -845,6 +846,14 @@ def shopping_cart():
                 session["cart-items"] = result
                 session["total"] = total
                 return redirect(url_for('shopping_cart'))
+    to_remove = []
+    for id_num, value in session.get("cart-items").items():
+        quantity, item = value
+        if item[5] == 0:
+            session["total"] -= quantity * item[4]
+            to_remove.append(id_num)
+    for id_num in to_remove:
+        session["cart-items"].pop(id_num)
     return render_template('shopping_cart.html', user_role=user_role, cart_items=session.get("cart-items"),
                            total=session.get("total"))
 
@@ -853,8 +862,13 @@ def shopping_cart():
 def checkout():
     user_role = check_role()
     # admin go awaaaay
-    if user_role == "admin" or (session.get("cart-items") == {} and session.get("total") == 0):
-        return redirect(request.referrer)
+    if user_role == "admin":
+        flash("لا يمكن للمسؤول الدخول لصفحة الدفع", "warning")
+        return redirect(url_for("home"))
+
+    if session.get("cart-items") == {} and session.get("total") == 0:
+        flash("عليك إضافة منتجات لسلة التسوق كي تقوم بالدفع", "warning")
+        return redirect(url_for("home"))
 
     cart_items = session.get("cart-items")
     total = session.get("total")

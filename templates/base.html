@@ -158,7 +158,7 @@
           </span>
         </a>
         {% if user_role != "admin" %}
-          <div class="shopping-cart" onclick="GoShoppingCart()" title="السلة">
+          <div class="shopping-cart" onclick="GoShoppingCart()" title="سلة التسوق">
             <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart')}}">
               <input style="display: none" id="cart-items-input" name="cart-items-input" value="">
               <input style="display: none" id="cart-update" name="cart-update" value="no">
@@ -244,6 +244,8 @@
         }
         // parse cartItems from localStorage as array to work with in the other html files
         let retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+
+
 
         // localStorage.setItem("cartCounter", "0");
         // localStorage.setItem("cartItems", "{}");
