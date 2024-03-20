@@ -2,6 +2,8 @@ import os
 import sqlite3
 import datetime
 import smtplib
+import string
+import random
 
 # from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, \
@@ -71,7 +73,7 @@ class User(UserMixin):
         return True if self.role == "admin" else False
 
 
-def send_email(sender, app_password, to, subject, message_text):
+def send_email(sender, app_password, to, subject, message_text, msg_type):
     # Create a secure connection to the Gmail SMTP server
     # with smtplib.SMTP('smtp.gmail.com', 587) as smtp_server:
     smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -84,7 +86,7 @@ def send_email(sender, app_password, to, subject, message_text):
     msg['From'] = sender
     msg['To'] = to
     msg['Subject'] = subject
-    msg.attach(MIMEText(message_text, 'plain'))
+    msg.attach(MIMEText(message_text, msg_type))
 
     # send email
     smtp_server.send_message(msg)
@@ -317,7 +319,7 @@ def register():
                            f"""
                            زبون جديد بإسم {first_name} {last_name}\n
                             email: {email}\nphone: {phone_number}
-                            """)
+                            """, "plain")
                 return redirect(url_for('profile'))
             except Exception as e:
                 connection.rollback()
@@ -329,12 +331,36 @@ def register():
     return render_template('register.html', cities=cities, user_role=user_role)
 
 
-@app.route('/forgot_password')
+@app.route('/forgot_password', methods=['POST', 'GET'])
 def forgot_password():
-    # todo - not implemented yet
-    return redirect(url_for('home'))
+    if request.method == "POST":
+        customer_email = request.form['customer-email'].strip()
+        with sqlite3.connect("Shopping.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute(f"""
+            select * from Customers
+            where email = '{customer_email}'
+            """)
+            wanted_user = cursor.fetchone()
+            user_fullname = wanted_user[2] + " " + wanted_user[3]
+            chars = string.ascii_letters + string.digits
+            unique_token = ''.join(random.choice(chars) for _ in range(10))
+        send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+                   customer_email,
+                   "استعادة كلمة المرور",
+                   f"""
+                   <p dir="rtl" style="text-align: center">
+                       السلام عليكم {user_fullname}
+                       <br><br>
+                       كلمة المرور المؤقتة الخاصة بك هي
+                       <br><br>
+                       <b style="font_size: 1.2em; background-color: #bdbcbc">
+                        {unique_token}
+                       </b>
+                   </p> 
+                   """, "html")
 
-# return render_template('forgot_password.html')
+    return render_template('forgot_password.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -926,7 +952,7 @@ def checkout():
                                "m7md.gh.99@hotmail.com",
                                "تم تسحيل زبون جديد",
                                f"زبون جديد بإسم {first_name} {last_name}\n "
-                               f"email: {email}\nphone: {phone_number}")
+                               f"email: {email}\nphone: {phone_number}", "plain")
                 except Exception as e:
                     connection.rollback()
                     # failed to register
@@ -986,7 +1012,7 @@ def checkout():
                        f"طلب جديد برقم {cursor.lastrowid}",
                        f"طلب جديد برقم {cursor.lastrowid}للزبون {first_name} {last_name}\n"
                        f" email: {email}\n"
-                       f"phone: {phone_number}")
+                       f"phone: {phone_number}", "plain")
         return render_template("order_approved.html", user_role=user_role)
 
     cur_user = current_user if user_role != "guest" else None

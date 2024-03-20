@@ -107,8 +107,10 @@
   .show-password-btn {
     position: absolute;
     left: 5px;
-    top: 68%;
-    transform: translateY(-50%);
+    /*top: 68%;*/
+    top: 55%;
+    /*background-color: #bdbcbc;*/
+    /*transform: translateY(-50%);*/
     cursor: pointer;
   }
 
@@ -182,9 +184,9 @@
           <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
             visibility_off
           </span>
-          <a class="forgot-password" style="display: none; cursor: pointer" onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">
-            هل نسيت كلمة المرور؟
-          </a>
+<!--          <a href="{{url_for('forgot_password')}}" class="forgot-password" style="cursor: pointer">&lt;!&ndash; onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">&ndash;&gt;-->
+<!--            هل نسيت كلمة المرور؟-->
+<!--          </a>-->
         </div>
         <br>
         <button type="submit" class="sign-in-button" style="display: none">
