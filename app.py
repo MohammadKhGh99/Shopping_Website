@@ -609,23 +609,22 @@ def add_product():
         product_items_left = request.form['product-items-left']
         product_publish_year = request.form['product-publish-year']
         product_author = request.form['product-author']
-        product_categories = request.form['product-categories']
+        # product_categories = request.form['product-categories']
         # product_on_sale = request.form['product-on-sale']
         # product_sale_price = request.form['product-sale-price']
 
-        categories = [x.strip() for x in product_categories.split(',')]
+        # categories = [x.strip() for x in product_categories.split(',')]
 
         # add the entered product info to the database
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
             try:
                 cursor.execute(
-                    "INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name, categories) "
+                    "INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name) " # , categories
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
                     (product_name, product_type, product_price, product_items_left, product_description,
-                     product_publish_year, product_author,
-                     product_categories)
-                )
+                     product_publish_year, product_author))
+                    #  product_categories)
 
                 # validating filename and creating img src path to store in database
                 for img_file in product_images:
@@ -797,7 +796,7 @@ def update_product():
             product_items_left = request.form['product-items-left']
             product_publish_year = request.form['product-publish-year']
             product_author = request.form['product-author']
-            product_categories = request.form['product-categories']
+            # product_categories = request.form['product-categories']
 
             # todo - update images
             save_product_sql = f"""
@@ -809,9 +808,9 @@ def update_product():
             description = '{product_description}',
             publish_year = '{product_publish_year}',
             author_name = '{product_author}',
-            categories = '{product_categories}'
             where id_number = {product_id}
             """
+            # categories = '{product_categories}'
             with sqlite3.connect("Shopping.db") as connection:
                 cursor = connection.cursor()
                 try:

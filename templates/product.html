@@ -33,6 +33,7 @@
 
   #product-right-side {
     width: 50vw;
+    height: 90%;
   }
 
   #add-to-cart-button {
@@ -216,6 +217,35 @@
         </span>
       </div>
       <br>
+      {% if user_role != "admin" %}
+        <div id="product-left-options">
+          <b>
+            الخيارات
+          </b>
+          <br>
+          <div>
+            <input type="checkbox" id="package-as-gift" name="package-as-gift">
+            <label for="package-as-gift">التغليف كهدية 10₪</label>
+          </div>
+          <div>
+            <input type="checkbox" id="ehdaa" name="ehdaa" onchange="EhdaaChange()">
+            <label for="ehdaa">إهداء 10₪</label>
+            <br>
+            <textarea id="ehdaa-text" name="ehdaa-text" style="display: none;"></textarea>
+          </div>
+        </div>
+        <script>
+          function EhdaaChange() {
+            if (document.getElementById("ehdaa").checked) {
+              document.getElementById("ehdaa-text").style.display = "block";
+            } else {
+              document.getElementById("ehdaa-text").style.display = "none";
+            }
+
+          }
+        </script>
+        {% endif %}
+      <br>
       <div id="product-left-lower">
         {% if user_role != "admin" %}
           <button id="add-to-cart-button" onclick="AddToCart()">
@@ -291,9 +321,9 @@
         <span>
           المؤلف: {{result[8]}}
         </span>
-        <span>
+        <!-- <span>
           تصنيفات: {{result[9]}}
-        </span>
+        </span> -->
       </div>
     </div>
   </div>
