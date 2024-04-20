@@ -37,16 +37,17 @@
     margin: 20px 0 20px 0;
   }
 
-  #checkout-button {
+  #checkout-button, #register-guest-button, #continue-as-guest-button {
     /*width: 100%;*/
     background-color: #cce5ff;
     font-family: "Traditional Arabic",serif;
     border: 0;
     cursor: pointer;
     margin-right: 2px;
+    padding: 10px;
   }
 
-  #checkout-button:hover {
+  #checkout-button:hover, #register-guest-button:hover, #continue-as-guest-button:hover {
     background-color: #e5e5e5;
   }
 
@@ -61,10 +62,11 @@
   .show-password-btn {
     position: absolute;
     left: 5px;
-    top: 68%;
+    top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
   }
+
 
 </style>
 
@@ -112,9 +114,9 @@
         <label for="customer-backup-phone" class="input_label">رقم هاتف إحتياطي (إختياري)</label><br>
         <input type="tel" id="customer-backup-phone" class="input_field" name="customer-backup-phone" autocomplete="phone" style="text-align: right" maxlength="10">
       </div>
-      <div class="field-holder password-container" >
+      <div class="field-holder password-container" {% if not cur_user %}style="display: none"{% endif %}>
         <label for="customer-password" class="input_label">كلمة المرور</label>
-        <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20" required>
+        <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20">
         <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
           visibility_off
         </span>
@@ -122,13 +124,32 @@
           طول كلمة المرور  8 - 20 رقم أو حرف
         </span>
       </div>
+      {% if user_role == "guest" %}
+        <h4 id="register-notice" style="text-align: center; color: red;">
+          🛑🛑🛑<br>
+          إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع
+        </h4>
+      {% endif %}
+      <button type="button" id="register-guest-button" onclick="RegisterGuest(this)">
+        للتسجيل بالموقع
+      </button>
+      <button type="button" id="continue-as-guest-button" onclick="ContinueAsGuest(this)" style="display: none;">
+        الإكمال كضيف
+      </button>
       <div id="lower-checkout">
         <span>
           المجموع الكلي:
           <b>{{total}}</b> ₪
           <span style="font-size: 0.6em">
             ({{total}} +
-            <b>0</b>
+            <b>0
+              <script>
+                if (document.getElementById("customer-city").value !== "اختر بلد") {
+                  document.currentScript.parentNode.textContent = "25";
+                  document.getElementById("lower-checkout").children[0].querySelector("b").textContent = (parseFloat("{{total}}") + 25).toString();
+                }
+              </script>
+            </b>
             رسوم شحن)
           </span>
         </span>
@@ -138,6 +159,24 @@
       </div>
     </form>
   </div>
+  <script>
+    function RegisterGuest(button) {
+      document.getElementsByClassName("password-container")[0].style.display = "block";
+      button.style.display = "none";
+      document.getElementById("continue-as-guest-button").style.display = "block";
+      document.getElementById("register-notice").style.display = "none";
+
+      document.getElementById("customer-password").setAttribute("required", "true");
+    }
+    function ContinueAsGuest(button) {
+      document.getElementsByClassName("password-container")[0].style.display = "none";
+      button.style.display = "none";
+      document.getElementById("register-guest-button").style.display = "block";
+      document.getElementById("register-notice").style.display = "block";
+
+      document.getElementById("customer-password").setAttribute("required", "false");
+    }
+  </script>
   {% if cur_user %}
     <script>
       document.getElementById("customer-first-name").value = "{{cur_user.first_name}}";
@@ -164,6 +203,7 @@
       const shippingB = shippingSpan.querySelector("b");
       const cityInput = document.getElementById("customer-city");
       if (cityInput.value !== "اختر بلد") {
+        console.log("what happened");
           AddShipping();
       }
 

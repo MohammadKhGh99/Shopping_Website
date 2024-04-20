@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Shopping",
+            "database": "${workspaceFolder:Shopping_Website}/Shopping.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

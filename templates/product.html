@@ -25,6 +25,7 @@
     text-align: right;
     flex-direction: column;
     border-bottom: 1px solid #e5e5e5;
+    font-size: 0.9em;
   }
 
   #product-left-upper span {
@@ -213,11 +214,11 @@
           {{result[4]}} ₪
         </span>
         <span style="margin-bottom: 20px">
-          شامل الضريبة, تكلفة الشحن ستحسب عند ادخال العنوان
+          تكلفة الشحن ستحسب عند ادخال العنوان
         </span>
       </div>
       <br>
-      {% if user_role != "admin" %}
+      <!-- {% if user_role != "admin" %}
         <div id="product-left-options">
           <b>
             الخيارات
@@ -244,7 +245,7 @@
 
           }
         </script>
-        {% endif %}
+      {% endif %} -->
       <br>
       <div id="product-left-lower">
         {% if user_role != "admin" %}
@@ -282,13 +283,22 @@
 
                 // checking if there is already items from the current product
                 if (retrievedArray["{{result[0]}}"] === undefined) {
+                    // let dict = {"count": 1};
+                    // if (document.getElementById("package-as-gift").checked){
+                    //   dict["gift"] = true;
+                    // }
+                    // if (document.getElementById("ehdaa").checked) {
+                    //   dict["ehdaa"] = true;
+                    //   dict["ehdaa-text"] = document.getElementById("ehdaa-text").text;
+                    // }
+                    // retrievedArray.push(["{{result[0]}}", dict]);
                     retrievedArray["{{result[0]}}"] = "1";
-                } else {
+                } 
+                else {
                     // increment the current amount of items from this product
                     const newItemCounter = parseInt(retrievedArray["{{result[0]}}"]) + 1;
                     retrievedArray["{{result[0]}}"] = newItemCounter.toString();
                 }
-                // retrievedArray[retrievedArray.length] = "{{result[0]}}";
                 // store the changed cart items array
                 localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
 

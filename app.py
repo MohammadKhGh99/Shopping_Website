@@ -921,13 +921,14 @@ def checkout():
         date_purchased = date_purchased.strftime("%Y-%m-%d %H:%M")
 
         password = request.form['customer-password'].strip()
-        hashed_password = bcrypt.generate_password_hash(password)
+        
 
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
             # register the guest customer to the website
-            if user_role != "customer":
+            if user_role != "customer" and password != "":
                 role = "customer"
+                hashed_password = bcrypt.generate_password_hash(password)
                 try:
                     cursor.execute("""
                     INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
@@ -990,26 +991,26 @@ def checkout():
             session["cart-items"] = {}
 
             # store the order in Orders SQL table
-            # if user_role == "customer":
-            cursor.execute(f"""
-            insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number,
-                  date_purchased, total_amount, status, str(cart_items)))
+            if user_role == "customer":
+                cursor.execute(f"""
+                insert into Orders(customer_id, customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+                values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (current_user.id_number, first_name, last_name, role, city, address, email, backup_phone, phone_number,
+                    date_purchased, total_amount, status, str(cart_items)))
             #  guest
-            # else:
-            # 	# delete - i think... because we will force guest to register to website
-            # 	cursor.execute(f"""
-            # 	insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-            # 	values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            # 	""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status,
-            # 	      str(cart_items)))
-
+            else:
+            	# delete - i think... because we will force guest to register to website
+            	cursor.execute(f"""
+            	insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+            	values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            	""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status,
+            	      str(cart_items)))
+                
             connection.commit()
             send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
                        "m7md.gh.99@hotmail.com",
                        f"طلب جديد برقم {cursor.lastrowid}",
-                       f"طلب جديد برقم {cursor.lastrowid}للزبون {first_name} {last_name}\n"
+                       f"طلب جديد برقم {cursor.lastrowid}\nللزبون {first_name} {last_name}\n"
                        f" email: {email}\n"
                        f"phone: {phone_number}", "plain")
         return render_template("order_approved.html", user_role=user_role)

@@ -188,19 +188,14 @@
       </script>
       <script>
           retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
-          console.log("{{item[5]}}");
           if (parseInt("{{item[5]}}") === 0) {
-              console.log("hi");
+            
               delete retrievedArray["{{item[0]}}"];
               localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
               const tempCounter = parseInt(counter.textContent);
               const newCounter = tempCounter - parseInt("{{quantity}}");
               counter.textContent = newCounter.toString();
               localStorage.setItem("cartCounter", counter.textContent);
-              console.log(retrievedArray);
-              console.log(tempCounter);
-              console.log(newCounter);
-
           }
       </script>
     </tr>
