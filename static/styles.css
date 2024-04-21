@@ -280,41 +280,14 @@ header {
   color: gray;
 }
 
-footer {
-  height: 90vh;
-  width: 100%;
-  background-color: #f2e4d7;
-  display: block;
-  position: relative;
-}
 
-@media (max-width: 767px) {
-  footer #footer-top {
-    font-size: 0.8em;
 
-  }
-
-}
-@media (min-width: 767px) {
-  footer #footer-top {
-    font-size: 1.2em;
-
-  }
-
-}
-footer #footer-top {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  padding-top: 20px;
-}
-
-footer div div {
+/* footer div div {
   display: block;
   text-align: right;
-}
+} */
 
-footer div hr {
+/* footer div hr {
   height: 1px;
   width: 230px;
   color: white;
@@ -322,24 +295,10 @@ footer div hr {
   margin: 0;
   border: #AD7765;
   display: none;
-}
+} */
 
-footer div a, #contact-us a {
+/* footer div a, #contact-us a {
   text-decoration: none;
-}
+} */
 
-footer div iconify-icon, #contact-us iconify-icon {
-  color: black;
-  padding: 7px 0;
-}
 
-footer div iconify-icon, #contact-us iconify-icon:hover {
-  color: white;
-}
-
-#footer-bottom {
-  font-size: 0.9em;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-}

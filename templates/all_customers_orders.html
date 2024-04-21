@@ -113,6 +113,7 @@
     <script>
       let initialValue = "";
     </script>
+    {% set count = [1] %}
     {% for status in all_orders_dict.keys() %}
       <h4>حالة الطلب <mark>{{status}}</mark></h4>
       <table class="all-orders-table">
@@ -133,26 +134,32 @@
             </b>
           </td>
           <td class="order-status-td">
-            <div id="status-container{{loop.index}}">
-              <select disabled>
+            <div id="status-container{{count[0]}}">
+              <select onchange="UpdateStatus(this)">
                 {% for stat in statuses %}
-                  <option value="{{stat}}">
-                    {{stat}}
-                  </option>
+                <option value="{{stat}}" 
+                {% if stat == order[-3] %}selected {% endif %}
+                {% if stat == "تم تأكيد الطلب" %} style="color: black" {% endif %}
+                {% if stat == "تم التوصيل" %} style="color: lawngreen" {% endif %}
+                {% if stat == "تم تجهيز الطلب" %} style="color: orange" {% endif %}>
+                  {{stat}}
+                </option>
                 {% endfor %}
                 <script>
-                    selectNode = document.currentScript.parentNode;
-                    for (let i = 0; i < selectNode.children.length; i++) {
-                        if (selectNode.children[i].value === "{{order[-3]}}") {
-                            selectNode.selectedIndex = i;
-                        }
-                    }
+                  selectNode = document.currentScript.parentNode;
+                  if (selectNode.value === "تم تجهيز الطلب") {
+                    selectNode.style.color = "orange";
+                  } else if (selectNode.value === "تم التوصيل") {
+                    selectNode.style.color = "lawngreen";
+                  } else {
+                    selectNode.style.color = "black";
+                  }  
                 </script>
               </select>
               &ensp;
-              <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px; font-size: 0.8em">
+              <!-- <button onclick="UpdateStatus(this)" style="cursor: pointer; margin-top: 10px; font-size: 0.8em">
                 تعديل الحالة
-              </button>
+              </button> -->
               <form method="post" style="display: none" id="status-form">
                 <input id="order-status-update" type="hidden" name="order-status-update">
               </form>
@@ -167,28 +174,64 @@
             </a>
           </td>
           <script>
-              initialValue = document.getElementById("status-container{{loop.index}}").children[0].value;
               document.getElementById("status-container{{loop.index}}").querySelector("select").style.maxWidth = "100%";
 
-              function UpdateStatus(button) {
-                  const selectNode = button.parentNode.children[0];
-                  if (selectNode.hasAttribute("disabled")) {
-                      selectNode.removeAttribute("disabled");
-                  } else {
-                      selectNode.setAttribute("disabled", "true");
-                      if (selectNode.value !== initialValue) {
-                          document.getElementById("order-status-update").value = button.parentNode.parentNode.parentNode.children[0].textContent + "," + selectNode.value;
-                          document.getElementById("status-form").submit();
-                      }
+              function EnableStatus(select) {
+                  if (select.hasAttribute("disabled")) {
+                      select.removeAttribute("disabled");
                   }
+              }
+
+              function UpdateStatus(select) {
+                  if (!select.hasAttribute("disabled")) {
+                      // select.setAttribute("disabled", "true");
+                      if (select.value === "تم تجهيز الطلب") {
+                        select.style.color = "orange";
+                      } else if (select.value === "تم التوصيل") {
+                        select.style.color = "lawngreen";
+                      } else {
+                        select.style.color = "black";
+                      }  
+                      // if (select.value !== initialValue) {
+                        console.log("selected " + select.value);
+                        console.log("initial " + initialValue);
+
+                        document.getElementById("order-status-update").value = select.parentNode.parentNode.parentNode.children[0].textContent + "," + select.value;
+                        document.getElementById("status-form").submit();
+                      // }
+                  }
+              }
+
+              function UpdateColor(select) {
+                if (select.value === "تم تجهيز الطلب") {
+                    select.style.color = "orange";
+                  } else if (select.value === "تم التوصيل") {
+                    select.style.color = "lawngreen";
+                  } else {
+                    selectNode.style.color = "black";
+                  }  
               }
           </script>
         </tr>
+        {% set _ = count.append(count.pop() + 1) %}
         {% endfor %}
       </table>
       <br>
     {% endfor %}
   </div>
+  <script>
+    
+    // let options = document.getElementsByTagName("option");
+    // for (let i = 0; i < options.length; i++) {
+    //   if (options[i].value === "تم تجهيز الطلب") {
+    //     options[i].style.color = "orange";
+    //   } else if (options[i].value === "تم التوصيل") {
+    //     options[i].style.color = "lawngreen";
+    //   } else {
+    //     options[i].style.color = "black";
+    //   }  
+    // }
+  </script>
   {% endblock %}
 
 </body>

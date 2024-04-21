@@ -46,6 +46,83 @@
     height: 30px;
     cursor: pointer;
   }
+
+  footer table {
+    text-align: center;
+    width: 100%;
+    border: 0; 
+  }
+  
+  footer table td {
+    vertical-align: top;
+    border: 0;
+  }
+  
+  footer table th {
+    width: 30vw;
+    border: 0;
+    /* text-align: center; */
+  }
+  
+  footer {
+    height: 90vh;
+    width: 100%;
+    background-color: #f2e4d7;
+    display: block;
+    position: relative;
+  }
+  
+  @media (max-width: 767px) {
+    footer table {
+      font-size: 0.8em;
+      border: 0;
+      
+    }
+    
+  }
+  @media (min-width: 767px) {
+    footer table {
+      font-size: 1.2em;
+      border: 0;
+
+    }
+
+  }
+  /* footer #footer-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+  } */
+
+  iconify-icon {
+    color: black;
+    padding: 7px 0;
+  }
+  
+  iconify-icon:hover {
+    color: white;
+  }
+
+  footer a {
+    text-decoration: none;
+  }
+
+  footer div iconify-icon, #contact-us iconify-icon {
+  color: black;
+  padding: 7px 0;
+  }
+
+  footer div iconify-icon, #contact-us iconify-icon:hover {
+    color: white;
+  }
+
+  #footer-bottom {
+    font-size: 0.9em;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
 </style>
 
 <body>
@@ -77,19 +154,19 @@
             <li><a href="{{url_for('home')}}">الصفحة الرئيسية</a></li>
             <li><a href="{{url_for('books')}}">كتب</a></li>
             <li style="position: relative">
-              <span class="coming-soon-side">
+              <!-- <span class="coming-soon-side">
                 <span>
                   قريبًا
                 </span>
-              </span>
+              </span> -->
               <a href="{{url_for('clothes')}}">أزياء شرعية</a>
             </li>
             <li style="position: relative">
-              <span class="coming-soon-side">
+              <!-- <span class="coming-soon-side">
                 <span>
                   قريبًا
                 </span>
-              </span>
+              </span> -->
               <a href="{{url_for('accessories')}}">إكسسوارات</a>
             </li>
             <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
@@ -266,8 +343,47 @@
   {% block lower_container %}
   {% endblock %}
   <footer>
-    <div id="footer-top">
-      <div id="who-we">
+    <!-- <div id="footer-top"> -->
+      <table>
+        <tr>
+          <th>
+            من نحن
+          </th>
+          <th>
+            سياسات وشروط الخدمة
+          </th>
+          <th>
+            تواصل معنا
+          </th>
+        </tr>
+        <tr>
+          <td>
+            موقع إرتقاء<br>
+            نرتقي بعملنا ونرتقي بعفّتنا
+          </td>
+          <td>
+            شروط الخدمة<br>
+            سياسة الشحن<br>
+            سياسة الخصوصية<br>
+            سياسة الاستبدال والاسترجاع
+          </td>
+          <td>
+            <a href="mailto:mohammad.gh454@gmail.com">
+              <iconify-icon icon="ic:outline-email"></iconify-icon>
+            </a>
+            <a href="https://wa.me/0528942919">
+              <iconify-icon icon="mdi:whatsapp"></iconify-icon>
+            </a>
+            <a href="https://www.instagram.com/">
+              <iconify-icon icon="mdi:instagram"></iconify-icon>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61556753079038">
+              <iconify-icon icon="mdi:facebook"></iconify-icon>
+            </a>
+          </td>
+        </tr>
+      </table>
+      <!-- <div id="who-we">
         <b>من نحن</b><br>
         <hr>
         موقع إرتقاء<br>
@@ -293,11 +409,11 @@
         <a href="https://www.instagram.com/">
           <iconify-icon icon="mdi:instagram"></iconify-icon>
         </a>
-        <a href="https://www.facebook.com/">
+        <a href="https://www.facebook.com/profile.php?id=61556753079038">
           <iconify-icon icon="mdi:facebook"></iconify-icon>
         </a>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
     <div id="footer-bottom">
       <span>
         IrtikaaStore &copy; 2024

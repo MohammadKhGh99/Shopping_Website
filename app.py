@@ -30,11 +30,12 @@ login_manager.login_view = "login"
 
 NO_ACCOUNTS = False
 STORE_CART = False
-NO_CLOTHES = True
+NO_CLOTHES = False
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
 types = ["كتب", "أزياء", "إكسسوارات"]
+types_dict = {"كتب": "books", "أزياء": "clothes", "إكسسوارات": "accessories"}
 
 
 # class Customers(db.Model):
@@ -602,8 +603,13 @@ def add_product():
     if request.method == "POST":
         product_name = request.form['product-name']
         product_type = request.form['product-type']
-        product_images = request.files.getlist('product-img')
-        product_img = ""
+        # product_images = request.files.getlist('product-img')
+        product_images = []
+        i = 1
+        while ('product-img' + str(i)) in request.form.keys():
+            product_images.append(request.form['product-img' + str(i)])
+            i += 1
+        
         product_description = request.form['product-description']
         product_price = request.form['product-price']
         product_items_left = request.form['product-items-left']
@@ -629,13 +635,13 @@ def add_product():
                 # validating filename and creating img src path to store in database
                 for img_file in product_images:
                     filename = secure_filename(img_file.filename)
-                    product_folder = 'books' if product_type == "كتب" else "clothes"
+                    product_folder = types_dict[product_type]
                     img_path = f'static/images/{product_folder}'
                     if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
                         os.mkdir(img_path + f"/{cursor.lastrowid}")
                     img_path += f"/{cursor.lastrowid}/{filename}"
                     img_file.save(img_path)
-                    product_img += img_path + ","
+                    product_img += img_path + "&"
                 product_img = product_img[:-1]
 
                 cursor.execute(f"""
@@ -999,13 +1005,12 @@ def checkout():
                     date_purchased, total_amount, status, str(cart_items)))
             #  guest
             else:
-            	# delete - i think... because we will force guest to register to website
-            	cursor.execute(f"""
-            	insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
-            	values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            	""", (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status,
-            	      str(cart_items)))
-                
+                # delete - i think... because we will force guest to register to website
+                cursor.execute(f"""
+                insert into Orders(customer_first_name, customer_last_name, role, city, address, email, backup_phone, customer_phone_number, order_date, total_amount, status, cart_items)
+                values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+                , (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
+            
             connection.commit()
             send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
                        "m7md.gh.99@hotmail.com",
