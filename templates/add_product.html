@@ -54,6 +54,7 @@
     cursor: pointer;
     border: 0;
     padding: 5px 5px 5px 5px;
+    transition-duration: 0.5s;
   }
 
   #go-new-added-button {
@@ -79,6 +80,7 @@
     align-items: center;
     margin-top: 10px;
     padding: 10px;
+    transition-duration: 0.5s;
   }
 
   #add-image-button:hover {
@@ -159,22 +161,22 @@
           <textarea id="product-description" name="product-description" class="input-field" required></textarea>
 <!--          <input type="text" id="product-description" name="product-description" class="input-field" height="20">-->
         </div>
-        <div class="field-holder">
+        <div class="field-holder" style="width: 100px;">
           <label for="product-price">السعر</label><br>
           <input type="text" id="product-price" name="product-price" class="input-field" required>
         </div>
-        <div class="field-holder">
+        <div class="field-holder" style="width: 100px;">
           <label for="product-items-left">الكمية</label><br>
           <input type="number" id="product-items-left" name="product-items-left" class="input-field" required>
         </div>
-        <div class="field-holder">
+        <!-- <div class="field-holder" style="width: 100px;">
           <label for="product-publish-year">سنة الإصدار</label><br>
           <input type="text" id="product-publish-year" name="product-publish-year" class="input-field" required>
         </div>
         <div class="field-holder">
           <label for="product-author">المؤلف</label><br>
           <input type="text" id="product-author" name="product-author" class="input-field">
-        </div>
+        </div> -->
         <!-- <div class="field-holder">
           <label for="product-categories">تصنيفات</label><br>
           <input type="text" id="product-categories" name="product-categories" class="input-field">
@@ -191,7 +193,7 @@
         <button type="submit" id="save-product-button">
           حفظ المنتج
         </button>
-      </>
+      </div>
       <script>
           function ToggleOnSale() {
               if (document.getElementById("product-on-sale").checked) {
@@ -202,12 +204,29 @@
                   document.getElementById("product-sale-price").removeAttribute("required");
               }
           }
+          /*function UpdateAddProductPage(){
+            console.log(document.getElementById("product-type").value);
+            if (document.getElementById("product-type").value === "كتب") {
+              document.getElementById("product-publish-year").parentNode.style.display = "block";
+              document.getElementById("product-publish-year").setAttribute("required", "true");
+              
+              document.getElementById("product-author").parentNode.style.display = "block";
+              document.getElementById("product-author").setAttribute("required", "true");
+            } else if (document.getElementById("product-type").value === "إكسسوارات" || document.getElementById("product-type").value === "أزياء") {
+              document.getElementById("product-publish-year").parentNode.style.display = "none";
+              document.getElementById("product-publish-year").removeAttribute("required");
+              
+              document.getElementById("product-author").parentNode.style.display = "none";
+              document.getElementById("product-author").removeAttribute("required");
+
+            }
+        }*/
       </script>
     </form>
   {% endif %}
   {% if done %}
     <button id="go-new-added-button">
-      <a href="{{url_for('product', ptype=ptype)}}">
+      <a href="{{url_for('product', ptype=ptype, id_num=id_num)}}">
         الإنتقال للمنتج المضاف حديثًا
       </a>
     </button>

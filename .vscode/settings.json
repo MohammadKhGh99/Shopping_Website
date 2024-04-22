@@ -8,5 +8,9 @@
         }
     ],
     "sqltools.useNodeRuntime": true,
-    "python.analysis.typeCheckingMode": "off"
+    "python.analysis.typeCheckingMode": "off",
+    "html-to-css-autocompletion.autocompletionFilesScope": "workspace",
+    "html-to-css-autocompletion.getSelectorsFromFileTypes": [
+        "html"
+    ]
 }

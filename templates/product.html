@@ -7,6 +7,7 @@
 
 <style>
 
+
   #product-container {
     display: flex;
     justify-content: space-between;
@@ -29,7 +30,7 @@
   }
 
   #product-left-upper span {
-    font-size: 0.9em;
+    font-size: 1em;
   }
 
   #product-right-side {
@@ -43,6 +44,9 @@
     font-family: "Traditional Arabic", sans-serif;
     font-size: 1em;
     cursor: pointer;
+    transition-duration: 0.5s;
+    width: 150px;
+    
   }
 
   #add-to-cart-button:hover {
@@ -78,19 +82,23 @@
   .next {
     cursor: pointer;
     position: absolute;
-    top: 9%;
+    top: 0;
     width: auto;
     padding-right: 16px;
     padding-left: 16px;
-    margin-top: -50px;
     color: white;
     font-weight: bold;
     font-size: 20px;
     border-radius: 0 3px 3px 0;
     user-select: none;
     -webkit-user-select: none;
-    height: 61%;
-    padding-top: 45%;
+    height: 100%;
+    text-align: center;
+    line-height: 30px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .next {
@@ -104,7 +112,7 @@
 
   .prev:hover,
   .next:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(225, 224, 224, 0.472);
   }
 
   #wish-product {
@@ -144,7 +152,7 @@
         <script>
             // hide the next and prev symbols if there is just one image
             const productImages = "{{result[3]}}";
-            if (productImages.indexOf(",") === -1) {
+            if (productImages.indexOf("&") === -1) {
                 document.getElementsByClassName("next")[0].style.display = "none";
                 document.getElementsByClassName("prev")[0].style.display = "none";
             }
@@ -210,7 +218,7 @@
         <h1 style="margin-top: 0; line-height: 1">
           {{result[1]}}
         </h1>
-        <span>
+        <span style="font-size: 1.5em;">
           {{result[4]}} ₪
         </span>
         <span style="margin-bottom: 20px">
@@ -246,13 +254,13 @@
           }
         </script>
       {% endif %} -->
-      <br>
+      <!-- <br> -->
       <div id="product-left-lower">
         {% if user_role != "admin" %}
           <button id="add-to-cart-button" onclick="AddToCart()">
             إضافة إلى سلة التسوق
           </button>
-          <a href="#" style="display: none; margin-right: 40%; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
+          <a href="#" style="display: none; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
             الذهاب إلى سلة التسوق
           </a>
           <form method="post" id="update-cart-form">
@@ -317,7 +325,7 @@
           </script>
         {% endif %}
 
-        <br>
+        <!-- <br> -->
         <span id="items-left">
           الكمية المتبقية:
           <b>{{result[5]}}</b>
@@ -325,12 +333,12 @@
         <p>
           {{result[6]}}
         </p>
-        <span>
+        <!-- <span>
           سنة النشر: {{result[7]}}
         </span>
         <span>
           المؤلف: {{result[8]}}
-        </span>
+        </span> -->
         <!-- <span>
           تصنيفات: {{result[9]}}
         </span> -->

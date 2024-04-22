@@ -131,10 +131,10 @@ def books():
             where type = 'كتب'
             """)
 
-            all_books = cursor.fetchall()
+            all_accessories = cursor.fetchall()
             connection.commit()
-            all_books = [book[:3] + (book[3].split('&'),) + book[4:] for book in all_books]
-            return render_template('books.html', products=all_books, user_role=user_role)
+            all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
+            return render_template('books.html', products=all_accessories, user_role=user_role)
         except Exception as e:
             connection.rollback()
             flash("خطأ في تحميل الكتب\nنوع الخطأ: " + str(e), "error")
@@ -156,9 +156,24 @@ def accessories():
     if NO_CLOTHES:
         return redirect(url_for('home'))
     user_role = check_role()
-    # check this
-    accessories_lst = []
-    return render_template('accessories.html', products=accessories_lst, user_role=user_role)
+
+    with sqlite3.connect("Shopping.db") as connection:
+        cursor = connection.cursor()
+        try:
+            # retrieve all the products that their type is "إكسسوارات" to get all the books in the website
+            cursor.execute("""
+            select * from Products
+            where type = 'إكسسوارات'
+            """)
+
+            all_accessories = cursor.fetchall()
+            connection.commit()
+            all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
+            return render_template('accessories.html', products=all_accessories, user_role=user_role)
+        except Exception as e:
+            connection.rollback()
+            flash("خطأ في تحميل إكسسوارات\nنوع الخطأ: " + str(e), "error")
+            return redirect(request.referrer)
 
 
 @login_manager.user_loader
@@ -598,6 +613,7 @@ def add_product():
     done = request.args.get('done')
     name = request.args.get('name')
     ptype = request.args.get('ptype')
+    id_num = request.args.get('id_num')
 
     # we enter this if when adding product
     if request.method == "POST":
@@ -606,15 +622,15 @@ def add_product():
         # product_images = request.files.getlist('product-img')
         product_images = []
         i = 1
-        while ('product-img' + str(i)) in request.form.keys():
-            product_images.append(request.form['product-img' + str(i)])
+        while ('product-img' + str(i)) in request.files.keys():
+            product_images.append(request.files['product-img' + str(i)])
             i += 1
         
         product_description = request.form['product-description']
         product_price = request.form['product-price']
         product_items_left = request.form['product-items-left']
-        product_publish_year = request.form['product-publish-year']
-        product_author = request.form['product-author']
+        product_publish_year = "" #request.form['product-publish-year']
+        product_author = " " #request.form['product-author']
         # product_categories = request.form['product-categories']
         # product_on_sale = request.form['product-on-sale']
         # product_sale_price = request.form['product-sale-price']
@@ -627,12 +643,13 @@ def add_product():
             try:
                 cursor.execute(
                     "INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name) " # , categories
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+                    "VALUES(?, ?, ?, ?, ?, ?, ?)",
                     (product_name, product_type, product_price, product_items_left, product_description,
                      product_publish_year, product_author))
                     #  product_categories)
 
                 # validating filename and creating img src path to store in database
+                product_img = ""
                 for img_file in product_images:
                     filename = secure_filename(img_file.filename)
                     product_folder = types_dict[product_type]
@@ -653,7 +670,7 @@ def add_product():
                 connection.commit()
                 # successfully added
                 flash(f"تمت إضافة ال{product_type} بنجاح", category="success")
-                return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type))
+                return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type, id_num=cursor.lastrowid))
             except Exception as e:
                 connection.rollback()
                 # failed to add
@@ -661,7 +678,7 @@ def add_product():
                 return redirect(request.referrer)
 
     # if we arrive now to add product page
-    return render_template('add_product.html', user_role=user_role, done=done, name=name, ptype=ptype, types=types)
+    return render_template('add_product.html', user_role=user_role, done=done, name=name, ptype=ptype, types=types, id_num=id_num)
 
 
 @app.route('/admin_profile/handling_products/remove_product', methods=['GET', 'POST'])
