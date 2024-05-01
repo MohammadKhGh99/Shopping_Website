@@ -99,6 +99,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition-duration: 0.5s;
   }
 
   .next {
@@ -226,7 +227,7 @@
         </span>
       </div>
       <br>
-      <!-- {% if user_role != "admin" %}
+      {% if user_role != "admin" %}
         <div id="product-left-options">
           <b>
             الخيارات
@@ -240,20 +241,21 @@
             <input type="checkbox" id="ehdaa" name="ehdaa" onchange="EhdaaChange()">
             <label for="ehdaa">إهداء 10₪</label>
             <br>
-            <textarea id="ehdaa-text" name="ehdaa-text" style="display: none;"></textarea>
+            <div id="ehdaa-text-div" style="display: none;">
+              <textarea id="ehdaa-text" name="ehdaa-text"></textarea>
+            </div>
           </div>
         </div>
         <script>
           function EhdaaChange() {
             if (document.getElementById("ehdaa").checked) {
-              document.getElementById("ehdaa-text").style.display = "block";
+              document.getElementById("ehdaa-text-div").style.display = "block";
             } else {
-              document.getElementById("ehdaa-text").style.display = "none";
+              document.getElementById("ehdaa-text-div").style.display = "none";
             }
-
           }
         </script>
-      {% endif %} -->
+      {% endif %}
       <!-- <br> -->
       <div id="product-left-lower">
         {% if user_role != "admin" %}
