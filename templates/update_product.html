@@ -14,14 +14,23 @@
     flex-direction: column;
     padding-right: 0;
     padding-bottom: 40px;
+    font-size: 1.2em;
     /*width: 300px;*/
   }
 
-  form div {
-    width: 350px;
+  @media (max-width: 767px) {
+    form div {
+      width: 80vw;
+    }
   }
 
-  .input_field {
+  @media (min-width: 767px) {
+    form div {
+      width: 50vw;
+    }
+  }
+
+  .input-field {
     /*font-size: 0.9em;*/
     width: 100%;
     padding-right: 10px;
@@ -35,6 +44,13 @@
   /*.field-holder {*/
   /*  margin-bottom: 10px;*/
   /*}*/
+
+  .field-holder {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
   #product-description {
     height: 100px;
@@ -67,7 +83,6 @@
 
   .img-holder {
     position: relative;
-    margin-right: 20%;
   }
 
   .image-delete {
@@ -79,6 +94,29 @@
 
   .image-delete:hover {
     color: #cce5ff;
+  }
+
+  #add-image-button {
+    background-color: #cce5ff;
+    cursor: pointer;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px;
+    transition-duration: 0.5s;
+  }
+
+  #add-image-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  #type-price-quantity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
 </style>
@@ -98,20 +136,28 @@
       <div id="form-container">
         <input id="product-id-input" name="product-id-input" style="display: none" type="number" value="{{result[0]}}">
         <div class="field-holder">
-          <label for="product-name">إسم المنتج</label><br>
-          <input value="{{result[1]}}" type="text" id="product-name" name="product-name" class="input_field">
+          <label for="product-name">إسم المنتج</label>
+          <input value="{{result[1]}}" type="text" id="product-name" name="product-name" class="input-field">
         </div>
-        <div class="field-holder">
-          <label for="product-type">نوع المنتج</label><br>
-          <select id="product-type" name="product-type" class="input_field" style="width: 363px">
-            {% for type in types %}
-             <option value="{{type}}">{{type}}</option>
-            {% endfor %}
-<!--            <option value="كتب">كتب</option>-->
-<!--            <option value="أزياء">أزياء</option>-->
-<!--            <option value="إكسسوارات">إكسسوارات</option>-->
-          </select>
+        <div id="type-price-quantity">
+          <div class="field-holder" style="align-items: center;">
+            <label for="product-type">نوع المنتج</label>
+            <select id="product-type" name="product-type" class="input-field" style="width: 150px;">
+              {% for type in types %}
+               <option value="{{type}}">{{type}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field-holder" style="align-items: center;">
+            <label for="product-price">السعر</label>
+            <input value="{{result[4]}}" type="text" id="product-price" name="product-price" class="input-field" style="width: 80px">
+          </div>
+          <div class="field-holder" style="align-items: center;">
+            <label for="product-items-left">الكمية</label>
+            <input value="{{result[5]}}" type="number" id="product-items-left" name="product-items-left" class="input-field" style="width: 80px">
+          </div>
         </div>
+
         <script>
             const productType = document.getElementById("product-type");
             const realType = "{{result[2]}}";
@@ -120,18 +166,9 @@
                     productType.children[i].setAttribute("selected", "true");
                 }
             }
-
-            // const allTypes = productType.querySelector("option");
-            // console.log(productType.children);
-            // console.log(productType.querySelector("option"));
-            // for (const childrenKey in productType.children) {
-            //     if (childrenKey === realType) {
-            //
-            //     }
-            // }
         </script>
         <div class="field-holder">
-          <label for="product-img" style="margin-right: 40%">صور المنتج</label><br>
+          <span>صور المنتج</span>
           <br>
           {% for image in images %}
             <div class="img-holder">
@@ -141,58 +178,61 @@
               <img src="{{url_for('static', filename=image)}}" alt="img"><br>
             </div>
           {% endfor %}
-          <input type="file" accept="image/*" multiple id="product-img" name="product-img" class="input_field">
+          <!-- <input type="file" accept="image/*" multiple id="product-img1" name="product-img1" class="input-field"> -->
+          <button type="button" id="add-image-button" onclick="AddImage(this)">
+            إضافة صورة
+          </button>
         </div>
+        <script>
+          const imagesStr = "{{images}}";
+          let imgCounter = imagesStr.match(new RegExp(",", "g")).length + 1;
+          function AddImage(button) {
+              if (imgCounter < 5) {
+                imgCounter++;
+                // adding label
+                const newLabel = document.createElement("label");
+                newLabel.setAttribute("for", "product-img" + imgCounter.toString());
+                newLabel.textContent = "صورة";
+                button.parentNode.insertBefore(newLabel, button);
+
+                // adding input field
+                const newInput = document.createElement("input");
+                newInput.classList.add("input-field");
+                newInput.setAttribute("id", "product-img" + imgCounter.toString());
+                newInput.setAttribute("name", "product-img" + imgCounter.toString());
+                newInput.setAttribute("type", "file");
+                newInput.setAttribute("accept", "image/*");
+                
+                button.parentNode.insertBefore(newInput, button);
+               } else {
+                window.alert("يمكنك إضافة حتى 5 صور للمنتج!")
+              }
+          }
+        </script>
         <div class="field-holder">
-          <label for="product-description">وصف المنتج</label><br>
-          <textarea id="product-description" name="product-description" class="input_field">{{result[6]}}</textarea>
-<!--          <input type="text" id="product-description" name="product-description" class="input_field" height="20">-->
+          <label for="product-description">وصف المنتج</label>
+          <textarea id="product-description" name="product-description" class="input-field">{{result[6]}}</textarea>
+<!--          <input type="text" id="product-description" name="product-description" class="input-field" height="20">-->
         </div>
-        <div class="field-holder">
-          <label for="product-price">السعر</label><br>
-          <input value="{{result[4]}}" type="text" id="product-price" name="product-price" class="input_field">
-        </div>
-        <div class="field-holder">
-          <label for="product-items-left">الكمية</label><br>
-          <input value="{{result[5]}}" type="number" id="product-items-left" name="product-items-left" class="input_field">
-        </div>
-        <div class="field-holder">
+        
+        <!-- <div class="field-holder">
           <label for="product-publish-year">سنة الإصدار</label><br>
-          <input value="{{result[7]}}" type="text" id="product-publish-year" name="product-publish-year" class="input_field">
+          <input value="{{result[7]}}" type="text" id="product-publish-year" name="product-publish-year" class="input-field">
         </div>
         <div class="field-holder">
           <label for="product-author">المؤلف</label><br>
-          <input value="{{result[8]}}" type="text" id="product-author" name="product-author" class="input_field">
+          <input value="{{result[8]}}" type="text" id="product-author" name="product-author" class="input-field">
         </div>
         <div class="field-holder">
           <label for="product-categories">تصنيفات</label><br>
-<!--          <select id="product-tags" name="product-tags" class="input_field" style="width: 363px">-->
-          <input value="{{result[9]}}" type="text" id="product-categories" name="product-categories" class="input_field">
-        </div>
-        <div class="field-holder" style="display: none">
-          <label for="product-on-sale">سعر مخفّض؟</label>
-          <input type="checkbox" id="product-on-sale" name="product-on-sale" onchange="ToggleOnSale()">
-        </div>
-        <div class="field-holder" style="display: none">
-          <label for="product-sale-price">السعر المخفّض</label><br>
-          <input type="text" id="product-sale-price" name="product-sale-price" class="input_field">
-        </div>
+          <select id="product-tags" name="product-tags" class="input-field" style="width: 363px">
+          <input value="{{result[9]}}" type="text" id="product-categories" name="product-categories" class="input-field">
+        </div> -->
         <br>
         <button type="submit" id="save-product-button">
           حفظ المنتج
         </button>
       </div>
-      <script>
-          function ToggleOnSale() {
-              if (document.getElementById("product-on-sale").checked) {
-                  document.getElementById("product-sale-price").parentNode.style.display = "block";
-                  document.getElementById("product-sale-price").setAttribute("required", "true");
-              } else {
-                  document.getElementById("product-sale-price").parentNode.style.display = "none";
-                  document.getElementById("product-sale-price").removeAttribute("required");
-              }
-          }
-      </script>
     </form>
     <form method="post" id="delete-img-form">
       <input type="hidden" id="delete-img" name="delete-img">

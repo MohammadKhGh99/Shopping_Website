@@ -95,6 +95,15 @@ def send_email(sender, app_password, to, subject, message_text, msg_type):
     smtp_server.quit()
 
 
+def send_error(e, subject):
+    send_email("mohammad.gh454@gmail.com", 
+               os.environ.get("GMAIL_APP_PASSWORD"),
+               "m7md.gh.99@hotmail.com",
+               subject,
+               str(e),
+               "plain")
+
+
 def check_role():
     if current_user.is_anonymous:
         user_role = "guest"
@@ -136,6 +145,7 @@ def books():
             all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
             return render_template('books.html', products=all_accessories, user_role=user_role)
         except Exception as e:
+            send_error(e, "خطأ في تحميل الكتب")
             connection.rollback()
             flash("خطأ في تحميل الكتب\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
@@ -171,6 +181,7 @@ def accessories():
             all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
             return render_template('accessories.html', products=all_accessories, user_role=user_role)
         except Exception as e:
+            send_error(e, "خطأ في تحميل الإكسسوارات")
             connection.rollback()
             flash("خطأ في تحميل إكسسوارات\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
@@ -190,6 +201,7 @@ def load_user(user_id):
             result = cursor.fetchone()
             connection.commit()
         except Exception as e:
+            send_error(e, "خطأ في الحصول على المستخدم")
             connection.rollback()
             flash("خطأ في الحصول على المستخدم\nنوع الخطأ: " + str(e), "error")
             return None
@@ -255,6 +267,7 @@ def login():
                 # 	try:
                 #
                 # 	except Exception as e:
+                #       send_error(e)
                 # 		connection.rollback()
                 # 		flash("فشل تحديث سلة المشتريات الحالية\nنوع الخطأ: " + str(e), "error")
                 # 		# todo - what happens when adding anonymous cart to stored cart
@@ -338,6 +351,7 @@ def register():
                             """, "plain")
                 return redirect(url_for('profile'))
             except Exception as e:
+                send_error(e, "خطأ في التسجيل للموقع")
                 connection.rollback()
                 # failed to register
                 flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
@@ -361,6 +375,7 @@ def forgot_password():
             user_fullname = wanted_user[2] + " " + wanted_user[3]
             chars = string.ascii_letters + string.digits
             unique_token = ''.join(random.choice(chars) for _ in range(10))
+
         send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
                    customer_email,
                    "استعادة كلمة المرور",
@@ -438,6 +453,7 @@ def orders():
             orders_result = cursor.fetchall()
             connection.commit()
         except Exception as e:
+            send_error(e, "خطأ في تحميل الطلبات")
             connection.rollback()
             flash("حدث خطأ أثناء تحميل الطلبات,\n خطأ: " + str(e), "error")
             return redirect(request.referrer)
@@ -481,6 +497,7 @@ def all_customers_orders():
                 """)
                 connection.commit()
         except Exception as e:
+            send_error(e, "خطأ في تحميل الطلبات")
             connection.rollback()
             flash("حدث خطأ أثناء تحميل الطلبات,\n خطأ: " + str(e), "error")
             return redirect(request.referrer)
@@ -517,6 +534,7 @@ def product(ptype, id_num):
     #             connection.commit()
     #             return redirect(request.referrer)
     #         except Exception as e:
+    #             send_error(e)
     #             flash("حدث خطأ أثناء الإهتمام بالمنتج\n خطأ: " + str(e), "error")
     #             return redirect(request.referrer)
 
@@ -567,6 +585,7 @@ def product(ptype, id_num):
     # 		flash("تم إضافة المنتج للسلة", "success")
     # 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
     # 	except Exception as e:
+    #       send_error(e)
     # 		flash(f"حدث خطأ أثناء إضافة المنتج رقم {product_id} إلى سلة التسوق\nخطأ:" + str(e), "error")
     # 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
 
@@ -582,6 +601,7 @@ def product(ptype, id_num):
             result = res_rows.fetchone()
             connection.commit()
         except Exception as e:
+            send_error(e, "خطأ في تحميل صفحة المنتج")
             connection.rollback()
             flash("خطأ في تحميل صفحة المنتج\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
@@ -672,6 +692,7 @@ def add_product():
                 flash(f"تمت إضافة ال{product_type} بنجاح", category="success")
                 return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type, id_num=cursor.lastrowid))
             except Exception as e:
+                send_error(e, f"حدث خطأ أثناء إضافة ال{product_type}")
                 connection.rollback()
                 # failed to add
                 flash(f"حدث خطأ أثناء إضافة ال{product_type}" + f": {e}", category="error")
@@ -714,6 +735,7 @@ def remove_product():
                     flash(f"لم يتم إيجاد منتج رقم {product_id}", "warning")
                 return redirect(url_for('remove_product'))
             except Exception as e:
+                send_error(e, f"حدث خطأ أثناء إزالة المنتج رقم {product_id}")
                 connection.rollback()
                 flash(f"حدث خطأ أثناء إزالة منتج رقم {product_id}" + f": {e}", "error")
                 return redirect(request.referrer)
@@ -757,6 +779,7 @@ def update_product():
                     connection.commit()
                     flash(f"تم إيجاد المنتج رقم {id_num}", "success")
                 except Exception as e:
+                    send_error(e, f"حدث خطأ أثناء البحث عن منتج رقم {id_num}")
                     connection.rollback()
                     flash(f"حدث خطأ أثناء البحث عن منتج رقم {id_num}" + f": {e}", "error")
                     return redirect(request.referrer)
@@ -764,7 +787,7 @@ def update_product():
                 result = cursor.fetchone()
                 session['result'] = result
                 img_src = [img[7:] for img in result[3].split("&")]
-            return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name,
+            return render_template('update_product.html', user_role=user_role, done=done, result=result, name=name, types=types,
                                    ptype=ptype, images=img_src)
         # deleting image
         elif request.form.get('delete-img') and request.form.get('delete-img').strip() != "":
@@ -784,7 +807,7 @@ def update_product():
                     connection.commit()
                     cur_images = result[0].split('&')
                     cur_images.remove(to_delete_img)
-                    new_images = ','.join(cur_images)
+                    new_images = '&'.join(cur_images)
 
                     cursor.execute(f"""
                     update Products
@@ -803,6 +826,7 @@ def update_product():
                     connection.commit()
                     return redirect(url_for('update_product'))
                 except Exception as e:
+                    send_error(e, f"حدث خطأ أثناء إزالة الصورة")
                     connection.rollback()
                     flash("حدث خطأ أثناء إزالة الصورة\nخطأ:" + str(e), "error")
                     return redirect(request.referrer)
@@ -812,35 +836,52 @@ def update_product():
             product_id = request.form['product-id-input']
             product_name = request.form['product-name']
             product_type = request.form['product-type']
-            product_images = request.files.getlist('product-img')
-            product_img = request.files['product-img']
+
             product_description = request.form['product-description']
             product_price = request.form['product-price']
             product_items_left = request.form['product-items-left']
-            product_publish_year = request.form['product-publish-year']
-            product_author = request.form['product-author']
-            # product_categories = request.form['product-categories']
 
-            # todo - update images
-            save_product_sql = f"""
-            update Products
-            set name = '{product_name}',
-            type = '{product_type}',
-            price = '{product_price}',
-            items_left = {product_items_left},
-            description = '{product_description}',
-            publish_year = '{product_publish_year}',
-            author_name = '{product_author}',
-            where id_number = {product_id}
-            """
-            # categories = '{product_categories}'
             with sqlite3.connect("Shopping.db") as connection:
                 cursor = connection.cursor()
+                cursor.execute(f"""
+                select * from Products
+                where id_number = {int(product_id)}
+                """)
+                cur_images = cursor.fetchone()[3] + "&"
+                product_images = []
+                i = cur_images.count("&") + 1
+                while ('product-img' + str(i)) in request.files.keys():
+                    product_images.append(request.files['product-img' + str(i)])
+                    i += 1
+
+                
                 try:
-                    cursor.execute(save_product_sql)
+                    for img_file in product_images:
+                        filename = secure_filename(img_file.filename)
+                        product_folder = types_dict[product_type]
+                        img_path = f'static/images/{product_folder}'
+                        if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
+                            os.mkdir(img_path + f"/{cursor.lastrowid}")
+                        img_path += f"/{cursor.lastrowid}/{filename}"
+                        img_file.save(img_path)
+                        cur_images += img_path + "&"
+                    cur_images = cur_images[:-1]
+
+                    cursor.execute(f"""
+                    update Products
+                    set name = '{product_name}',
+                    type = '{product_type}',
+                    img_path = '{cur_images}',
+                    price = '{product_price}',
+                    items_left = {product_items_left},
+                    description = '{product_description}'
+                    where id_number = {int(product_id)}
+                    """)
+
                     connection.commit()
                     flash(f"تم تعديل المنتج رقم {product_id}", "success")
                 except Exception as e:
+                    send_error(e, f"حدث خطأ أثناء تعديل المنتج رقم {product_id}")
                     connection.rollback()
                     flash(f"حدث خطأ أثناء تعديل منتج رقم {product_id}" + f": {e}", "error")
                     return redirect(request.referrer)
@@ -848,6 +889,7 @@ def update_product():
                 return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type,
                                        id_num=product_id)
     img_src = [img[7:] for img in result[3].split("&")]
+    print("types" + str(types))
     return render_template('update_product.html', done_updating=False, result=result, images=img_src, types=types)
 
 
@@ -885,6 +927,7 @@ def shopping_cart():
                         result[cur_id] = (int(quantity), cur_res_rows)
                         total += int(cur_res_rows[4]) * int(quantity)
                     except Exception as e:
+                        send_error(e, f"حدث خطأ في سلة التسوق, رقم المنتج: {cur_id}")
                         connection.rollback()
                         flash(f"حدث خطأ في سلة التسوق, رقم المنتج: {cur_id} \n خطأ:" + str(e), "error")
                         return redirect(request.referrer)
@@ -894,14 +937,15 @@ def shopping_cart():
                 session["cart-items"] = result
                 session["total"] = total
                 return redirect(url_for('shopping_cart'))
-    to_remove = []
-    for id_num, value in session.get("cart-items").items():
-        quantity, item = value
-        if item[5] == 0:
-            session["total"] -= quantity * item[4]
-            to_remove.append(id_num)
-    for id_num in to_remove:
-        session["cart-items"].pop(id_num)
+    # todo - remove the items with 0 quantity
+    # to_remove = []
+    # for id_num, value in session.get("cart-items").items():
+    #     quantity, item = value
+    #     if item[5] == 0:
+    #         session["total"] -= quantity * item[4]
+    #         to_remove.append(id_num)
+    # for id_num in to_remove:
+    #     session["cart-items"].pop(id_num)
     return render_template('shopping_cart.html', user_role=user_role, cart_items=session.get("cart-items"),
                            total=session.get("total"))
 
@@ -977,6 +1021,7 @@ def checkout():
                                f"زبون جديد بإسم {first_name} {last_name}\n "
                                f"email: {email}\nphone: {phone_number}", "plain")
                 except Exception as e:
+                    send_error(e, "خطأ في التسجيل للموقع")
                     connection.rollback()
                     # failed to register
                     flash("حدث خطأ أثناء التسجيل للموقع" + f": {e}", category="error")
@@ -1006,6 +1051,7 @@ def checkout():
                         # flash(f"لا يوجد كمية كافية من المنتج {item[1]}", "warning")
                         raise Exception(f"لا يوجد كمية كافية من المنتج {item[1]}")
                 except Exception as e:
+                    send_error(e, f"حدث خطأ أثناء الدفع")
                     connection.rollback()
                     flash(f"حدث خطأ أثناء الدفع\nنوع الخطأ: " + str(e), "error")
                     return redirect(request.referrer)
@@ -1055,6 +1101,7 @@ def order_info(parent, order_id):
             result = cursor.fetchone()
             connection.commit()
         except Exception as e:
+            send_error(e, "خطأ في تحميل صفحة الطلب")
             flash("حدث خطأ أثناء تحميل صفحة الطلب\n خطأ: " + str(e), "error")
             connection.rollback()
             return redirect(request.referrer)

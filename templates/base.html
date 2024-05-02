@@ -169,8 +169,8 @@
               </span> -->
               <a href="{{url_for('accessories')}}">إكسسوارات</a>
             </li>
-            <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
-            <li><a href="{{url_for('about')}}">من نحن</a></li>
+            <!-- <li><a href="{{url_for('contact_us')}}">تواصل معنا</a></li>
+            <li><a href="{{url_for('about')}}">من نحن</a></li> -->
           </ul>
           <div class="side-menu-footer">
             <footer style="background-color: white; border-top: 1px solid black; height: 50px; display: flex; justify-content: center; align-items: center">
@@ -309,7 +309,8 @@
 
         // define cart counter in localStorage if not defined
         let counter = document.getElementsByClassName("counter")[0];
-        if (localStorage.getItem("cartCounter") === null) {
+        console.log(JSON.parse(localStorage.getItem("cartItems")));
+        if (localStorage.getItem("cartCounter") === null || localStorage.getItem("cartCounter") === 0) {
             localStorage.setItem("cartCounter", "0");
         }
         // put the content of the counter as the stored counter value
@@ -374,7 +375,7 @@
             <a href="https://wa.me/0528942919">
               <iconify-icon icon="mdi:whatsapp"></iconify-icon>
             </a>
-            <a href="https://www.instagram.com/">
+            <a href="https://www.instagram.com/wrtht_al2nbya2/">
               <iconify-icon icon="mdi:instagram"></iconify-icon>
             </a>
             <a href="https://www.facebook.com/profile.php?id=61556753079038">
@@ -463,9 +464,7 @@
     }
 
     function closeFlash(span) {
-        const grandpa = span.parentNode.parentNode.parentNode.parentNode;
-        const parent = span.parentNode.parentNode.parentNode;
-        grandpa.removeChild(parent);
+        span.parentNode.parentNode.remove();
     }
   </script>
 <!--  {% block approved_contact %}-->

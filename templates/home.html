@@ -22,39 +22,50 @@
     gap: 20px;
   }
 
-  .books-shopping {
-    cursor: pointer;
+  @media (max-width: 767px) {
+    .clothes-shopping span, .accessories-shopping span, .books-shopping span {
+      font-size: 0.65em;
+    }
+  }
+  @media (min-width: 767px) {
+    .clothes-shopping span, .accessories-shopping span, .books-shopping span {
+      font-size: 1em;
+    }
   }
 
   .clothes-shopping, .accessories-shopping, .books-shopping {
     width: 25vw;
     text-align: center;
-    /* border: 0; */
-    /* border-radius: 10%;
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.2); */
     display: block;
+  }
+  
+  .clothes-shopping span, .accessories-shopping span, .books-shopping span {
+    color: black; 
+    font-family: 'Reem Kufi', sans-serif
   }
 
   .clothes-shopping a:hover, .accessories-shopping a:hover, .books-shopping a:hover {
     /* background-color: rgb(184, 184, 184); */
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
   }
-
+  
   .clothes-shopping a, .accessories-shopping a, .books-shopping a {
     width: 100%;
     height: 100%;
     display: block;
     text-decoration: none;
-    border-radius: 10%;
+    border-radius: 20% 20% 10% 10%;
+    
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.2);
     transition-duration: 0.5s;
+    overflow: hidden;
   }
-
+  
   .clothes-shopping a img, .accessories-shopping a img, .books-shopping a img {
     width: 100%;
     height: 100%;
     display: block;
-    border-radius: 20%;
+    border-radius: 20% 20% 10% 10%;
   }
 
   .coming-soon {
@@ -63,10 +74,7 @@
     align-items: center;
     position: absolute;
     text-align: center;
-    /*top: 0;*/
-    /*bottom: 0;*/
     left: 0;
-    /*right: 0;*/
     border-radius: 10%;
     width: 100%;
     height: 100%;
@@ -98,7 +106,7 @@
       <a href="{{url_for('books')}}">
         <img src="{{url_for('static', filename='images/books_logo.jpg')}}" alt="books">
 <!--        https://drive.google.com/thumbnail?id=1Hc2iQOr5Xn3ZZumoy_EW-Jj7AstRT-wm&sz=w1000-->
-        <span style="color: black; font-size: 0.9em; font-family: 'Reem Kufi', sans-serif">مكتبة ورثة الأنبياء</span>
+        <span>مكتبة ورثة الأنبياء</span>
       </a>
     </div>
     <div class="clothes-shopping" title="أزياء شرعية">
@@ -110,7 +118,7 @@
       <!-- <a href="{{url_for('clothes')}}" > -->
       <a href="#" >
         <img src="{{ url_for('static', filename='images/clothes_logo.jpg')}}" alt="clothes">
-        <span style="color: black; font-size: 0.9em; ; font-family: 'Reem Kufi', sans-serif" >متجر نور الفضيلة للألبسة الشرعية</span>
+        <span>نور الفضيلة للألبسة الشرعية</span>
       </a>
     </div>
     <div class="accessories-shopping" title="إكسسوارات">
@@ -121,7 +129,7 @@
       </span> -->
       <a href="{{url_for('accessories')}}">
        <img src="{{ url_for('static', filename='images/accessories_logo.png')}}" alt="clothes">
-        <span style="color: black; font-size: 0.9em; ; font-family: 'Reem Kufi', sans-serif" >إكسسوارات</span>
+        <span>إكسسوارات</span>
       </a>
     </div>
   </div>

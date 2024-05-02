@@ -97,19 +97,21 @@ def create_table():
 	"""
 	
 	products_table = """
-	create table if not exists Products(
+	create table if not exists NewProducts(
 		id_number integer primary key autoincrement,
 		name nvarchar(50),
 		type nvarchar(20),
-		img_path nvarchar(100),
+		img_path nvarchar(500),
 		price nvarchar(10),
 		items_left int default 0,
-		description nvarchar(200),
+		description nvarchar(255),
 		publish_year nvarchar(20),
 		author_name nvarchar(20),
 		categories nvarchar(100)
+
 	)
 	"""
+	
 	# phone = '^[0-9]{10}$'
 	with sqlite3.connect(database="Shopping.db") as connection:
 		cursor = connection.cursor()
@@ -117,9 +119,21 @@ def create_table():
 			# cursor.execute(customers_table)
 			# cursor.execute(guests_table)
 			# cursor.execute(orders_table)
-			cursor.execute(cart_items_table)
+   
+			cursor.execute(products_table)
+			copy_data = """
+			INSERT INTO NewProducts SELECT * FROM Products
+			"""
+			cursor.execute(copy_data)
+
+			drop_old_table = "DROP TABLE Products"
+			cursor.execute(drop_old_table)
+
+
+			cursor.execute("ALTER TABLE NewProducts RENAME TO Products")
+
+			cursor.execute("update Products set img_path = 'static/images/accessories/17/420545733_122129020364225102_3929758205205983229_n.jpg&static/images/accessories/17/420376204_122129020400225102_1788161504903887152_n.jpg&static/images/accessories/17/429948444_122129020442225102_8314405273549168624_n.jpg' where id_number = 17")
 			
-			# cursor.execute(products_table)
 			connection.commit()
 		except Exception as e:
 			print(e)

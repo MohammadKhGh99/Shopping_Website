@@ -172,7 +172,7 @@
           </select>
         </div>
         <br>
-        <button class="shopping-cart-buttons" onclick="toggleUpdate()">
+        <button disabled class="shopping-cart-buttons" onclick="toggleUpdate(this)">
           تعديل السلة
           {% if item[5] == 0 %}
             <script>
@@ -275,13 +275,14 @@
       // }
 
       function UpdateCart(select) {
+          select.parentNode.parentNode.querySelector("button").removeAttribute("disabled");
           // the parent of hidden td tags
           const parentDiv = select.parentNode.parentNode.parentNode;
           // take the values of the hidden td tags
           const curId = parentDiv.querySelectorAll("td")[1].textContent;
           const price = parentDiv.querySelectorAll("td")[2].textContent;
-          const quantityDiv = parentDiv.querySelectorAll("td")[3];
-
+          const quantityDiv = parentDiv.querySelectorAll("td")[3];  // select.parentNode.parentNode
+          
           // the initial quantity of the edited item
           const initialQuantity = parseInt(quantityDiv.textContent);
           // the new selected quantity by select tag
@@ -290,7 +291,31 @@
           let newCounter = parseInt(localStorage.getItem("cartCounter"));
           const diff = (newQuantity - initialQuantity);
           newCounter += diff;
+          // update cart item array
+          retrievedArray[curId] = (parseInt(retrievedArray[curId]) + diff).toString();
+          if (retrievedArray[curId] === "0") {
+            // delete retrievedArray[curId];
+          }
+          localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+          document.getElementById("cart-items-input").value = localStorage.getItem("cartItems");
+          document.getElementById("cart-update").value = "Yes";
+          
+          // document.getElementById("update-form" + curId).submit();
+        }
+        
+        function toggleUpdate(button) {
+          // the parent of hidden td tags
+          const parentDiv = button.parentNode.parentNode;
+          const price = parentDiv.querySelectorAll("td")[2].textContent;
+          const quantityDiv = parentDiv.querySelectorAll("td")[3];
+          // the initial quantity of the edited item
+          const initialQuantity = parseInt(quantityDiv.textContent);
+          // the new selected quantity by select tag
+          const newQuantity = parseInt(document.querySelector("#item-quantity select").value);
           // store the new counter
+          let newCounter = parseInt(localStorage.getItem("cartCounter"));
+          const diff = (newQuantity - initialQuantity);
+          newCounter += diff;
           localStorage.setItem("cartCounter", newCounter);
           counter.textContent = newCounter.toString();
           quantityDiv.textContent = newQuantity;
@@ -299,19 +324,6 @@
           newTotal += parseFloat(price) * diff;
           totalDiv.textContent = newTotal.toString();
 
-          // update cart item array
-          retrievedArray[curId] = (parseInt(retrievedArray[curId]) + diff).toString();
-          if (retrievedArray[curId] === "0") {
-              delete retrievedArray[curId];
-          }
-          localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
-          document.getElementById("cart-items-input").value = localStorage.getItem("cartItems");
-          document.getElementById("cart-update").value = "Yes";
-
-          // document.getElementById("update-form" + curId).submit();
-      }
-
-      function toggleUpdate() {
           document.querySelector(".shopping-cart form").submit();
       }
   </script>
