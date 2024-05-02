@@ -15,13 +15,50 @@
     max-width: 100%;
   }
 
+  @media (max-width: 767px) {
+    .all-orders-table {
+      font-size: 0.7em;
+    }
+
+    .all-orders-table select {
+      font-size: 0.8em;
+    }
+
+    .order-info-link span {
+      font-size: 1.2em;
+    }
+
+    .order-total-td {
+      font-size: 1em;
+    }
+    
+  }
+
+  @media (min-width: 767px) {
+    .all-orders-table {
+      font-size: 0.9em;
+    }
+    .all-orders-table select {
+      font-size: 1em;
+    }
+
+    .order-info-link span {
+      font-size: 1.5em;
+    }
+
+  }
+
+  .order-info-link {
+    font-size: 1em;
+  }
+
   .all-orders-table {
     border-collapse: collapse;
-    font-size: 0.9em;
     max-width: 100%;
     width: 100%;
     margin-bottom: 50px;
   }
+  
 
   .all-orders-table tr th {
     border: 1px solid black;
@@ -34,6 +71,10 @@
     /*padding: 10px 0 0 0;*/
   }
 
+  .order-status-td select {
+    height: 30px;
+  }
+
   .order-customer-info div{
     display: flex;
     justify-content: center;
@@ -44,19 +85,15 @@
   }
 
   .order-status-td div {
-    width: 90%;
-    display: inline-block;
+    width: 100%;
     font-size: 0.9em;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
   }
 
   .order-content {
     padding: 0;
-  }
-
-  .each-order-table{
-    border: 1px solid black;
-    border-collapse: collapse;
-    font-size: 0.8em;
   }
 
   td {
@@ -67,15 +104,6 @@
     border-collapse: collapse;
   }
 
-  .each-order-table td a {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-  }
-
   td img {
     width: 100%;
     height: 100%;
@@ -83,11 +111,11 @@
 
   #order-info-button {
     color: black;
-    background-color: #cce5ff;
+    background-color: transparent;
     cursor: pointer;
     border: 0;
     text-decoration: none;
-    padding: 5px;
+    padding: 1px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -96,6 +124,21 @@
 
   #order-info-button:hover {
     background-color: #e5e5e5;
+  }
+
+  #edit-price-button {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  #edit-price-button span {
+    color: black;
+  }
+
+  #edit-price-button span:hover {
+    color: rgb(147, 146, 146);
   }
 
 </style>
@@ -122,16 +165,41 @@
           <th style="width: 20%;">تاريخ الطلب</th>
           <th style="width: 20%;">السعر الكلي</th>
           <th style="width: 20%;">حالة الطلب</th>
-          <th style="width: 20%;">معلومات الطلب</th>
+          <th style="width: 15%;">معلومات الطلب</th>
         </tr>
         {% for order in all_orders_dict[status] %}
         <tr>
           <td class="order-id-td">{{order[0]}}</td>
           <td class="order-date-td">{{order[10]}}</td>
-          <td class="order-total-td" style="font-size: 0.8em; padding-bottom: 20px">
-            <b>
-              ₪ {{order[11]}}
-            </b>
+          <td class="order-total-td">
+            <b>{{order[11]}}</b>
+            <b>₪ </b>
+            <br>
+            <button id="edit-price-button" onclick="EditPrice(this)">
+              <span class="material-symbols-outlined" style="font-size: 16px;">
+                edit
+              </span>
+            </button>
+            <script>
+              function EditPrice(button) {
+                let price = button.parentNode.children[0].textContent;
+                let newTotal = prompt("السعر الجديد", price);
+                if (newTotal !== null) {
+                  newTotal.trim();
+                  let isDigits = /^\d+[\.\d+]$/.test(newTotal);
+                  if (isDigits) {
+                    button.parentNode.children[0].textContent = newTotal;
+                    document.getElementById("total-form").querySelector("input").value = button.parentNode.parentNode.children[0].textContent + "," + newTotal;
+                    document.getElementById("total-form").submit();
+                  } else {
+                    alert("الرجاء إدخال قيمة صحيحة");
+                  }
+                }
+              }
+            </script>
+            <form method="post" style="display: none" id="total-form">
+              <input id="order-total-update" type="hidden" name="order-total-update">
+            </form>
           </td>
           <td class="order-status-td">
             <div id="status-container{{count[0]}}">
@@ -167,7 +235,8 @@
           </td>
           <td class="order-info-link">
             <a href="{{url_for('order_info', parent='all_customers_orders', order_id=order[0])}}" id="order-info-button">
-              معاينة الطلب
+              معاينة
+              <br>
               <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
                 visibility
               </span>
@@ -184,7 +253,6 @@
 
               function UpdateStatus(select) {
                   if (!select.hasAttribute("disabled")) {
-                      // select.setAttribute("disabled", "true");
                       if (select.value === "تم تجهيز الطلب") {
                         select.style.color = "orange";
                       } else if (select.value === "تم التوصيل") {
@@ -192,13 +260,11 @@
                       } else {
                         select.style.color = "black";
                       }  
-                      // if (select.value !== initialValue) {
                         console.log("selected " + select.value);
                         console.log("initial " + initialValue);
 
                         document.getElementById("order-status-update").value = select.parentNode.parentNode.parentNode.children[0].textContent + "," + select.value;
                         document.getElementById("status-form").submit();
-                      // }
                   }
               }
 
@@ -219,19 +285,6 @@
       <br>
     {% endfor %}
   </div>
-  <script>
-    
-    // let options = document.getElementsByTagName("option");
-    // for (let i = 0; i < options.length; i++) {
-    //   if (options[i].value === "تم تجهيز الطلب") {
-    //     options[i].style.color = "orange";
-    //   } else if (options[i].value === "تم التوصيل") {
-    //     options[i].style.color = "lawngreen";
-    //   } else {
-    //     options[i].style.color = "black";
-    //   }  
-    // }
-  </script>
   {% endblock %}
 
 </body>

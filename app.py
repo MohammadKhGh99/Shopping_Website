@@ -476,26 +476,43 @@ def all_customers_orders():
         return redirect(url_for('orders'))
     order_id = -1
     new_status = ""
+    status_update = False
+    new_total_amount = ""
+    total_update = False
+
     if request.method == 'POST':
-        order_id, new_status = request.form["order-status-update"].split(",")
-        order_id = int(order_id)
+        if "order-status-update" in request.form.keys():
+            status_update = True
+            order_id, new_status = request.form["order-status-update"].split(",")
+            order_id = int(order_id)
+        elif "order-total-update" in request.form.keys():
+            total_update = True
+            order_id, new_total_amount = request.form["order-total-update"].split(",")
+            order_id = int(order_id)
 
     # retrieve all the orders of all the users for the admin to handle
     with sqlite3.connect('Shopping.db') as connection:
         cursor = connection.cursor()
         try:
+            if request.method == 'POST':
+                if status_update:
+                    cursor.execute(f"""
+                    update Orders
+                    set status = '{new_status}'
+                    where id_number = {order_id}
+                    """)
+                elif total_update:
+                    cursor.execute(f"""
+                    update Orders
+                    set total_amount = {new_total_amount}
+                    where id_number = {order_id}
+                    """)
+                connection.commit()
             cursor.execute("""
             select * from Orders
             """)
             orders_result = cursor.fetchall()
             connection.commit()
-            if request.method == 'POST':
-                cursor.execute(f"""
-                update Orders
-                set status = '{new_status}'
-                where id_number = {order_id}
-                """)
-                connection.commit()
         except Exception as e:
             send_error(e, "خطأ في تحميل الطلبات")
             connection.rollback()
@@ -507,7 +524,7 @@ def all_customers_orders():
         orders_count = 0
         for order in orders_result:
             orders_count += 1
-            if order[0] == order_id:
+            if order[0] == order_id and status_update:
                 all_orders_dict[new_status].append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
             else:
                 all_orders_dict[order[12]].append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
