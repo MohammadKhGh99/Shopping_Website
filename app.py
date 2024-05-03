@@ -4,6 +4,7 @@ import datetime
 import smtplib
 import string
 import random
+import shutil
 
 # from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, \
@@ -730,13 +731,22 @@ def remove_product():
     if request.method == "POST":
         product_id = request.form["search-product-id-input"]
         # if the user didn't enter any number to search for
-        if product_id == "":
+        if product_id.strip() == "":
             flash("لم يتم إدخال أي رقم", "warning")
             return redirect(url_for('remove_product'))
 
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
             try:
+                cursor.execute(f"""
+                    select * from Products
+                    where id_number = {product_id}           
+                    """)
+                product_info = cursor.fetchone()
+                connection.commit()
+
+                shutil.rmtree(f"static/images/{types_dict[product_info[2]] + '/' + str(product_id)}")
+
                 # deleting the wanted product
                 row_count = cursor.execute(f"""
                     delete from Products
@@ -942,7 +952,7 @@ def shopping_cart():
                         cur_res_rows = cursor.fetchone()
                         # if cur_res_rows[5] > 0:
                         result[cur_id] = (int(quantity), cur_res_rows)
-                        total += int(cur_res_rows[4]) * int(quantity)
+                        total += int(float(cur_res_rows[4])) * int(quantity)
                     except Exception as e:
                         send_error(e, f"حدث خطأ في سلة التسوق, رقم المنتج: {cur_id}")
                         connection.rollback()
@@ -974,8 +984,8 @@ def checkout():
     if user_role == "admin":
         flash("لا يمكن للمسؤول الدخول لصفحة الدفع", "warning")
         return redirect(url_for("home"))
-
-    if session.get("cart-items") == {} and session.get("total") == 0:
+    
+    if session.get("cart-items") == {} or session.get("total") == 0:
         flash("عليك إضافة منتجات لسلة التسوق كي تقوم بالدفع", "warning")
         return redirect(url_for("home"))
 

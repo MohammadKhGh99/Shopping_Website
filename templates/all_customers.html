@@ -23,30 +23,30 @@
     margin-bottom: 50px;
   }
 
-  table tr th  {
+  #all-users-container table tr th  {
     border: 1px solid black;
     border-collapse: collapse;
   }
 
   @media (max-width: 767px) {
-    td {
+    #all-users-container table td {
       font-size: 0.7em;
     }
-    td button {
+    #all-users-container table td button {
       font-size: 0.7em;
 
     }
-    th {
+    #all-users-container th {
       font-size: 0.8em;
     }
   }
   @media (min-width: 767px) {
-    td {
+    #all-users-container table td {
       font-size: 1em;
     }
   }
 
-  td {
+  #all-users-container table td {
     vertical-align: middle;
     text-align: center;
     padding: 10px 0 10px 0;
@@ -71,6 +71,19 @@
   #user-more-info-button:hover {
     background-color: #e5e5e5;
   }
+
+  #all-users-container td a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+  }
+  
+  #all-users-container td a:hover {
+    color: #afaeae;
+  }
+
 
 </style>
 
@@ -103,7 +116,7 @@
         {{ user[2] }} {{ user[3] }}
       </td>
       {% if user[4] == 'admin' %}
-        <td style="color: #428403">
+        <td style="color: #65d001">
           {{ user[4] }}
         </td>
       {% else %}
@@ -118,11 +131,15 @@
         {{ user[10] }}
       </td>
       <td>
-        <button type="button" id="user-more-info-button">
+        <a href="#" id="customer-info-button">
+          <span class="material-symbols-outlined" id="customer-info-icon">
+            visibility
+          </span>
+        </a>
+        <!-- <button type="button" id="user-more-info-button" onclick="window.alert('الخاصية قيد التنفيذ');">
           معلومات أكثر
-        </button>
+        </button> -->
       </td>
-
     </tr>
     {% endfor %}
   </table>
