@@ -161,7 +161,8 @@
       <h4>حالة الطلب <mark>{{status}}</mark></h4>
       <table class="all-orders-table">
         <tr>
-          <th style="width: 20%;">رقم الطلب</th>
+          <th style="width: 5%;">رقم الطلب</th>
+          <th style="width: 15%;">اسم الزبون</th>
           <th style="width: 20%;">تاريخ الطلب</th>
           <th style="width: 20%;">السعر الكلي</th>
           <th style="width: 20%;">حالة الطلب</th>
@@ -170,6 +171,7 @@
         {% for order in all_orders_dict[status] %}
         <tr>
           <td class="order-id-td">{{order[0]}}</td>
+          <td class="order-fullname-td">{{order[2]}} {{order[3]}}</td>
           <td class="order-date-td">{{order[10]}}</td>
           <td class="order-total-td">
             <b>{{order[11]}}</b>
