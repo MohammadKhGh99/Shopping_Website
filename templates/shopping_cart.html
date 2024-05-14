@@ -180,11 +180,11 @@
             </script>
           {% endif %}
         </button>
-        <!-- <button id="delete-cart-item-button" onclick="DeleteCartItem(this)">
-          <span class="material-symbols-outlined image-delete" onclick="DeleteImage(this)">
-            delete
-          </span>
-        </button> -->
+<!--        <button id="delete-cart-item-button" onclick="DeleteCartItem(this)">-->
+        <span class="material-symbols-outlined image-delete" onclick="DeleteCartItem(this)">
+          delete
+        </span>
+<!--        </button>-->
       </td>
       <script>
           if (parseInt("{{item[5]}}") === 0) {
@@ -206,9 +206,9 @@
     {% endfor %}
   </table>
 
-<!--  <form id="delete-form" method="post">-->
-<!--    <input id="deleted-id" name="deleted-id" style="display: none">-->
-<!--  </form>-->
+  <form id="delete-form" method="post">
+    <input id="deleted-id" name="deleted-id" style="display: none">
+  </form>
 
   <br>
   <div id="cart-total-price">
@@ -245,16 +245,16 @@
           const parenOftDeleted = toDelete.parentNode;
           // take id, price and quantity from 3 hidden td tags
           const itemId = toDelete.querySelectorAll("td")[1].textContent;
-          const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
-          const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
+          // const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
+          // const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
           console.log("item id:" + itemId.toString());
           // put the value of the hidden input tag as the wanted item's id to remove from cart
           // document.getElementById("deleted-id").value = itemId;
                 // change the cart counter as the quantity of the removed product
-          const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
-          counter.textContent = newCounter.toString();
+          // const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
+          // counter.textContent = newCounter.toString();
           // store the new cart counter
-          localStorage.setItem("cartCounter", newCounter.toString());
+          // localStorage.setItem("cartCounter", newCounter.toString());
                 // const newCartItems = JSON.parse(localStorage.getItem("cartItems"));
           // check this line when running
           // remove the product from cart items array
@@ -264,11 +264,11 @@
           // put the changed array in the hidden input to retrieve in python
           document.getElementById("cart-items-input").value = localStorage.getItem("cartItems")
           // take the total of the cart
-          const totalDiv = document.getElementById("total-price").querySelector("b");
-          const beforeSum = parseFloat(totalDiv.textContent);
+          // const totalDiv = document.getElementById("total-price").querySelector("b");
+          // const beforeSum = parseFloat(totalDiv.textContent);
           // modify the total of the cart as required
-          const totalSum = beforeSum - (quantity * price);
-          totalDiv.textContent = totalSum.toString();
+          // const totalSum = beforeSum - (quantity * price);
+          // totalDiv.textContent = totalSum.toString();
                 // const deleteForm = document.getElementById("delete-form");
           parenOftDeleted.removeChild(toDelete);
           // deleteForm.submit();
@@ -323,7 +323,7 @@
           let newTotal = parseFloat(totalDiv.textContent);
           newTotal += parseFloat(price) * diff;
           totalDiv.textContent = newTotal.toString();
-
+          DeleteCartItem(button);
           document.querySelector(".shopping-cart form").submit();
       }
   </script>

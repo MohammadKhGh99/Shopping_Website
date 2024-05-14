@@ -15,12 +15,12 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for, f
 # from database_handling import *
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_APP_KEY")
+app.secret_key = 'lakjfpoek[gf;sldg165478'
 app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
@@ -516,6 +516,16 @@ def all_customers_orders():
             select * from Orders
             """)
             orders_result = cursor.fetchall()
+            customer_email = orders_result[0][7]
+            # todo - send email to customer when updating order status
+            # send_email("mohammad.gh454@gmail.com",
+            #            os.environ.get("GMAIL_APP_PASSWORD"),
+            #            customer_email,
+            #            "تم تحديث حالة الطلب",
+            #            f"""
+            #            تم تحديث حالة طلبك الى {new_status}\n
+            #             والسعر الكلي إلى {new_total_amount}
+            #             """, "plain")
             connection.commit()
         except Exception as e:
             send_error(e, "خطأ في تحميل الطلبات")
@@ -523,6 +533,7 @@ def all_customers_orders():
             flash("حدث خطأ أثناء تحميل الطلبات,\n خطأ: " + str(e), "error")
             return redirect(request.referrer)
         # check - some parsing of each cart items, because it is as string!
+
 
         all_orders_dict = {status: [] for status in statuses}
         orders_count = 0
@@ -532,8 +543,14 @@ def all_customers_orders():
                 all_orders_dict[new_status].append(order[:-3] + (new_status, convert_str_to_dic(order[-2]), order[-1]))
             else:
                 all_orders_dict[order[12]].append(order[:-2] + (convert_str_to_dic(order[-2]), order[-1]))
-    return render_template('all_customers_orders.html', user_role=user_role, orders_num=orders_count,
-                           statuses=statuses, all_orders_dict=all_orders_dict)
+
+        total_delivered = 0
+        for cur_order in all_orders_dict["تم التوصيل"]:
+            total_delivered += cur_order[11]
+    return render_template('all_customers_orders.html',
+                           user_role=user_role, orders_num=orders_count,
+                           statuses=statuses, all_orders_dict=all_orders_dict,
+                           total_delivered=total_delivered)
 
 
 @app.route('/<ptype>/<id_num>', methods=['POST', 'GET'])
@@ -976,6 +993,7 @@ def shopping_cart():
     #         to_remove.append(id_num)
     # for id_num in to_remove:
     #     session["cart-items"].pop(id_num)
+    print(session.get("cart-items"))
     return render_template('shopping_cart.html', user_role=user_role, cart_items=session.get("cart-items"),
                            total=session.get("total"))
 

@@ -117,11 +117,11 @@
       </td>
       {% if user[4] == 'admin' %}
         <td style="color: #65d001">
-          {{ user[4] }}
+          مسؤول
         </td>
       {% else %}
         <td>
-          {{ user[4] }}
+          زبون
         </td>
       {% endif %}
       <td>
@@ -131,7 +131,7 @@
         {{ user[10] }}
       </td>
       <td>
-        <a href="#" id="customer-info-button">
+        <a href="" id="customer-info-button" onclick="window.alert('الميزة غير فعالة حتى الآن');">
           <span class="material-symbols-outlined" id="customer-info-icon">
             visibility
           </span>

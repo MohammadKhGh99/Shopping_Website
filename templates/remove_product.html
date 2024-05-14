@@ -67,9 +67,17 @@
         <input type="number" id="search-product-id-input" name="search-product-id-input" min="1">
       </div>
       <br>
-      <button id="search-product-id-button" type="submit">
+      <button id="search-product-id-button" type="button" onclick="ConfirmRemove(this)">
         إزالة
       </button>
+      <script>
+        function ConfirmRemove(button) {
+          var confirm_remove = confirm("هل أنت متأكد من رغبتك في إزالة هذا المنتج؟");
+          if (confirm_remove) {
+            button.parentNode.submit();
+          }
+        }
+      </script>
     </form>
   </div>
   {% endblock %}
