@@ -15,9 +15,12 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for, f
 # from database_handling import *
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ["FLASK_APP_KEY"]
+app.secret_key = os.getenv("FLASK_APP_KEY")
 app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
