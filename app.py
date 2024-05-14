@@ -38,8 +38,8 @@ NO_CLOTHES = False
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
-types = ["كتب", "أزياء", "إكسسوارات"]
-types_dict = {"كتب": "books", "أزياء": "clothes", "إكسسوارات": "accessories"}
+types = ["كتب", "أزياء", "ركن الهدايا"]
+types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا": "gifts_corner"}
 
 
 # class Customers(db.Model):
@@ -144,10 +144,10 @@ def books():
             where type = 'كتب'
             """)
 
-            all_accessories = cursor.fetchall()
+            all_books = cursor.fetchall()
             connection.commit()
-            all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
-            return render_template('books.html', products=all_accessories, user_role=user_role)
+            all_books = [book[:3] + (book[3].split('&'),) + book[4:] for book in all_books]
+            return render_template('books.html', products=all_books, user_role=user_role)
         except Exception as e:
             send_error(e, "خطأ في تحميل الكتب")
             connection.rollback()
@@ -165,8 +165,8 @@ def clothes():
     return render_template('clothes.html', products=clothes_lst, user_role=user_role)
 
 
-@app.route('/accessories')
-def accessories():
+@app.route('/gifts_corner')
+def gifts_corner():
     if NO_CLOTHES:
         return redirect(url_for('home'))
     user_role = check_role()
@@ -174,20 +174,20 @@ def accessories():
     with sqlite3.connect("Shopping.db") as connection:
         cursor = connection.cursor()
         try:
-            # retrieve all the products that their type is "إكسسوارات" to get all the books in the website
+            # retrieve all the products that their type is "ركن الهدايا" to get all the gifts in the website
             cursor.execute("""
             select * from Products
-            where type = 'إكسسوارات'
+            where type = 'ركن الهدايا'
             """)
 
-            all_accessories = cursor.fetchall()
+            all_gifts_corner = cursor.fetchall()
             connection.commit()
-            all_accessories = [accessor[:3] + (accessor[3].split('&'),) + accessor[4:] for accessor in all_accessories]
-            return render_template('accessories.html', products=all_accessories, user_role=user_role)
+            all_gifts_corner = [gift[:3] + (gift[3].split('&'),) + gift[4:] for gift in all_gifts_corner]
+            return render_template('gifts_corner.html', products=all_gifts_corner, user_role=user_role)
         except Exception as e:
-            send_error(e, "خطأ في تحميل الإكسسوارات")
+            send_error(e, "خطأ في تحميل ركن الهدايا")
             connection.rollback()
-            flash("خطأ في تحميل إكسسوارات\nنوع الخطأ: " + str(e), "error")
+            flash("خطأ في تحميل ركن الهدايا\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
 
 
@@ -403,11 +403,20 @@ def forgot_password():
 def profile():
     user_role = check_role()
     if request.method == 'POST':
+        form = request.form
+        new_fullname = form['customer-fullname'].strip().split(" ")
+        new_first_name = new_fullname[0]
+        new_last_name = new_fullname[1:]
+        new_phone_number = form['customer-phone'].strip()
+        new_email = form['customer-email'].strip()
+        new_city = form['customer-city'].strip()
+        new_address = form['customer-address'].strip()
+        new_backup_phone = form['customer-backup-phone'].strip()
         return redirect(url_for('profile'))
     # admin go to your own profile
     if user_role == "admin":
         return redirect(url_for('admin_profile'))
-    return render_template('profile.html', current_user=current_user, user_role=user_role)
+    return render_template('profile.html', current_user=current_user, user_role=user_role, cities=cities)
 
 
 @app.route('/admin_profile', methods=['GET', 'POST'])

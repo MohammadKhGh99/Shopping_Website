@@ -244,8 +244,8 @@
               <li>
                 <div>
                   <h4>الإسم الكامل</h4>
-  <!--                <input readonly type="text" name="full_name" value="{{current_user.first_name}} {{current_user.last_name}}">-->
-                  <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p>
+                  <input disabled class="customer-info" type="text" name="customer-fullname" value="{{current_user.first_name}} {{current_user.last_name}}">
+                  <!-- <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p> -->
                 </div>
                 <button class="edit-button"> <!-- type="button" onclick="toggleEditContent(this)"> -->
                   <span class="material-symbols-outlined">
@@ -256,8 +256,20 @@
               <li>
                 <div>
                   <h4>رقم الهاتف</h4>
-  <!--                <input readonly type="text" name="phone_number" value="{{current_user.phone_number}}">-->
-                  <p class="disabled-text-p">{{current_user.phone_number}}</p>
+                  <input disabled class="customer-info" type="text" name="customer-phone" value="{{current_user.phone_number}}">
+                  <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
+                </div>
+                <button class="edit-button">
+                  <span class="material-symbols-outlined">
+                    edit
+                  </span>
+                </button>
+              </li>
+              <li>
+                <div>
+                  <h4>رقم الهاتف الإحتياطي</h4>
+                  <input disabled class="customer-info" type="text" name="customer-backup-phone" value="{{current_user.backup_phone}}">
+                  <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
                 </div>
                 <button class="edit-button">
                   <span class="material-symbols-outlined">
@@ -268,8 +280,8 @@
               <li>
                 <div>
                   <h4>البريد الإلكتروني</h4>
-  <!--                <input readonly type="text" name="phone_number" value="{{current_user.phone_number}}">-->
-                  <p class="disabled-text-p">{{current_user.email}}</p>
+                  <input disabled class="customer-info" type="text" name="customer-email" value="{{current_user.email}}">
+                  <!-- <p class="disabled-text-p">{{current_user.email}}</p> -->
                 </div>
                 <button class="edit-button">
                   <span class="material-symbols-outlined">
@@ -291,7 +303,23 @@
               <li>
                 <div>
                   <h4>البلد</h4>
-                  <p class="disabled-text-p">{{current_user.city}}</p>
+                  <select disabled class="customer-info" id="customer-city" class="input_field" name="customer-city" required style="width: 365px; background-color: white">
+                    <option value="اختر بلد">اختر بلد</option>
+                    {% for city in cities %}
+                      <option value="{{city}}">{{city}}</option>
+                    {% endfor %}
+                  </select>
+                  <!-- <p class="disabled-text-p">{{current_user.city}}</p> -->
+                  <script>
+                    let citiesParent = document.getElementById("customer-city");
+                    const all_cities = citiesParent.children;
+                    for (let i = 0; i < all_cities.length; i++) {
+                        if (all_cities[i].value.includes("{{current_user.city}}")) {
+                            citiesParent.selectedIndex = i;
+                            break;
+                        }
+                    }
+                  </script>
                 </div>
                 <button class="edit-button">
                   <span class="material-symbols-outlined">
@@ -302,8 +330,8 @@
               <li>
                 <div>
                   <h4>العنوان</h4>
-  <!--                <input readonly type="text" name="address" value="{{current_user.address}}">-->
-                  <p class="disabled-text-p">{{current_user.address}}</p>
+                 <input disabled class="customer-info" type="text" name="customer-address" value="{{current_user.address}}">
+                  <!-- <p class="disabled-text-p">{{current_user.address}}</p> -->
                 </div>
                 <button class="edit-button">
                   <span class="material-symbols-outlined">
@@ -311,12 +339,12 @@
                   </span>
                 </button>
               </li>
-            <li style="margin: 30px 0 30px 0">
-              <button id="update-info-button" type="button" onclick="updateProfileInfo()">
-                تعديل المعلومات الشخصية
-              </button>
-            </li>
-          </ul>
+              <li style="margin: 30px 0 30px 0">
+                <button id="update-info-button" type="button" onclick="updateProfileInfo()">
+                  تعديل المعلومات الشخصية
+                </button>
+              </li>
+            </ul>
           </form>
         </li>
 <!--        <li id="orders-info">-->
@@ -382,9 +410,17 @@
     }
 
     function updateProfileInfo() {
-        const formDiv = document.querySelector("form input");
-        window.alert("لا يسمح بتعديل المعلومات الشخصية حتى الآن");
-        // const paragraphDivs
+      if (document.getElementsByClassName('customer-info')[0].hasAttribute('disabled')){
+        const infoToEnableEditing = document.querySelectorAll(".customer-info");
+        for (let i = 0; i < infoToEnableEditing.length; i++) {
+          infoToEnableEditing[i].removeAttribute("disabled");
+        }  
+      } else {
+        const formDiv = document.querySelector("form");
+        formDiv.submit();
+      }
+
+
     }
 
     function toggleEditContent(button) {
