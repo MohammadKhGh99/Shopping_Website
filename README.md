@@ -26,7 +26,7 @@ This is a shopping website project that allows users to browse and purchase prod
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/shopping-website.git`
+1. Clone the repository: `git clone https://github.com/MohammadKhGh99/Shopping_Website.git`
 2. Install dependencies: `pip install -r requirements.txt`
 
 [//]: # (3. Set up the database: [instructions here])

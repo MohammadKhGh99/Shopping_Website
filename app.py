@@ -12,7 +12,7 @@ from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager,
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
 from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
-from database_handling import *
+# from database_handling import *
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
