@@ -18,18 +18,6 @@
 <body>
   {% extends "profile.html" %}
 
-  {% block link_bar %}
-  <a href="{{url_for('all_customers')}}">
-    حميع المستخدمين
-  </a>
-  <a href="{{url_for('all_customers_orders')}}">
-    جميع الطلبات
-  </a>
-  <a href="{{url_for('handling_products')}}">
-    المنتجات
-  </a>
-  {% endblock %}
-
   {% block admin %}
   <span style="color: #428403; border-radius: 30%; font-size: 0.6em">مسؤول</span>
   {% endblock %}

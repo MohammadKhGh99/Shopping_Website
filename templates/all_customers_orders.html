@@ -141,6 +141,17 @@
     color: rgb(147, 146, 146);
   }
 
+  .table-titles {
+    font-size: 1em;
+    margin-bottom: 20px;
+  }
+
+  #all-orders-title {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+
 </style>
 
 <body>
@@ -152,13 +163,13 @@
 
   {% block lower_container %}
   <div id="all-orders-container">
-    <h2>جميع الطلبات - {{orders_num}}</h2>
+    <b id="all-orders-title">جميع الطلبات - {{orders_num}}</b>
     <script>
       let initialValue = "";
     </script>
     {% set count = [1] %}
     {% for status in all_orders_dict.keys() %}
-      <h4>حالة الطلب <mark>{{status}}</mark> </h4>
+      <b class="table-titles">حالة الطلب <mark style="padding: 5px">{{status}}</mark> </b>
       <table class="all-orders-table">
         <tr>
           <th style="width: 5%;">رقم الطلب</th>

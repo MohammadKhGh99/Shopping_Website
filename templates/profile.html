@@ -6,41 +6,7 @@
 </head>
 
 <style>
-  #dashboard-link-bar {
-    display: flex;
-    justify-content: space-between;
-    /*align-content: center;*/
-    padding: 0 10vw 0 10vw;
-    border-bottom: 1px solid #f2e4d7;
-  }
-
-  @media (max-width: 767px) {
-    #dashboard-link-bar a {
-      font-size: 0.8em;
-    }
-  }
-  @media (min-width: 767px) {
-    #dashboard-link-bar a {
-      font-size: 1em;
-    }
-  }
-
-  #dashboard-link-bar a {
-    text-decoration: none;
-    color: black;
-    text-align: center;
-    border-left: 1px solid #f2e4d7;
-    width: 100%;
-  }
-
-  #dashboard-link-bar a:first-child {
-    border-right: 1px solid #f2e4d7;
-  }
-
-  #dashboard-link-bar a:hover {
-    text-decoration: underline;
-    background-color: #e5e5e5;
-  }
+  
 
   #profile-container {
     flex-direction: column;
@@ -51,7 +17,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    /*border-bottom: 1px solid black;*/
   }
 
   #upper-profile div {
@@ -153,11 +118,10 @@
     margin-top: 20px;
   }
 
-  @media screen and (max-width: 767px) {
+  @media (max-width: 767px) {
     #profile-greeting {
       font-size: 1em;
     }
-    
   }
 
 
@@ -165,22 +129,6 @@
 
 <body>
   {% extends "base.html" %}
-
-  {% block upper_container %}
-  <div id="dashboard-link-bar">
-    {% block link_bar %}
-    <a href="{{url_for('orders')}}">
-      الطلبات
-    </a>
-    {% endblock %}
-    <a href="{{url_for('profile')}}">
-      الصفحة الشخصية
-    </a>
-    <a href="{{url_for('logout')}}">
-      تسجيل الخروج
-    </a>
-  </div>
-  {% endblock %}
 
   {% block lower_container %}
   <div id="profile-container">
@@ -198,90 +146,88 @@
     </div>
     <div id="lower-profile">
       <div id="main-list">
-        <!-- <li id="profile-info"> -->
-          <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
-            <b id="user-info-title">المعلومات الشخصية</b>
-            <button style="background-color: transparent; border: 0;">
-              <span class="material-symbols-outlined" id="profile-info-arrow">
-                expand_more
-              </span>
-            </button>
-          </div>
-          <form id="profile-info-form" method="post" style="display: none; flex-direction: column; padding-right: 0; position:relative;">
-            <ul>
-              <li>
-                <div>
-                  <label for="customer-fullname">الإسم الكامل</label>
-                  <input disabled class="customer-info" type="text" id="customer-fullname" name="customer-fullname" value="{{current_user.first_name}} {{current_user.last_name}}">
-                  <!-- <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p> -->
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-phone">رقم الهاتف</label>
-                  <input disabled class="customer-info" type="text" id="customer-phone" name="customer-phone" value="{{current_user.phone_number}}">
-                  <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-backup-phone">رقم الهاتف الإحتياطي</label>
-                  <input disabled class="customer-info" type="text" id="customer-backup-phone" name="customer-backup-phone" value="{{current_user.backup_phone}}">
-                  <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-email">البريد الإلكتروني</label>
-                  <input disabled class="customer-info" type="text" id="customer-email" name="customer-email" value="{{current_user.email}}">
-                  <!-- <p class="disabled-text-p">{{current_user.email}}</p> -->
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-password">كلمة المرور</label>
-                  <input disabled ="customer-password" namd="customer-password" value="**********">
-                  <!-- <p style="margin-bottom: 5px;">**********</p> -->
-                  <a href="#" style="text-decoration: none; font-size: 0.6em; color: black" onclick="window.alert('لا يمكن تغيير كلمة السر حتى الآن');">هل نسيت كلمة السر؟</a>
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-city">البلد</label>
-                  <select disabled class="customer-info" id="customer-city" name="customer-city" required style="width: 72%; margin-bottom: 5px; background-color: white; font-family: Noto Naskh Arabic">
-                    <option value="اختر بلد">اختر بلد</option>
-                    {% for city in cities %}
-                      <option value="{{city}}">{{city}}</option>
-                    {% endfor %}
-                  </select>
-                  <!-- <p class="disabled-text-p">{{current_user.city}}</p> -->
-                  <script>
-                    let citiesParent = document.getElementById("customer-city");
-                    const all_cities = citiesParent.children;
-                    for (let i = 0; i < all_cities.length; i++) {
-                        if (all_cities[i].value.includes("{{current_user.city}}")) {
-                            citiesParent.selectedIndex = i;
-                            break;
-                        }
-                    }
-                  </script>
-                </div>
-              </li>
-              <li>
-                <div>
-                  <label for="customer-address">العنوان</label>
-                  <input disabled class="customer-info" type="text" id="customer-address" name="customer-address" value="{{current_user.address}}">
-                  <!-- <p class="disabled-text-p">{{current_user.address}}</p> -->
-                </div>
-              </li>
-              <li style="margin: 30px 0 30px 0">
-                <button id="update-info-button" type="button" onclick="updateProfileInfo(this)">
-                  تعديل المعلومات الشخصية
-                </button>
-              </li>
-            </ul>
-          </form>
-        <!-- </li> -->
+        <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
+          <b id="user-info-title">المعلومات الشخصية</b>
+          <button style="background-color: transparent; border: 0;">
+            <span class="material-symbols-outlined" id="profile-info-arrow">
+              expand_more
+            </span>
+          </button>
+        </div>
+        <form id="profile-info-form" method="post" style="display: none; flex-direction: column; padding-right: 0; position:relative;">
+          <ul>
+            <li>
+              <div>
+                <label for="customer-fullname">الإسم الكامل</label>
+                <input disabled class="customer-info" type="text" id="customer-fullname" name="customer-fullname" value="{{current_user.first_name}} {{current_user.last_name}}">
+                <!-- <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p> -->
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-phone">رقم الهاتف</label>
+                <input disabled class="customer-info" type="text" id="customer-phone" name="customer-phone" value="{{current_user.phone_number}}">
+                <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-backup-phone">رقم الهاتف الإحتياطي</label>
+                <input disabled class="customer-info" type="text" id="customer-backup-phone" name="customer-backup-phone" value="{{current_user.backup_phone}}">
+                <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-email">البريد الإلكتروني</label>
+                <input disabled class="customer-info" type="text" id="customer-email" name="customer-email" value="{{current_user.email}}">
+                <!-- <p class="disabled-text-p">{{current_user.email}}</p> -->
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-password">كلمة المرور</label>
+                <input disabled id="customer-password" name="customer-password" value="**********">
+                <!-- <p style="margin-bottom: 5px;">**********</p> -->
+                <a href="#" style="text-decoration: none; font-size: 0.6em; color: black" onclick="window.alert('لا يمكن تغيير كلمة السر حتى الآن');">هل نسيت كلمة السر؟</a>
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-city">البلد</label>
+                <select disabled class="customer-info" id="customer-city" name="customer-city" required style="width: 72%; margin-bottom: 5px; background-color: white;">
+                  <option value="اختر بلد">اختر بلد</option>
+                  {% for city in cities %}
+                    <option value="{{city}}">{{city}}</option>
+                  {% endfor %}
+                </select>
+                <!-- <p class="disabled-text-p">{{current_user.city}}</p> -->
+                <script>
+                  let citiesParent = document.getElementById("customer-city");
+                  const all_cities = citiesParent.children;
+                  for (let i = 0; i < all_cities.length; i++) {
+                      if (all_cities[i].value.includes("{{current_user.city}}")) {
+                          citiesParent.selectedIndex = i;
+                          break;
+                      }
+                  }
+                </script>
+              </div>
+            </li>
+            <li>
+              <div>
+                <label for="customer-address">العنوان</label>
+                <input disabled class="customer-info" type="text" id="customer-address" name="customer-address" value="{{current_user.address}}">
+                <!-- <p class="disabled-text-p">{{current_user.address}}</p> -->
+              </div>
+            </li>
+            <li style="margin: 30px 0 30px 0">
+              <button id="update-info-button" type="button" onclick="updateProfileInfo(this)">
+                تعديل المعلومات الشخصية
+              </button>
+            </li>
+          </ul>
+        </form>
       </div>
     </div>
   </div>

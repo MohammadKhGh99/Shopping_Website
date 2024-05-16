@@ -9,14 +9,14 @@
   #product-container {
     display: flex;
     justify-content: space-between;
-    margin: 40px 40px 40px 40px;
+    margin: 20px;
   }
 
   #product-left-side {
     display: flex;
     text-align: right;
     flex-direction: column;
-    width: 50vw;
+    width: 35vw;
   }
 
   #product-left-upper {
@@ -32,18 +32,18 @@
   }
 
   #product-right-side {
-    width: 50vw;
-    height: 90%;
+    width: 65vw;
+    height: 100%;
   }
 
   #add-to-cart-button {
     background-color: #cce5ff;
     border: 0;
     font-family: "Noto Naskh Arabic", sans-serif;
-    font-size: 1em;
+    font-size: 0.8em;
     cursor: pointer;
     transition-duration: 0.5s;
-    width: 150px;
+    width: 10em;
     
   }
 
@@ -132,6 +132,50 @@
     background-color: #f15252;
   }
 
+  .modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.9); 
+  }
+  
+  .modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+  }
+  
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #product-num-title {
+    font-size: 0.8em;
+    margin-bottom: 30px;
+  }
+
+
 </style>
 
 <body>
@@ -142,8 +186,15 @@
     <div id="product-right-side">
       <div id="images-gallery-container">
         {% for image in images %}
+        
         <div class="slides" style="width: 100%; height: 100%">
-          <img src="{{url_for('static', filename=image)}}" alt="" style="width: 100%; height: 100%; object-fit: fill">
+          <img src="{{url_for('static', filename=image)}}" alt="" style="width: 100%; height: 100%; object-fit: fill" onclick="EnlargeImg(this)">
+          <!-- <img src="{{url_for('static', filename=image)}}" alt="Your Image" style="width: 100%; height: 100%; object-fit: fill; max-width: 300px" onclick="EnlargeImg(this)"> -->
+          <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="img01">
+            <div id="caption"></div>
+          </div>
         </div>
         {% endfor %}
         <a class="next" onclick="MoveSlides(1)">&#10094;</a>
@@ -155,6 +206,35 @@
                 document.getElementsByClassName("next")[0].style.display = "none";
                 document.getElementsByClassName("prev")[0].style.display = "none";
             }
+
+            function EnlargeImg(img) {
+              var modal = img.parentNode.children[1];
+              var modalImg = img.parentNode.children[1].querySelector("img");
+              var zoomed = false;
+
+              
+              modal.style.display = "block";
+              modalImg.src = img.src;
+
+
+              modalImg.onclick = function() {
+                if (!zoomed) {
+                  modalImg.style.transform = "scale(2)";
+                  zoomed = true;
+                } else {
+                  modalImg.style.transform = "scale(1)";
+                  zoomed = false;
+                }
+              }
+
+              var span = modal.querySelector(".close");
+              span.onclick = function() { 
+                modal.style.display = "none";
+                modalImg.src = "";
+                zoomed = false;
+              }
+            }
+
         </script>
       </div>
       <script>
@@ -188,9 +268,9 @@
       </script>
     </div>
     <div id="product-left-side">
-      <h5 style="background-color: #e5e5e5; width: 150px; text-align: center">
+      <span id="product-num-title" style="background-color: #e5e5e5; width: 7em; text-align: center">
         رقم المنتج: {{result[0]}}
-      </h5>
+      </span>
       {% if result[5] == 0 %}
         <h2 style="background-color: #f64f4f; width: 100%; text-align: center; margin-top: 0; height: 50px">
           نفد المخزون
@@ -214,13 +294,13 @@
 <!--        </script>-->
       {% endif %}
       <div id="product-left-upper">
-        <h1 style="margin-top: 0; line-height: 1">
+        <span style="margin-top: 0; margin-bottom: 20px; font-size: 1em">
           {{result[1]}}
-        </h1>
-        <span style="font-size: 1.5em;">
+        </span>
+        <span style="font-size: 1.1em;">
           {{result[4]}} ₪
         </span>
-        <span style="margin-bottom: 20px">
+        <span style="margin-bottom: 20px; font-size: 0.7em; color: rgb(90, 89, 89)">
           تكلفة الشحن ستحسب عند ادخال العنوان
         </span>
       </div>
@@ -260,7 +340,7 @@
           <button id="add-to-cart-button" onclick="AddToCart()">
             إضافة إلى سلة التسوق
           </button>
-          <a href="#" style="display: none; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
+          <a href="#" style="display: none; font-size: 0.8em" id="go-to-shop-cart" onclick="ClickOnCart()">
             الذهاب إلى سلة التسوق
           </a>
           <form method="post" id="update-cart-form">
@@ -326,11 +406,11 @@
         {% endif %}
 
         <!-- <br> -->
-        <span id="items-left">
+        <span id="items-left" style="font-size: 0.8em;">
           الكمية المتبقية:
-          <b>{{result[5]}}</b>
+          <b style="text-decoration: underline;">{{result[5]}}</b>
         </span>
-        <p>
+        <p style="font-size: 0.8em;">
           {{result[6]}}
         </p>
         <!-- <span>

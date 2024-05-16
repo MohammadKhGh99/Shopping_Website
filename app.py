@@ -622,47 +622,7 @@ def product(ptype, id_num):
             tmp = item.split(":")
             cart_items[int(tmp[0])] = tmp[1]
 
-    # with sqlite3.connect("Shopping.db") as connection:
-    # 	cursor = connection.cursor()
-    # 	try:
-    #
-    # 		cursor.execute(f"""
-    # 		select * from Cart_Items
-    # 		where customer_id = {current_user.id_number}
-    # 		""")
-    #
-    # 		searching_result = cursor.fetchone()
-    # 		connection.commit()
-    # 		# add new row to Cart_Items table
-    # 		if searching_result is None:
-    # 			cursor.execute("""
-    # 			insert into Cart_Items(customer_id, total, cart_items)
-    # 			values(?, ?, ?)
-    # 			""", (current_user.id_number, product_price, cart_items_tmp))
-    # 		else:
-    # 			cursor.execute(f"""
-    # 			update Cart_Items
-    # 			set total = total + {product_price},
-    # 			cart_items = '{cart_items_tmp}'
-    # 			where customer_id = {current_user.id_number}
-    # 			""")
-    #
-    # 		# cursor.execute(f"""
-    # 		# insert into Cart_Items (customer_id, total, cart_items)
-    # 		# values({int(product_id)}, {float(product_price)}, '{cart_items_tmp}')
-    # 		# on duplicate key update
-    # 		# 	total = values(total + {float(product_price)}),
-    # 		# 	cart_items = values('{cart_items_tmp}')
-    # 		# """)
-    #
-    # 		connection.commit()
-    # 		flash("تم إضافة المنتج للسلة", "success")
-    # 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
-    # 	except Exception as e:
-    #       send_error(e)
-    # 		flash(f"حدث خطأ أثناء إضافة المنتج رقم {product_id} إلى سلة التسوق\nخطأ:" + str(e), "error")
-    # 		return redirect(url_for('product', id_num=id_num, name=name, ptype=ptype))
-
+    
     # retrieve the info for the current product
     with sqlite3.connect('Shopping.db') as connection:
         cursor = connection.cursor()

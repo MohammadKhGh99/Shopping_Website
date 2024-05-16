@@ -122,7 +122,7 @@
     products {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      margin: 35px 0 35px 0;
+      padding: 35px 0 35px 0;
       row-gap: 20px;
       max-width: 100%;
       width: 100%;
@@ -146,8 +146,11 @@
       height: 100%;
     }
 
+    .lower-product span {
+      font-size: 0.8em;
+    }
   }
-
+  
   @media (min-width: 767px) {
     products {
       display: grid;
@@ -169,10 +172,14 @@
       width: 80%;
       height: 100%;
     }
+    .lower-product span {
+      font-size: 1.5em;
+    }
+    
   }
-
+  
   product {
-    display: block;
+    display: inline-block;
     text-align: center;
     border-radius: 5%;
     color: #AD7765;
@@ -209,7 +216,6 @@
   {% endblock %}
 
   {% block upper_container %}
-<!--  <br>-->
   <div id="container">
     <button id="filters-button" onclick="openFilters()">
       <span class="material-symbols-outlined filters-icon">
@@ -237,7 +243,7 @@
           overlay.classList.toggle('show');
       }
     </script>
-    <filters id="filters">
+    <filters id="filters" style="display: none;">
       <form>
         <ul>
           <li style="display: flex; justify-content: space-between">
@@ -373,14 +379,13 @@
     {% block lower_container %}
     <div id="books-upper">
       <img src="{{url_for('static', filename='images/books_cover.jpg')}}" alt="ورثة الأنبياء">
-<!--      https://drive.google.com/thumbnail?id=1XpJE7jA6rDo9xYkDnXy5_ETs7WsOFxvy&sz=w1000-->
       <b>
         الكتب
       </b>
     </div>
     <products class="products">
       {% for prod in products %}
-      <a href="{{url_for('product', ptype=prod[2], id_num=prod[0])}}" style="text-decoration: none; color: black">
+      <a href="{{url_for('product', ptype='books', id_num=prod[0])}}" style="text-decoration: none; color: black">
         <product class="product">
           <div class="upper-product">
             <img src="../{{prod[3][0]}}" alt="product">
@@ -394,7 +399,7 @@
               {{ prod[4] }} ₪
             </span>
             {% if prod[5] == 0 %}
-              <span style="background-color: #f64f4f; font-size: 1.5em">
+              <span style="background-color: #f64f4f; font-size: 1em">
                  نفد المخزون
               </span>
             {% endif %}
