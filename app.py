@@ -264,6 +264,7 @@ def login():
                 user = load_user(res_rows[0][0])
                 # login the current user
                 login_user(user)
+                # TODO
                 # todo - should I concatenate both anonymous and stored carts? I think NO
                 # store the current cart items in the database to include them in customer's database
                 # with sqlite3.connect("Shopping.db") as connection:
@@ -281,8 +282,7 @@ def login():
                     return redirect(url_for('admin_profile'))
                 return redirect(url_for('profile'))
             else:
-                flash("خطأ في إحدى الخانات (رقم الهاتف/البريد الإلكتروني أو كلمة المرور) الرجاء المحاولة مرة أخرى",
-                      "warning")
+                flash("خطأ في إحدى الخانات (رقم الهاتف/البريد الإلكتروني أو كلمة المرور) الرجاء المحاولة مرة أخرى", "warning")
                 return redirect(request.referrer)
         # if there is no user has these unique info, then go and register the new user
         elif len(res_rows) == 0:
@@ -405,13 +405,40 @@ def profile():
     if request.method == 'POST':
         form = request.form
         new_fullname = form['customer-fullname'].strip().split(" ")
-        new_first_name = new_fullname[0]
-        new_last_name = new_fullname[1:]
+        new_first_name = new_fullname[0].strip()
+        new_last_name = ' '.join(new_fullname[1:]).strip()
+
         new_phone_number = form['customer-phone'].strip()
+        new_backup_phone = form['customer-backup-phone'].strip()
         new_email = form['customer-email'].strip()
+        # changing password as 'forgot password' feature, not here
         new_city = form['customer-city'].strip()
         new_address = form['customer-address'].strip()
-        new_backup_phone = form['customer-backup-phone'].strip()
+
+        with sqlite3.connect("Shopping.db") as connection:
+            cursor = connection.cursor()
+            try:
+                cursor.execute(f"""
+                update Customers
+                set first_name = '{new_first_name}',
+                last_name = '{new_last_name}',
+                phone_number = '{new_phone_number}',
+                backup_phone = '{new_backup_phone}',
+                email = '{new_email}',
+                city = '{new_city}',
+                address = '{new_address}'
+                where id_number = {current_user.id_number}
+                """)
+                connection.commit()
+                flash("تم تحديث البيانات بنجاح", "success")
+                return redirect(url_for('profile'))
+            except Exception as e:
+                send_error(e, "خطأ في تحديث البيانات")
+                connection.rollback()
+                flash("حدث خطأ أثناء تحديث البيانات\n خطأ: " + str(e), "error")
+                return redirect(request.referrer)
+
+
         return redirect(url_for('profile'))
     # admin go to your own profile
     if user_role == "admin":

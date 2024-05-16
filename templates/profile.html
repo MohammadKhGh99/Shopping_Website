@@ -43,9 +43,6 @@
   }
 
   #profile-container {
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
     flex-direction: column;
   }
 
@@ -57,14 +54,15 @@
     /*border-bottom: 1px solid black;*/
   }
 
+  #upper-profile div {
+    padding: 0 100px 0 100px;
+  }
+
   #lower-profile {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    /*text-align: center;*/
-    /*width: 100%;*/
-    /*padding-right: 0;*/
   }
 
   #main-list {
@@ -74,27 +72,24 @@
     flex-direction: column;
     text-decoration: none;
     list-style: none;
-    width: 100%;
+    width: 80%;
     padding-right: 0;
     padding-bottom: 10px;
   }
 
-  #lower-profile ul #profile-info, #orders-info {
-    border-bottom: 1px solid gray;
-    display: flex;
-    /*justify-content: center;*/
-    /*align-items: center;*/
-    flex-direction: column;
-    /*width: 100%;*/
-    width: 80%;
-    /*padding-right: 20px;*/
-  }
-
-  form ul {
+  #profile-info-form ul {
     display: flex;
     justify-content: right;
     align-items: start;
     flex-direction: column;
+    text-decoration: none;
+    list-style: none;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  label {
+    font-size: 0.8em;
   }
 
   #upper-profile-info {
@@ -103,95 +98,68 @@
     align-items: center;
   }
 
-  #lower-profile ul li ul {
-    text-decoration: none;
-    list-style: none;
-    width: 80%;
-    padding-right: 0;
-  }
-
-  #lower-profile ul li ul li{
+  #profile-info-form ul li{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 80%;
+    width: 100%;
   }
 
-  #lower-profile ul li ul li:not(:last-child) {
+  #profile-info-form ul li:not(:last-child) {
     border-bottom: 1px solid gray;
   }
 
-  #lower-profile ul li ul li h4 {
+  #profile-info-form ul li h4 {
     margin-top: 10px;
     margin-bottom: 0;
   }
 
-  #lower-profile ul li ul li input, p {
+  #profile-info-form ul li div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  input {
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 0.8em;
-    font-family: "Traditional Arabic", sans-serif;
-  }
-  
-  .edit-button {
-    display: none;
-    cursor: pointer; 
-    width: 30px; 
-    height: 30px;
-    /*display: flex;*/
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border: 0;
-  }
-
-  .edit-button:hover {
-    color: gray;
-  }
-
-  #upper-orders {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  #orders-counter {
-    background-color: black;
-    color: white;
-    border-radius: 50%;
-    display: inline-flex;
-    width: 20px;
-    height: 20px;
-    font-size: 15px;
-    justify-content: center;
-    vertical-align: top;
-  }
-
-  #go-shopping-button {
-    cursor: pointer;
-    background-color: #cce5ff;
-    border: 0;
-    width: 100px;
-    height: 50px;
-  }
-
-  #go-shopping-button:hover {
-    background-color: #e5e5e5;
+    font-family: "Noto Naskh Arabic", sans-serif;
+    width: 70%;
   }
 
   #update-info-button {
     cursor: pointer;
-    width: 10em;
+    width: 12em;
     background-color: #cce5ff;
     border: 0;
-    font-family: 'Traditional Arabic', serif;
-    font-size: 0.9em;
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 0.8em;
+    text-wrap: nowrap;
+    padding: 10px;
     transition-duration: 0.5s;
   }
 
   #update-info-button:hover {
     background-color: #e5e5e5;
   }
+
+  #user-info-title:hover {
+    text-decoration: underline;
+  }
+
+  #profile-greeting {
+    font-size: 1.5em;
+    margin-top: 20px;
+  }
+
+  @media screen and (max-width: 767px) {
+    #profile-greeting {
+      font-size: 1em;
+    }
+    
+  }
+
 
 </style>
 
@@ -218,9 +186,9 @@
   <div id="profile-container">
     <div id="upper-profile">
       <div style="text-align: center; border-bottom: 1px solid black">
-        <h2 style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between; column-gap: 10px">
+        <b id="profile-greeting" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between; column-gap: 10px">
           السلام عليكم  {{current_user.first_name + " " + current_user.last_name}}{% block admin %}{% endblock %}
-        </h2>
+        </b>
         {% if current_user.role == "customer" %}
           <span style="margin-top: 0; font-size: 0.7em;">
             {{current_user.date_joined}}
@@ -229,81 +197,58 @@
       </div>
     </div>
     <div id="lower-profile">
-      <ul id="main-list">
-        <li id="profile-info">
+      <div id="main-list">
+        <!-- <li id="profile-info"> -->
           <div id="upper-profile-info" style="cursor: pointer; user-select: none" onclick="OpenProfileInfo()">
-            <h3>المعلومات الشخصية</h3>
+            <b id="user-info-title">المعلومات الشخصية</b>
             <button style="background-color: transparent; border: 0;">
               <span class="material-symbols-outlined" id="profile-info-arrow">
                 expand_more
               </span>
             </button>
           </div>
-          <form method="post" style="display: none; flex-direction: column; padding-right: 0; position:relative;">
+          <form id="profile-info-form" method="post" style="display: none; flex-direction: column; padding-right: 0; position:relative;">
             <ul>
               <li>
                 <div>
-                  <h4>الإسم الكامل</h4>
-                  <input disabled class="customer-info" type="text" name="customer-fullname" value="{{current_user.first_name}} {{current_user.last_name}}">
+                  <label for="customer-fullname">الإسم الكامل</label>
+                  <input disabled class="customer-info" type="text" id="customer-fullname" name="customer-fullname" value="{{current_user.first_name}} {{current_user.last_name}}">
                   <!-- <p class="disabled-text-p">{{current_user.first_name + " " + current_user.last_name}}</p> -->
                 </div>
-                <button class="edit-button"> <!-- type="button" onclick="toggleEditContent(this)"> -->
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>رقم الهاتف</h4>
-                  <input disabled class="customer-info" type="text" name="customer-phone" value="{{current_user.phone_number}}">
+                  <label for="customer-phone">رقم الهاتف</label>
+                  <input disabled class="customer-info" type="text" id="customer-phone" name="customer-phone" value="{{current_user.phone_number}}">
                   <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>رقم الهاتف الإحتياطي</h4>
-                  <input disabled class="customer-info" type="text" name="customer-backup-phone" value="{{current_user.backup_phone}}">
+                  <label for="customer-backup-phone">رقم الهاتف الإحتياطي</label>
+                  <input disabled class="customer-info" type="text" id="customer-backup-phone" name="customer-backup-phone" value="{{current_user.backup_phone}}">
                   <!-- <p class="disabled-text-p">{{current_user.phone_number}}</p> -->
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>البريد الإلكتروني</h4>
-                  <input disabled class="customer-info" type="text" name="customer-email" value="{{current_user.email}}">
+                  <label for="customer-email">البريد الإلكتروني</label>
+                  <input disabled class="customer-info" type="text" id="customer-email" name="customer-email" value="{{current_user.email}}">
                   <!-- <p class="disabled-text-p">{{current_user.email}}</p> -->
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>كلمة المرور</h4>
-                  <p class="disabled-text-p">**********</p>
+                  <label for="customer-password">كلمة المرور</label>
+                  <input disabled ="customer-password" namd="customer-password" value="**********">
+                  <!-- <p style="margin-bottom: 5px;">**********</p> -->
+                  <a href="#" style="text-decoration: none; font-size: 0.6em; color: black" onclick="window.alert('لا يمكن تغيير كلمة السر حتى الآن');">هل نسيت كلمة السر؟</a>
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>البلد</h4>
-                  <select disabled class="customer-info" id="customer-city" class="input_field" name="customer-city" required style="width: 365px; background-color: white">
+                  <label for="customer-city">البلد</label>
+                  <select disabled class="customer-info" id="customer-city" name="customer-city" required style="width: 72%; margin-bottom: 5px; background-color: white; font-family: Noto Naskh Arabic">
                     <option value="اختر بلد">اختر بلد</option>
                     {% for city in cities %}
                       <option value="{{city}}">{{city}}</option>
@@ -321,64 +266,38 @@
                     }
                   </script>
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li>
                 <div>
-                  <h4>العنوان</h4>
-                 <input disabled class="customer-info" type="text" name="customer-address" value="{{current_user.address}}">
+                  <label for="customer-address">العنوان</label>
+                  <input disabled class="customer-info" type="text" id="customer-address" name="customer-address" value="{{current_user.address}}">
                   <!-- <p class="disabled-text-p">{{current_user.address}}</p> -->
                 </div>
-                <button class="edit-button">
-                  <span class="material-symbols-outlined">
-                    edit
-                  </span>
-                </button>
               </li>
               <li style="margin: 30px 0 30px 0">
-                <button id="update-info-button" type="button" onclick="updateProfileInfo()">
+                <button id="update-info-button" type="button" onclick="updateProfileInfo(this)">
                   تعديل المعلومات الشخصية
                 </button>
               </li>
             </ul>
           </form>
-        </li>
-<!--        <li id="orders-info">-->
-<!--          <div id="upper-orders" style="cursor: pointer" onclick="OpenOrdersInfo()">-->
-<!--            <h4 style="user-select: none">-->
-<!--              الطلبات-->
-<!--              <span id="orders-counter" style="user-select: none">0</span>-->
-<!--            </h4>-->
-<!--            <button style="background-color: transparent; border: 0;">-->
-<!--              <span class="material-symbols-outlined" id="orders-info-arrow">-->
-<!--                expand_more-->
-<!--              </span>-->
-<!--            </button>-->
-<!--          </div>-->
-<!--          <div id="lower-orders" style="display: none; padding-bottom: 20px">-->
-<!--            <div id="no-orders">-->
-<!--              <p>لم تقدم أي طلبات حتى الآن</p>-->
-<!--              <a href="{{url_for('home')}}">-->
-<!--                <button id="go-shopping-button">-->
-<!--                  إبدأ التسوق-->
-<!--                </button>-->
-<!--              </a>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </li>-->
-      </ul>
+        <!-- </li> -->
+      </div>
     </div>
   </div>
   <script>
+    let initialFullname = "";
+    let initialPhone = "";
+    let initialBackupPhone = "";
+    let initialEmail = "";
+    let initialCity = "";
+    let initialAddress = "";
+
     function OpenProfileInfo() {
         const mySpan = document.querySelector('#profile-info-arrow');
         mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
-        const profileInfo = document.querySelector('#profile-info form');
-        const profileInfoTitle = document.querySelector("#upper-profile-info h3")
+        const profileInfo = document.getElementById('profile-info-form');
+        const profileInfoTitle = document.querySelector("#user-info-title")
         if (profileInfo.style.display === "none") {
             profileInfo.style.display = "flex";
             profileInfoTitle.style.textDecoration = "underline";
@@ -388,58 +307,37 @@
         }
     }
 
-    function OpenOrdersInfo() {
-        const mySpan = document.querySelector('#orders-info-arrow');
-        mySpan.textContent = mySpan.textContent.trim() === "expand_more" ? "expand_less" : "expand_more";
-        const ordersInfo = document.querySelector('#lower-orders');
-        const noOrders = document.querySelector("#no-orders");
-        const ordersInfoTitle = document.querySelector("#upper-orders h3");
-        const ordersCounter = document.getElementById("orders-counter");
-        if (ordersCounter.value === "0") {
-            noOrders.style.display = "block";
-        } else {
-            noOrders.style.display = "none";
-        }
-        if (ordersInfo.style.display === "none") {
-            ordersInfo.style.display = "block";
-            ordersInfoTitle.style.textDecoration = "underline";
-        } else {
-            ordersInfo.style.display = "none";
-            ordersInfoTitle.style.textDecoration = "none";
-        }
-    }
-
-    function updateProfileInfo() {
+    function updateProfileInfo(button) {
       if (document.getElementsByClassName('customer-info')[0].hasAttribute('disabled')){
         const infoToEnableEditing = document.querySelectorAll(".customer-info");
         for (let i = 0; i < infoToEnableEditing.length; i++) {
           infoToEnableEditing[i].removeAttribute("disabled");
-        }  
-      } else {
-        const formDiv = document.querySelector("form");
-        formDiv.submit();
-      }
-
-
-    }
-
-    function toggleEditContent(button) {
-        const toEdit = button.parentNode.querySelector("div input");
-        const initialValue = toEdit.textContent;
-        const submitButton = button.parentNode.querySelector("div ");
-        // console.log(initialValue);
-        if (toEdit.getAttribute("readonly") != null){
-        // if (toEdit.getAttribute("contenteditable") === "false"){
-        //     toEdit.setAttribute("contenteditable", "true");
-            toEdit.removeAttribute("readonly");
-            // button.setAttribute("type", "submit");
-
-            toEdit.focus();
         }
-        // else {
-        //     toEdit.setAttribute("contenteditable", "false");
-        // }
-
+        button.textContent = "حفظ التغييرات";
+        initialFullname = document.getElementById("customer-fullname").value;
+        initialPhone = document.getElementById("customer-phone").value;
+        initialBackupPhone = document.getElementById("customer-backup-phone").value;
+        initialEmail = document.getElementById("customer-email").value;
+        initialCity = document.getElementById("customer-city").value;
+        initialAddress = document.getElementById("customer-address").value;
+      } else {
+        let updatedFullname = document.getElementById("customer-fullname").value;
+        let updatedPhone = document.getElementById("customer-phone").value;
+        let updatedBackupPhone = document.getElementById("customer-backup-phone").value;
+        let updatedEmail = document.getElementById("customer-email").value;
+        let updatedCity = document.getElementById("customer-city").value;
+        let updatedAddress = document.getElementById("customer-address").value;
+        if (updatedFullname === initialFullname && updatedPhone === initialPhone && updatedBackupPhone === initialBackupPhone && updatedEmail === initialEmail && updatedCity === initialCity && updatedAddress === initialAddress) {
+          const infoToEnableEditing = document.querySelectorAll(".customer-info");
+          for (let i = 0; i < infoToEnableEditing.length; i++) {
+            infoToEnableEditing[i].setAttribute("disabled", "true");
+          }
+          button.textContent = "تعديل المعلومات الشخصية";
+          alert("لم تقم بتغيير أي معلومة");
+          return;
+        }
+        document.getElementById("profile-info-form").submit();
+      }
     }
   </script>
   {% endblock %}
