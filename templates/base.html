@@ -127,8 +127,7 @@
       </div>
     </div>
   </header>
-  
-  {% if user_role == "admin" or user_role == "cutomer" %}
+  {% if user_role == "admin" or user_role == "customer" %}
     <div id="dashboard-link-bar">
       {% if user_role == "admin" %}
         <a href="{{url_for('all_customers')}}">
@@ -254,10 +253,36 @@
         <th>
           <div class="tooltip">
             من نحن
-            <span class="tooltiptext">
+
+            <span class="tooltiptext" style="display: none;">
               موقع إرتقاء<br>
               نرتقي بعملنا ونرتقي بعفّتنا
             </span>
+            <span class="tooltiptext" style="display: none;">
+              boooooks
+            </span>
+            <span class="tooltiptext" style="display: none;">
+              cloooothes
+            </span>
+            <span class="tooltiptext" style="display: none;">
+              giiiiiiiifts
+            </span>
+            <script>
+              const irtekaaWhoWe = document.currentScript.parentNode.children[0];
+              const BooksWhoWe = document.currentScript.parentNode.children[1];
+              const clothesWhoWe = document.currentScript.parentNode.children[2];
+              const giftsWhoWe = document.currentScript.parentNode.children[3];
+              if (window.location.href.includes("home")) {
+                irtekaaWhoWe.style.display = "inline-block";
+              } else if (window.location.href.includes("books")) {
+                BooksWhoWe.style.display = "inline-block";
+              } else if (window.location.href.includes("clothes")) {
+                clothesWhoWe.style.display = "inline-block";
+              } else if (window.location.href.includes("gifts")) {
+                giftsWhoWe.style.display = "inline-block";
+              }
+              
+            </script>
           </div>
         </th>
         <!-- <th>
@@ -337,8 +362,8 @@
         // const menuButton = document.getElementById('open-menu');
         const sideMenu = document.getElementById('side-menu');
         //sideMenu.style.display = 'block';
-        const overlay = document.getElementById('overlay');
         sideMenu.classList.toggle('open');
+        const overlay = document.getElementById('overlay');
         overlay.classList.toggle('show');
     }
 

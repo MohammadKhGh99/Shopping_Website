@@ -33,24 +33,37 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-direction: column;
     /*column-gap: 10px;*/
     margin: 20px 0 20px 0;
   }
 
   #checkout-button, #register-guest-button, #continue-as-guest-button {
-    /*width: 100%;*/
-    background-color: #cce5ff;
     font-family: "Noto Naskh Arabic",serif;
     border: 0;
     cursor: pointer;
-    margin-right: 2px;
     padding: 10px;
     transition-duration: 0.5s;
+    text-wrap: nowrap;
+    border-radius: 10px; 
+  }
+  
+  #checkout-button {
+    background-color: #cce5ff;
+  }
+  
+  #register-guest-button, #continue-as-guest-button {
+    scale: 0.8; 
+    background-color: rgb(248, 128, 128);
   }
 
-  #checkout-button:hover, #register-guest-button:hover, #continue-as-guest-button:hover {
+  #checkout-button:hover {
     background-color: #e5e5e5;
   }
+
+  #register-guest-button:hover, #continue-as-guest-button:hover {
+    background-color: #f0f0f0;
+  }rgb(192, 191, 191)
 
   .password-container {
     position: relative;
@@ -115,7 +128,9 @@
         <label for="customer-backup-phone" class="input_label">رقم هاتف إحتياطي (إختياري)</label><br>
         <input type="tel" id="customer-backup-phone" class="input_field" name="customer-backup-phone" autocomplete="phone" style="text-align: right" maxlength="10">
       </div>
-      <div class="field-holder password-container" {% if not cur_user %}style="display: none"{% endif %}>
+      <h1>
+      </h1>
+      <div class="field-holder password-container" style="display: none;">
         <label for="customer-password" class="input_label">كلمة المرور</label>
         <input type="password" id="customer-password" class="input_field" name="customer-password" autocomplete="new-password" minlength="8" maxlength="20">
         <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
@@ -130,13 +145,13 @@
           🛑🛑🛑<br>
           إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع
         </h4>
+        <button type="button" id="register-guest-button" onclick="RegisterGuest(this)">
+          للتسجيل بالموقع
+        </button>
+        <button type="button" id="continue-as-guest-button" onclick="ContinueAsGuest(this)" style="display: none;">
+          الإكمال كضيف
+        </button>
       {% endif %}
-      <button type="button" id="register-guest-button" onclick="RegisterGuest(this)">
-        للتسجيل بالموقع
-      </button>
-      <button type="button" id="continue-as-guest-button" onclick="ContinueAsGuest(this)" style="display: none;">
-        الإكمال كضيف
-      </button>
       <div id="lower-checkout">
         <span>
           المجموع الكلي:
@@ -154,13 +169,24 @@
             رسوم شحن)
           </span>
         </span>
-        <button type="submit" id="checkout-button">
+        <button type="submit" id="checkout-button" onclick="Checkout()">
           تأكيد الطلب
         </button>
       </div>
     </form>
   </div>
   <script>
+    function Checkout() {
+      if (document.getElementsByClassName("password-container")[0].style.display === "none") {
+        const confirmGuestCheckout = confirm("هل أنت متأكد من رغبتك في تأكيد الطلب بدون التسجيل للموقع؟");
+        console.log(confirmGuestCheckout);
+        if (confirmGuestCheckout) {
+        } else {
+          document.getElementById("register-notice").style.display = "none";
+          document.getElementsByClassName("password-container")[0].style.display = "block";
+        }
+      }
+    }
     function RegisterGuest(button) {
       document.getElementsByClassName("password-container")[0].style.display = "block";
       button.style.display = "none";
