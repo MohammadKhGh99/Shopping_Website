@@ -27,7 +27,7 @@
         </button>
       </div>
 
-      <div id="menu" style="display: none;">
+      <div id="menu">
         <span id="overlay" onclick="closeMenu(true, true)"></span>
         <div id="side-menu">
           <span class="material-symbols-outlined" id="close-side-menu" style="cursor: pointer" onclick="closeMenu()">
@@ -335,8 +335,8 @@
   <script>
     function openMenu(){
         // const menuButton = document.getElementById('open-menu');
-        document.getElementById('menu').style.display = 'block';
         const sideMenu = document.getElementById('side-menu');
+        //sideMenu.style.display = 'block';
         const overlay = document.getElementById('overlay');
         sideMenu.classList.toggle('open');
         overlay.classList.toggle('show');
@@ -361,24 +361,22 @@
         overlay.classList.remove('show');
         searchMenu.classList.remove('open');
         if (isFilter) {
-            event.preventDefault();
-            const spans = document.getElementsByClassName('filters-span');
-            for (let i = 0; i < spans.length; i++) {
-                if (spans[i].textContent === "expand_less") {
-                    spans[i].textContent = "expand_more";
-                }
+          event.preventDefault();
+          const spans = document.getElementsByClassName('filters-span');
+          for (let i = 0; i < spans.length; i++) {
+            if (spans[i].textContent === "expand_less") {
+              spans[i].textContent = "expand_more";
             }
+          }
         }
         if (isSearch) {
-            searchMenu.querySelector('input').value = "";
+          searchMenu.querySelector('input').value = "";
         }
-    }
+      }
 
     function closeFlash(span) {
         span.parentNode.parentNode.remove();
     }
   </script>
-<!--  {% block approved_contact %}-->
-<!--  {% endblock %}-->
 </body>
 </html>
