@@ -25,13 +25,14 @@
         </div>
         <div id="type-price-quantity">
           <div class="field-holder" style="align-items: center;">
-            <label for="product-type">نوع المنتج</label>
-            <select id="product-type" name="product-type" class="input-field" style="width: 150px;">
+            <label for="product-type">نوع المنتج: <b>{{result[2]}}</b></label>
+            <input value="{{result[2]}}" type="hidden" id="product-type" name="product-type" class="input-field" style="width: 100px;">
+            <!-- <select disabled id="product-type" name="product-type" class="input-field" style="width: 150px; background-color: white">
               {% for type in types %}
                <option value="{{type}}">{{type}}</option>
               {% endfor %}
-            </select>
-          </div>
+            </select> -->
+          </div>&ensp;
           <div class="field-holder" style="align-items: center;">
             <label for="product-price">السعر</label>
             <input value="{{result[4]}}" type="text" id="product-price" name="product-price" class="input-field" style="width: 80px">

@@ -58,7 +58,7 @@ types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا
 
 class User(UserMixin):
     def __init__(self, id_number, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone,
-                 password, email, forgot_password=False):
+                 password, email, forgot_password=0):
         self.id_number = id_number
         self.phone_number = phone_number
         self.first_name = first_name
@@ -260,9 +260,12 @@ def login():
                 return redirect(request.referrer)
             # checking the entered password with the stored password
             # if they are identical then login the current user
-            if bcrypt.check_password_hash(res_rows[0][-2], password):
+            if bcrypt.check_password_hash(res_rows[0][-3], password):
                 # load the user with the found id number
                 user = load_user(res_rows[0][0])
+                if user.forgot_password == 1:
+                    # todo - change password for user
+                    return redirect(url_for('new_password', phone_number=res_rows[0][1]))
                 # login the current user
                 login_user(user)
                 flash("تم تسجيل الدخول بنجاح!", category="success")
@@ -358,40 +361,99 @@ def register():
 def forgot_password():
     if request.method == "POST":
         customer_email = request.form['customer-email'].strip()
+        customer_phone = request.form['customer-phone'].strip()
+        login_method = request.form['login-method']
+
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
-            cursor.execute(f"""
-            select * from Customers
-            where email = '{customer_email}'
-            """)
-            wanted_user = cursor.fetchone()
-            user_fullname = wanted_user[2] + " " + wanted_user[3]
-            chars = string.ascii_letters + string.digits
-            unique_token = ''.join(random.choice(chars) for _ in range(10))
-            cursor.execute(f"""
-            update Customers
-            set password = '{bcrypt.generate_password_hash(unique_token)}'
-            where email = '{customer_email}'
-            """)
-
-        send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
-                   customer_email,
-                   "استعادة كلمة المرور",
-                   f"""
-                   <p dir="rtl" style="text-align: center">
-                       السلام عليكم {user_fullname}
-                       <br><br>
-                       كلمة المرور المؤقتة الخاصة بك هي
-                       <br><br>
-                       <b style="font_size: 1.2em; background-color: #bdbcbc">
-                        {unique_token}
-                       </b>
-                   </p> 
-                   """, "html")
-        flash("تم إرسال كلمة المرور المؤقتة إلى البريد الإلكتروني", "success")
-
-
+            try:
+                chars = string.ascii_letters + string.digits
+                unique_token = ''.join(random.choice(chars) for _ in range(10))
+                if login_method == "phone":
+                    cursor.execute(f"""
+                    select * from Customers
+                    where phone_number = '{customer_phone}'
+                    """)
+                    wanted_user = cursor.fetchone()
+                    user_fullname = wanted_user[2] + " " + wanted_user[3]
+                    temp_password = bcrypt.generate_password_hash(unique_token).decode('utf-8')
+                    cursor.execute(f"""
+                    update Customers
+                    set password = '{temp_password}',
+                    forgot_password = 1
+                    where phone_number = '{customer_phone}'
+                    """)
+                    customer_email = wanted_user[10]
+                else:
+                    cursor.execute(f"""
+                    select * from Customers
+                    where email = '{customer_email}'
+                    """)
+                    wanted_user = cursor.fetchone()
+                    user_fullname = wanted_user[2] + " " + wanted_user[3]
+                    cursor.execute(f"""
+                    update Customers
+                    set password = '{bcrypt.generate_password_hash(unique_token)}',
+                    forgot_password = 1
+                    where email = '{customer_email}'
+                    """)
+                connection.commit()
+                send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+                        customer_email,
+                        "استعادة كلمة المرور",
+                        f"""
+                        <p dir="rtl" style="text-align: center">
+                            السلام عليكم {user_fullname}
+                            <br><br>
+                            كلمة المرور المؤقتة الخاصة بك هي
+                            <br><br>
+                            <b style="font_size: 1.2em; background-color: #bdbcbc">
+                                {unique_token}
+                            </b>
+                        </p> 
+                        """, "html")
+                flash("تم إرسال كلمة المرور المؤقتة إلى البريد الإلكتروني", "success")
+                return redirect(url_for('login'))
+            except Exception as e:
+                send_error(e, "خطأ في استعادة كلمة المرور")
+                connection.rollback()
+                flash("حدث خطأ أثناء استعادة كلمة المرور\n خطأ: " + str(e), "error")
+                return redirect(request.referrer)
     return render_template('forgot_password.html')
+
+
+@app.route('/new_password', methods=['POST', 'GET'])
+def new_password():
+    if current_user is not None:
+        flash("يجب تسجيل الخروج أولاً", "warning")
+        return redirect(url_for('profile'))
+    if request.method == "POST":
+        new_password = request.form['new-password']
+        new_password_confirm = request.form['confirm-password']
+        phone_number = request.args.get('phone_number')
+
+        if new_password != new_password_confirm:
+            flash("كلمة المرور غير متطابقة", "warning")
+            return redirect(request.referrer)
+        with sqlite3.connect("Shopping.db") as connection:
+            cursor = connection.cursor()
+            new_hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            try:
+                cursor.execute(f"""
+                update Customers
+                set password = '{new_hashed_password}',
+                forgot_password = 0
+                where phone_number = '{phone_number}'
+                """)
+                connection.commit()
+                flash("تم تغيير كلمة المرور بنجاح", "success")
+                return redirect(url_for('login'))
+            except Exception as e:
+                send_error(e, "خطأ في تغيير كلمة المرور")
+                connection.rollback()
+                flash("حدث خطأ أثناء تغيير كلمة المرور\n خطأ: " + str(e), "error")
+                return redirect(request.referrer)
+    return render_template('new_password.html')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -890,24 +952,23 @@ def update_product():
                 while ('product-img' + str(i)) in request.files.keys():
                     product_images.append(request.files['product-img' + str(i)])
                     i += 1
-
                 
                 try:
                     for img_file in product_images:
                         filename = secure_filename(img_file.filename)
                         product_folder = types_dict[product_type]
                         img_path = f'static/images/{product_folder}'
-                        if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
-                            os.mkdir(img_path + f"/{cursor.lastrowid}")
-                        img_path += f"/{cursor.lastrowid}/{filename}"
+                        if not os.path.exists(img_path + f"/{product_id}"):
+                            os.mkdir(img_path + f"/{product_id}")
+                        img_path += f"/{product_id}/{filename}"
                         img_file.save(img_path)
                         cur_images += img_path + "&"
                     cur_images = cur_images[:-1]
+                    # type = '{product_type}',
 
                     cursor.execute(f"""
                     update Products
                     set name = '{product_name}',
-                    type = '{product_type}',
                     img_path = '{cur_images}',
                     price = '{product_price}',
                     items_left = {product_items_left},

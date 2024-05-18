@@ -26,20 +26,12 @@
             البريد الإلكتروني
           </button>
           <button type="button" class="login-method" id="phone-method" onclick="CheckLoginMethod(this)">
-            رقم الهاتف
+            رقم الهاتف الشخصي
           </button>
           <input hidden="hidden" type="text" id="login-method-input" name="login-method" value="">
-<!--          <div>-->
-<!--            <label for="email-login-method">البريد الإلكتروني</label>-->
-<!--            <input checked type="radio" id="email-login-method" name="login-method" value="email" onchange="CheckLoginMethod()">-->
-<!--          </div>-->
-<!--          <div>-->
-<!--            <label for="phone-login-method">رقم الهاتف</label>-->
-<!--            <input type="radio" id="phone-login-method" name="login-method" value="phone" onchange="CheckLoginMethod()">-->
-<!--          </div>-->
         </div>
         <div class="field-holder" id="phone-method-holder" style="display: none">
-          <label for="customer-phone" class="input_label">رقم الهاتف</label>
+          <label for="customer-phone" class="input_label">رقم الهاتف الشخصي</label>
           <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" style="text-align: right" maxlength="10">
         </div>
         <div class="field-holder" id="email-method-holder" style="display: none">
@@ -48,17 +40,16 @@
         </div>
         <div class="field-holder password-container" style="display: none">
           <label for="customer-password" class="input_label">كلمة المرور</label>
-         <div class="password-div">
-          <input type="password" id="customer-password" class="input_field" name="customer-password" maxlength="20">
-          <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
-            visibility_off
-          </span>
+          <div class="password-div">
+            <input type="password" id="customer-password" class="input_field" name="customer-password" maxlength="20">
+            <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+              visibility_off
+            </span>
+          </div>
+          <a href="{{url_for('forgot_password')}}" class="forgot-password" style="cursor: pointer">
+            هل نسيت كلمة المرور؟
+          </a>
         </div>
-<!--          <a href="{{url_for('forgot_password')}}" class="forgot-password" style="cursor: pointer">&lt;!&ndash; onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">&ndash;&gt;-->
-<!--            هل نسيت كلمة المرور؟-->
-<!--          </a>-->
-        </div>
-        <br>
         <button type="submit" class="sign-in-button" style="display: none">
           تسجيل الدخول
         </button>
@@ -86,83 +77,35 @@
         }
     }
 
-    function PhoneMethod() {
-        let methods = document.getElementsByClassName("login-method");
-        for (let i = 0; i < methods.length; i++) {
-            methods[i].style.display = "none";
-        }
-
-        document.getElementById("login-method-title").style.display = "none";
-
-        document.getElementById("phone-method-holder").style.display = "block";
-        document.getElementById("phone-login-title").style.display = "block";
-        document.getElementById("customer-phone").setAttribute("required", "true");
-
-        document.getElementById("email-method-holder").style.display = "none";
-        document.getElementById("email-login-title").style.display = "none";
-        document.getElementById("customer-email").removeAttribute("required");
-
-        document.getElementsByClassName("password-container")[0].style.display = "block";
-        document.getElementById("customer-password").setAttribute("required", "true");
-        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
-    }
-
-    function EmailMethod() {
-        let methods = document.getElementsByClassName("login-method");
-        for (let i = 0; i < methods.length; i++) {
-            methods[i].style.display = "none";
-        }
-
-        document.getElementById("login-method-title").style.display = "none";
-
-        document.getElementById("email-method-holder").style.display = "block";
-        document.getElementById("email-login-title").style.display = "block";
-        document.getElementById("customer-email").setAttribute("required", "true");
-
-        document.getElementById("phone-method-holder").style.display = "none";
-        document.getElementById("phone-login-title").style.display = "none";
-        document.getElementById("customer-phone").removeAttribute("required");
-
-        document.getElementsByClassName("password-container")[0].style.display = "block";
-        document.getElementById("customer-password").setAttribute("required", "true");
-        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
-    }
-
     function CheckLoginMethod(button) {
-        // console.log("Enter");
-        // let methods = document.getElementsByClassName("login-method");
-        // for (let i = 0; i < methods.length; i++) {
-        //     methods[i].style.display = "none";
-        // }
+      document.getElementById("login-method-title").style.display = "none";
 
-        document.getElementById("login-method-title").style.display = "none";
+      if (button.id === "phone-method") {
+          document.getElementById("login-method-input").value = "phone";
 
-        if (button.id === "phone-method") {
-            document.getElementById("login-method-input").value = "phone";
+          document.getElementById("phone-method-holder").style.display = "block";
+          document.getElementById("phone-login-title").style.display = "block";
+          document.getElementById("customer-phone").setAttribute("required", "true");
 
-            document.getElementById("phone-method-holder").style.display = "block";
-            document.getElementById("phone-login-title").style.display = "block";
-            document.getElementById("customer-phone").setAttribute("required", "true");
+          document.getElementById("email-method-holder").style.display = "none";
+          document.getElementById("email-login-title").style.display = "none";
+          document.getElementById("customer-email").removeAttribute("required");
+      } else {
+          document.getElementById("login-method-input").value = "email";
 
-            document.getElementById("email-method-holder").style.display = "none";
-            document.getElementById("email-login-title").style.display = "none";
-            document.getElementById("customer-email").removeAttribute("required");
-        } else {
-            document.getElementById("login-method-input").value = "email";
+          document.getElementById("email-method-holder").style.display = "block";
+          document.getElementById("email-login-title").style.display = "block";
+          document.getElementById("customer-email").setAttribute("required", "true");
 
-            document.getElementById("email-method-holder").style.display = "block";
-            document.getElementById("email-login-title").style.display = "block";
-            document.getElementById("customer-email").setAttribute("required", "true");
+          document.getElementById("phone-method-holder").style.display = "none";
+          document.getElementById("phone-login-title").style.display = "none";
+          document.getElementById("customer-phone").removeAttribute("required");
+      }
 
-            document.getElementById("phone-method-holder").style.display = "none";
-            document.getElementById("phone-login-title").style.display = "none";
-            document.getElementById("customer-phone").removeAttribute("required");
-        }
-
-        document.getElementById("new-user").style.display = "block";
-        document.getElementsByClassName("password-container")[0].style.display = "block";
-        document.getElementById("customer-password").setAttribute("required", "true");
-        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+      document.getElementById("new-user").style.display = "block";
+      document.getElementsByClassName("password-container")[0].style.display = "block";
+      document.getElementById("customer-password").setAttribute("required", "true");
+      document.getElementsByClassName("sign-in-button")[0].style.display = "block";
     }
   </script>
   {% endblock %}

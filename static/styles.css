@@ -55,7 +55,7 @@ body {
 }
 
 @media (min-width: 767px) {
-  .add-update-product-form div {
+  .add-update-product-form.div {
     width: 50vw;
   }
 }
@@ -1053,6 +1053,9 @@ product {
   padding-bottom: 10px;
   transition-duration: 0.5s;
   font-size: 1em;
+}
+
+#books-container product {
   font-family: Reem Kufi, Noto Naskh Arabic;
 }
 
@@ -1424,7 +1427,7 @@ product hr {
 .login-method {
   background-color: #cce5ff;
   font-family: 'Noto Naskh Arabic', sans-serif;
-  font-size: 1em;
+  font-size: 0.8em;
   cursor: pointer;
   border: 0;
   border-radius: 5px;
@@ -2011,7 +2014,16 @@ product hr {
 
 .img-holder {
   position: relative;
+  width: 30%;
+  height: 400px;
+  padding-bottom: 30px;
 }
+
+.img-holder img {
+  object-fit: cover;
+  height: 100%;
+}
+
 
 .image-delete {
   position: absolute;
