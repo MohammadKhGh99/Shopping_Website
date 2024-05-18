@@ -38,7 +38,7 @@ body {
 /* ########################## add_product.html CSS ######################### */
 
 
-#add-product-form {
+.add-update-product-form {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,34 +49,38 @@ body {
 }
 
 @media (max-width: 767px) {
-  #add-product-form div {
+  .add-update-product-form div {
     width: 80vw;
   }
 }
 
 @media (min-width: 767px) {
-  #add-product-form div {
+  .add-update-product-form div {
     width: 50vw;
   }
 }
 
-
-#add-product-form .input-field {
-  width: 100%;
+.add-update-product-form .input-field,
+#search-product-id-input {
   padding-right: 10px;
   height: 50px;
   line-height: 50px;
   border: 1px solid rgba(12, 27, 84, .5);
   font-family: "Noto Naskh Arabic", serif;
   font-size: 0.8em;
-  
+
+}
+
+.add-update-product-form .input-field {
+  width: 100%;
 }
 
 #product-description {
   height: 100px;
 }
 
-#go-new-added-button, #save-product-button {
+#go-new-added-button,
+#save-product-button {
   font-size: 1em;
   font-family: 'Noto Naskh Arabic', sans-serif;
   text-decoration: none;
@@ -92,12 +96,30 @@ body {
   margin: 30px 40vw 30px 0;
 }
 
-#go-new-added-button a{
+#go-new-added-button a {
   text-decoration: none;
   color: black;
+  transition-duration: 0.5s;
 }
 
-#go-new-added-button:hover, #save-product-button:hover {
+#go-new-added-button:hover,
+#save-product-button:hover,
+#add-image-button:hover,
+#order-info-button:hover,
+#user-more-info-button:hover,
+.error-flash-message,
+.warning-flash-message,
+.success-flash-message,
+#dashboard-link-bar a:hover,
+#checkout-button:hover,
+.sign-in-button:hover,
+.handle-products-button:hover,
+.login-method:hover,
+#approve-order-button:hover,
+#add-to-cart-button:hover,
+#update-info-button:hover,
+.sign-up-button:hover,
+#search-product-id-button:hover  {
   background-color: #e5e5e5;
 }
 
@@ -113,18 +135,15 @@ body {
   transition-duration: 0.5s;
 }
 
-#add-image-button:hover {
-  background-color: #e5e5e5;
-}
-
-#add-product-form .field-holder {
+.add-update-product-form .field-holder {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: column;
 }
 
-#add-product-form #type-price-quantity {
+.add-update-product-form #type-price-quantity, 
+#profile-info-form ul li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -143,32 +162,19 @@ body {
 
 /* ########################## all_customers_orders.html CSS ######################### */
 
-#all-orders-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 20px 20px 20px 20px;
-  max-width: 100%;
-}
-
 @media (max-width: 767px) {
   .all-orders-table {
     font-size: 0.7em;
   }
-
   .all-orders-table select {
     font-size: 0.8em;
   }
-
   .order-info-link span {
     font-size: 1.2em;
   }
-
   .order-total-td {
     font-size: 1em;
   }
-  
 }
 
 @media (min-width: 767px) {
@@ -178,14 +184,13 @@ body {
   .all-orders-table select {
     font-size: 1em;
   }
-
   .order-info-link span {
     font-size: 1.5em;
   }
-
 }
 
-.order-info-link {
+.order-info-link,
+#product-left-upper span {
   font-size: 1em;
 }
 
@@ -196,13 +201,11 @@ body {
   margin-bottom: 50px;
 }
 
-
-.all-orders-table tr th {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-
-.order-id-td, .order-total-td, .order-date-td, .order-status-td, .order-number {
+.order-id-td,
+.order-total-td,
+.order-date-td,
+.order-status-td,
+.order-number {
   vertical-align: middle;
   text-align: center;
   /*padding: 10px 0 0 0;*/
@@ -212,7 +215,7 @@ body {
   height: 30px;
 }
 
-.order-customer-info div{
+.order-customer-info div {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -224,8 +227,8 @@ body {
 .order-status-td div {
   width: 100%;
   font-size: 0.9em;
-  display: flex; 
-  justify-content: center; 
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
@@ -233,7 +236,8 @@ body {
   padding: 0;
 }
 
-#all-orders-container td {
+#all-orders-container td,
+#all-users-container table td {
   text-align: center;
   vertical-align: middle;
   padding: 10px 0 10px 0;
@@ -241,7 +245,7 @@ body {
   border-collapse: collapse;
 }
 
-#all-orders-container td img {
+#all-orders-container td img, #orders-container td img {
   width: 100%;
   height: 100%;
 }
@@ -259,10 +263,6 @@ body {
   margin: 0 10px 0 10px;
 }
 
-#order-info-button:hover {
-  background-color: #e5e5e5;
-}
-
 #edit-price-button {
   background-color: transparent;
   border: 0;
@@ -270,7 +270,14 @@ body {
   font-size: 1em;
 }
 
-#edit-price-button span {
+#edit-price-button span,
+#last-footer iconify-icon,
+.profile-icon:hover,
+#side-menu-footer a:hover,
+.sign-container form a,
+.menu-icon:hover,
+.search-icon:hover,
+.shopping-cart-icon:hover {
   color: black;
 }
 
@@ -289,9 +296,11 @@ body {
   margin-top: 20px;
 }
 
-/* ########################## Base.html CSS ######################### */
+/* ########################## all_customers.html CSS ######################### */
 
-#all-users-container {
+#all-users-container,
+#all-orders-container,
+#orders-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -308,35 +317,25 @@ body {
   margin-bottom: 50px;
 }
 
-#all-users-container table tr th  {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-
 @media (max-width: 767px) {
   #all-users-container table td {
     font-size: 0.7em;
   }
+
   #all-users-container table td button {
     font-size: 0.7em;
 
   }
+
   #all-users-container th {
     font-size: 0.8em;
   }
 }
+
 @media (min-width: 767px) {
   #all-users-container table td {
     font-size: 1em;
   }
-}
-
-#all-users-container table td {
-  vertical-align: middle;
-  text-align: center;
-  padding: 10px 0 10px 0;
-  border: 1px solid black;
-  border-collapse: collapse;
 }
 
 #user-more-info-button {
@@ -353,10 +352,6 @@ body {
   transition-duration: 0.5s;
 }
 
-#user-more-info-button:hover {
-  background-color: #e5e5e5;
-}
-
 #all-users-container td a {
   display: inline-flex;
   justify-content: center;
@@ -369,7 +364,7 @@ body {
   color: #afaeae;
 }
 
-/* ########################## Base.html CSS ######################### */
+/* ########################## base.html CSS ######################### */
 
 .material-symbols-outlined {
   user-select: none;
@@ -391,7 +386,7 @@ header {
   align-items: center;
 }
 
-#header-left{
+#header-left {
   position: absolute;
   top: 40px;
   left: 50px;
@@ -412,17 +407,9 @@ header {
   align-items: center;
 }
 
-.error-flash-message {
-  background-color: #e5e5e5;
-}
-.warning-flash-message {
-  background-color: #e5e5e5;
-}
-
 .success-flash-message {
   animation: fadeOut 5s ease-in-out forwards;
   opacity: 1;
-  background-color: #e5e5e5;
 }
 
 @keyframes fadeOut {
@@ -442,7 +429,7 @@ header {
 #last-footer table {
   text-align: center;
   width: 100%;
-  border: 0; 
+  border: 0;
 }
 
 #last-footer table td {
@@ -468,40 +455,43 @@ header {
     font-size: 0.8em;
     border: 0;
   }
+
   .profile-icon {
     font-size: 1.8em;
     color: #AD7765;
   }
+
   .shopping-cart-icon {
     color: #AD7765;
     font-size: 1.8em;
   }
 }
+
 @media (min-width: 767px) {
   #last-footer table td {
     font-size: 1.2em;
   }
+
   #last-footer table th {
     font-size: 1em;
   }
+
   #last-footer table {
     border: 0;
   }
+
   .profile-icon {
     font-size: 1.5em;
     color: #AD7765;
   }
+
   .shopping-cart-icon {
     color: #AD7765;
     font-size: 1.5em;
   }
 }
 
-iconify-icon {
-  color: black;
-}
-
-iconify-icon:hover {
+#last-footer iconify-icon:hover {
   color: white;
 }
 
@@ -512,11 +502,8 @@ iconify-icon:hover {
   height: 30px;
 }
 
-#last-footer div iconify-icon, #contact-us iconify-icon {
-  color: black;
-}
-
-#last-footer div iconify-icon:hover, #contact-us iconify-icon:hover {
+#last-footer div iconify-icon:hover,
+#contact-us iconify-icon:hover {
   color: white;
 }
 
@@ -555,12 +542,12 @@ select {
 }
 
 #side-menu-footer {
-  background-color: white; 
-  border-top: 1px solid black; 
-  height: 50px; 
+  background-color: white;
+  border-top: 1px solid black;
+  height: 50px;
   display: flex;
   justify-content: space-around;
-  align-items:start;
+  align-items: start;
   margin-top: 10px;
   width: 100%;
 }
@@ -571,21 +558,15 @@ select {
   text-decoration: none;
 }
 
-#side-menu-footer a:hover {
-  color: black;
-}
-
-.profile-icon:hover {
-  color: black;
-}
-
 @keyframes pulse {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.3);
   }
+
   100% {
     transform: scale(1);
   }
@@ -635,6 +616,7 @@ select {
     font-size: 0.8em;
   }
 }
+
 @media (min-width: 767px) {
   #dashboard-link-bar a {
     font-size: 1em;
@@ -655,11 +637,6 @@ select {
 
 #dashboard-link-bar a:hover {
   text-decoration: underline;
-  background-color: #e5e5e5;
-}
-
-.shopping-cart-icon:hover {
-  color: black;
 }
 
 .counter {
@@ -705,17 +682,9 @@ select {
   color: #AD7765;
 }
 
-.search-icon:hover {
-  color: black;
-}
-
 .menu-icon {
   font-size: 30px;
   color: #AD7765;
-}
-
-.menu-icon:hover {
-  color: black;
 }
 
 .open-menu {
@@ -738,12 +707,12 @@ select {
   text-align: center;
 }
 
-#side-menu ul li{
+#side-menu ul li {
   display: flow-root;
   padding: 15px 10px;
 }
 
-#side-menu ul li:not(:last-child){
+#side-menu ul li:not(:last-child) {
   border-bottom: 1px solid gray;
   width: 70%;
 }
@@ -786,7 +755,7 @@ select {
   width: 100%;
   height: 100%;
   z-index: 2;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .coming-soon-side span {
@@ -806,7 +775,7 @@ select {
   width: 100vw;
   height: 100vh;
   z-index: 2;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -815,20 +784,21 @@ select {
 }
 
 @media (max-width: 767px) {
-  #search-menu, #side-menu {
+
+  #search-menu,
+  #side-menu,
+  #side-menu.open {
     width: 50vw;
   }
-  #side-menu.open {
-    width: 50vw; /* Slide into view */
-  }
 }
-  
+
 @media (min-width: 767px) {
-  #search-menu, #side-menu {
+  #search-menu,
+  #side-menu {
     width: 30vw;
-  }    
+  }
   #side-menu.open {
-    width: 35vw; /* Slide into view */
+    width: 35vw;
   }
 }
 
@@ -836,16 +806,21 @@ select {
   width: 70%;
 }
 
-#search-menu, #side-menu {
-  position: fixed; /* Position absolutely */
-  width: 0; /* Hide off-screen */
+#search-menu,
+#side-menu,
+filters {
+  position: fixed;
+  /* Position absolutely */
+  width: 0;
+  /* Hide off-screen */
   top: 0;
   bottom: 0;
   background-color: white;
-  transition: 0.5s; /* Smooth animation */
+  transition: 0.5s;
+  /* Smooth animation */
   z-index: 3;
   display: flex;
-  justify-content:flex-start;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   padding-top: 15px;
@@ -853,7 +828,8 @@ select {
 }
 
 #search-menu.open {
-  right: 0; /* Slide into view */
+  right: 0;
+  /* Slide into view */
 }
 
 #search-menu ul {
@@ -864,7 +840,7 @@ select {
   padding-right: 0;
 }
 
-#search-menu ul li{
+#search-menu ul li {
   display: flex;
   width: 100%;
   border-bottom: 1px solid gray;
@@ -885,7 +861,7 @@ select {
   text-align: left;
 }
 
-.breadcrumb-list ul{
+.breadcrumb-list ul {
   display: inline-flex;
   list-style: none;
   margin: 0;
@@ -902,7 +878,7 @@ select {
 
 /* ##################### books.html CSS ############################# */
 
-#container {
+#books-container {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
@@ -922,7 +898,7 @@ select {
   color: #e5e5e5;
 }
 
-#books-upper b{
+#books-upper b {
   font-size: 2em;
   margin-top: 50px;
 }
@@ -954,22 +930,9 @@ select {
   color: #AD7765;
 }
 
-filters {
-  position: fixed; /* Position absolutely */
-  right: -1000px; /* Hide off-screen */
-  top: 0;
-  bottom: 0;
-  width: 50vw;
-  background-color: #ffffff;
-  transition: right 0.3s ease-in-out; /* Smooth animation */
-  z-index: 3;
-  display: block;
-  padding-top: 15px;
-  overflow: auto;
-}
-
 filters.open {
-  right: 0; /* Slide into view */
+  right: 0;
+  /* Slide into view */
 }
 
 #filters-close-side-menu {
@@ -984,7 +947,7 @@ filters ul {
   list-style: none;
 }
 
-filters ul li{
+filters ul li {
   user-select: none;
   display: block;
   padding: 15px 15px;
@@ -1009,7 +972,7 @@ filters ul li:last-child {
   cursor: default;
 }
 
-filters ul li:not(:last-child){
+filters ul li:not(:last-child) {
   border-bottom: 1px solid gray;
 }
 
@@ -1055,6 +1018,7 @@ filters ul li:not(:last-child){
     row-gap: 40px;
     max-width: 100%;
   }
+
   product .upper-product {
     display: flex;
     justify-content: center;
@@ -1063,14 +1027,16 @@ filters ul li:not(:last-child){
     height: 70%;
     padding-bottom: 5px;
   }
+
   product .upper-product img {
     width: 80%;
     height: 100%;
   }
+
   .lower-product span {
     font-size: 1.2em;
   }
-  
+
 }
 
 product {
@@ -1080,7 +1046,7 @@ product {
   color: #AD7765;
   background-color: white;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
-  -2px -2px 2px rgba(0, 0, 0, 0.2);
+    -2px -2px 2px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   width: 100%;
   height: 100%;
@@ -1091,8 +1057,7 @@ product {
 }
 
 product:hover {
-  /* background-color: #e5e5e5; */
-  box-shadow: 12px 12px 16px 16px rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  box-shadow: 12px 12px 16px 16px rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
 product hr {
@@ -1103,19 +1068,6 @@ product hr {
 }
 
 /* ##################### checkout.html CSS ############################# */
-
-#checkout-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-#checkout-container form {
-  text-align: right;
-  width: 350px;
-  color: #525d85;
-}
 
 .input_field {
   width: 100%;
@@ -1136,59 +1088,175 @@ product hr {
   margin: 20px 0 20px 0;
 }
 
-#checkout-button, #register-guest-button, #continue-as-guest-button {
-  font-family: "Noto Naskh Arabic",serif;
+#checkout-button,
+#register-guest-button,
+#continue-as-guest-button {
+  font-family: "Noto Naskh Arabic", serif;
   border: 0;
   cursor: pointer;
   padding: 10px;
   transition-duration: 0.5s;
   text-wrap: nowrap;
-  border-radius: 10px; 
+  border-radius: 10px;
 }
 
 #checkout-button {
   background-color: #cce5ff;
 }
 
-#register-guest-button, #continue-as-guest-button {
-  scale: 0.8; 
+#register-guest-button,
+#continue-as-guest-button {
+  scale: 0.8;
   background-color: rgb(248, 128, 128);
 }
 
-#checkout-button:hover {
-  background-color: #e5e5e5;
-}
-
-#register-guest-button:hover, #continue-as-guest-button:hover {
+#register-guest-button:hover,
+#continue-as-guest-button:hover {
   background-color: #f0f0f0;
 }
 
-/*rgb(192, 191, 191)*/
-
-.password-container {
-  position: relative;
-}
-
 .error-border {
-    border-color: red !important; /* Red border color */
-}
-
-.show-password-btn {
-  position: absolute;
-  left: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
+  border-color: red !important;
+  /* Red border color */
 }
 
 /* ##################### clothes.html CSS ############################# */
 
+/* ##################### forgot_password.html CSS ############################# */
 
+.sign-in-button {
+  width: 100%;
+  background-color: #cce5ff;
+  font-family: "Noto Naskh Arabic", serif;
+  border: 0;
+  cursor: pointer;
+  margin-right: 2px;
+  transition-duration: 0.5s;
+}
 
+.sign-container form a:hover {
+  color: gray;
+}
 
+/* ##################### gifts_corner.html CSS ############################# */
 
+#container {
+  display: block;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
 
+@media (max-width: 767px) {
+  products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 35px 0 35px 0;
+    row-gap: 20px;
+    max-width: 100%;
+    width: 100%;
+  }
 
+  products a {
+    max-width: 90%;
+    padding-right: 10px;
+  }
+
+  product .upper-product {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    width: 100%;
+    height: 70%;
+  }
+
+  product .upper-product img {
+    width: 80%;
+    height: 100%;
+  }
+
+}
+
+@media (min-width: 767px) {
+  products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 35px 20px 50px 20px;
+    column-gap: 40px;
+    row-gap: 40px;
+    max-width: 100%;
+  }
+
+  product .upper-product {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    width: 100%;
+    height: 70%;
+    padding-bottom: 5px;
+  }
+
+  product .upper-product img {
+    width: 80%;
+    height: 100%;
+  }
+}
+
+product {
+  display: block;
+  text-align: center;
+  border-radius: 5%;
+  color: #AD7765;
+  background-color: white;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
+    -2px -2px 2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 10px;
+  transition-duration: 0.5s;
+}
+
+product:hover {
+  box-shadow: 12px 12px 16px 16px rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+product hr {
+  height: 1px;
+  width: 70%;
+  background-color: gray;
+  color: gray;
+}
+
+/* ##################### handling_products.html CSS ############################# */
+
+#products-handling-container {
+  margin: 20px 0 20px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.handle-products-button {
+  cursor: pointer;
+  background-color: #cce5ff;
+  border: 0;
+  font-size: 1em;
+  font-family: "Noto Naskh Arabic", serif;
+  width: 5em;
+  height: 3em;
+  transition-duration: 0.5s;
+}
+
+.handle-products-button a {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
 
 /* ##################### Home.html CSS ############################# */
 
@@ -1202,45 +1270,61 @@ product hr {
 }
 
 @media (max-width: 767px) {
-  .clothes-shopping span, .gifts_corner-shopping span, .books-shopping span {
+  .clothes-shopping span,
+  .gifts_corner-shopping span,
+  .books-shopping span {
     font-size: 0.65em;
   }
 }
+
 @media (min-width: 767px) {
-  .clothes-shopping span, .gifts_corner-shopping span, .books-shopping span {
+
+  .clothes-shopping span,
+  .gifts_corner-shopping span,
+  .books-shopping span {
     font-size: 1em;
   }
 }
 
-.clothes-shopping, .gifts_corner-shopping, .books-shopping {
+.clothes-shopping,
+.gifts_corner-shopping,
+.books-shopping {
   width: 25vw;
   text-align: center;
   display: block;
 }
 
-.clothes-shopping span, .gifts_corner-shopping span, .books-shopping span {
-  color: black; 
+.clothes-shopping span,
+.gifts_corner-shopping span,
+.books-shopping span {
+  color: black;
   font-family: 'Reem Kufi', sans-serif
 }
 
-.clothes-shopping a:hover, .gifts_corner-shopping a:hover, .books-shopping a:hover {
+.clothes-shopping a:hover,
+.gifts_corner-shopping a:hover,
+.books-shopping a:hover {
   /* background-color: rgb(184, 184, 184); */
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-.clothes-shopping a, .gifts_corner-shopping a, .books-shopping a {
+.clothes-shopping a,
+.gifts_corner-shopping a,
+.books-shopping a {
   width: 100%;
   height: 100%;
   display: block;
   text-decoration: none;
   border-radius: 20% 20% 10% 10%;
-  
+
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), -1px -1px 1px rgba(0, 0, 0, 0.2);
   transition-duration: 0.5s;
   overflow: hidden;
 }
 
-.clothes-shopping a img, .gifts_corner-shopping a img, .books-shopping a img {
+.clothes-shopping a img,
+.gifts_corner-shopping a img,
+.books-shopping a img {
   width: 100%;
   height: 100%;
   display: block;
@@ -1258,7 +1342,7 @@ product hr {
   width: 100%;
   height: 100%;
   z-index: 2;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .coming-soon span {
@@ -1269,4 +1353,673 @@ product hr {
   user-select: none;
 }
 
+/* ##################### login.html CSS ############################# */
 
+.sign-container {
+  display: block;
+  justify-content: center;
+  max-width: 100%;
+  text-align: center;
+}
+
+.sign-container form a,
+#user-info-title:hover {
+  text-decoration: underline;
+}
+
+.password-div {
+  position: relative;
+  width: 100%;
+}
+
+.password-div input {
+  width: 100%;
+}
+
+.password-div a {
+  background-color: transparent;
+  border: 0;
+  text-decoration: underline;
+  position: absolute;
+  top: 30%;
+  left: 0;
+  /*top: 500px;*/
+  font-size: 0.8em;
+}
+
+.sign-in-button {
+  width: 100%;
+  background-color: #cce5ff;
+  font-family: "Noto Naskh Arabic", serif;
+  border: 0;
+  cursor: pointer;
+  /*transition: left 0.5s ease-in-out;*/
+  margin-right: 2px;
+  transition-duration: 0.5s;
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-container a {
+  font-size: 0.7em;
+}
+
+.show-password-btn {
+  position: absolute;
+  left: 5px;
+  top: 48%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+#login-method-selector {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+
+.login-method {
+  background-color: #cce5ff;
+  font-family: 'Noto Naskh Arabic', sans-serif;
+  font-size: 1em;
+  cursor: pointer;
+  border: 0;
+  border-radius: 5px;
+  transition-duration: 0.5s;
+}
+
+/* ##################### order_approved.html CSS ############################# */
+
+#approve-order-button {
+  /*width: 100%;*/
+  background-color: #cce5ff;
+  font-family: "Noto Naskh Arabic", serif;
+  border: 0;
+  cursor: pointer;
+  margin-right: 2px;
+  margin-bottom: 20px;
+  transition-duration: 0.5s;
+}
+
+#approved-contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 20px;
+}
+
+#approved-contact button {
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  cursor: pointer;
+  border: 0;
+}
+
+/* ##################### order_info.html CSS ############################# */
+
+#order-info-container {
+  padding: 50px;
+}
+
+#order-info-container table,
+#order-info-container tr,
+#order-info-container th,
+#order-info-container td,
+#all-users-container table tr th,
+.all-orders-table tr th {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#order-info-container td {
+  vertical-align: top;
+  text-align: center;
+  padding: 10px 0 0 0;
+  font-size: 0.9em;
+}
+
+#order-info-container img {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  width: auto;
+}
+
+/* ##################### orders.html CSS ############################# */
+
+.all-orders-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.order-id-td,
+.order-total-td,
+.order-date-td,
+.order-number {
+  vertical-align: middle;
+  text-align: center;
+  /*padding: 10px 0 0 0;*/
+}
+
+.order-customer-info div {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+
+.order-status-td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px 0 0 0;
+}
+
+.order-status-td p {
+  width: 90%;
+  display: inline-block;
+  font-size: 0.9em;
+  border: 1px solid black;
+}
+
+.order-content {
+  padding: 0;
+}
+
+.each-order-table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 0.8em;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+#orders-container td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 0 10px 0;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.each-order-table td a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+#order-info-button {
+  color: black;
+  background-color: #cce5ff;
+  cursor: pointer;
+  border: 0;
+  text-decoration: none;
+  padding: 5px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0 10px 0 10px;
+}
+
+/* ##################### product.html CSS ############################# */
+
+#product-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+#product-left-side {
+  display: flex;
+  text-align: right;
+  flex-direction: column;
+  width: 35vw;
+}
+
+#product-left-upper {
+  display: flex;
+  text-align: right;
+  flex-direction: column;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 0.9em;
+}
+
+#product-right-side {
+  width: 65vw;
+  height: 100%;
+}
+
+#add-to-cart-button {
+  background-color: #cce5ff;
+  border: 0;
+  font-family: "Noto Naskh Arabic", sans-serif;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition-duration: 0.5s;
+  width: 10em;
+
+}
+
+#product-left-lower {
+  display: flex;
+  text-align: right;
+  flex-direction: column;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 1em;
+}
+
+#product-left-lower span {
+  margin-bottom: 10px;
+}
+
+#images-gallery-container {
+  position: relative;
+  width: 90%;
+  height: 90%;
+}
+
+.slides {
+  display: none;
+  /*transition: width 0.5s ease-in-out;*/
+  width: 100%;
+  height: 100%;
+}
+
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  width: auto;
+  padding-right: 16px;
+  padding-left: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+  height: 100%;
+  text-align: center;
+  line-height: 30px;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition-duration: 0.5s;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.prev {
+  left: 0;
+}
+
+.prev:hover,
+.next:hover {
+  background-color: rgba(225, 224, 224, 0.472);
+}
+
+#wish-product {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.wish-button {
+  border: 1px solid black;
+  border-radius: 50%;
+  padding: 3px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.wish-button:hover {
+  background-color: #f15252;
+}
+
+.modal {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  z-index: 1;
+  padding-top: 5px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  padding: 0 20px 20px 20px;
+  cursor: pointer;
+  object-fit: contain;
+  transform-origin: top;
+}
+
+@media only screen and (max-width: 767px) {
+  .modal-content {
+    width: 100%;
+    max-width: none;
+    overflow: auto;
+  }
+}
+
+.close-img {
+  cursor: pointer;
+  color: white;
+  font-size: 40px;
+  margin: 100px 50px 50px 50px;
+}
+
+#product-num-title {
+  font-size: 0.8em;
+  margin-bottom: 30px;
+}
+
+/* ##################### profile.html CSS ############################# */
+
+#profile-container {
+  flex-direction: column;
+}
+
+#upper-profile div {
+  padding: 0 100px 0 100px;
+}
+
+#main-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-decoration: none;
+  list-style: none;
+  width: 80%;
+  padding-right: 0;
+  padding-bottom: 10px;
+}
+
+#profile-info-form ul {
+  display: flex;
+  justify-content: right;
+  align-items: start;
+  flex-direction: column;
+  text-decoration: none;
+  list-style: none;
+  width: 100%;
+  padding-right: 0;
+}
+
+#profile-info-form label {
+  font-size: 0.8em;
+}
+
+#upper-profile-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#profile-info-form ul li:not(:last-child) {
+  border-bottom: 1px solid gray;
+}
+
+#profile-info-form ul li h4 {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+#profile-info-form ul li div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#profile-info-form input {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-family: "Noto Naskh Arabic", sans-serif;
+  width: 70%;
+}
+
+#update-info-button {
+  cursor: pointer;
+  width: 12em;
+  background-color: #cce5ff;
+  border: 0;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 0.8em;
+  text-wrap: nowrap;
+  padding: 10px;
+  transition-duration: 0.5s;
+}
+
+#profile-greeting {
+  font-size: 1.5em;
+  margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+  #profile-greeting {
+    font-size: 1em;
+  }
+}
+
+/* ##################### register.html CSS ############################# */
+
+.sign-container form,
+#checkout-container form {
+  text-align: right;
+  width: 350px;
+  color: #525d85;
+}
+
+.input_label {
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sign-up-button {
+  width: 100%;
+  background-color: #cce5ff;
+  font-family: "Noto Naskh Arabic", serif;
+  border: 0;
+  cursor: pointer;
+  margin-right: 2px;
+  transition-duration: 0.5s;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.field-holder {
+  margin-bottom: 10px;
+}
+
+/* ##################### remove_product.html CSS ############################# */
+
+#removing-product-container,
+#removing-product-container form,
+#lower-profile,
+#upper-profile,
+#order-approved-container,
+#order-info-container,
+#checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#removing-product-container {
+  padding: 30px 0 30px 0;
+}
+
+#removing-product-container form div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ##################### search_update_product.html CSS ############################# */
+
+#search-updating-product-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px 0 30px 0;
+}
+
+#search-product-id-button {
+  font-family: "Noto Naskh Arabic", sans-serif;
+  font-size: 1em;
+  background-color: #cce5ff;
+  border: 0;
+  cursor: pointer;
+  width: 60px;
+  height: 50px;
+  transition-duration: 0.5s;
+}
+
+#search-product-id-input {
+  width: 20%;
+}
+
+/* ##################### shopping_cart.html CSS ############################# */
+
+#shopping-cart-container {
+  padding: 20px 20px 20px 20px;
+}
+
+#item-handle button {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+#item-quantity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+#item-quantity button {
+  cursor: pointer;
+  width: 25px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 0;
+  color: #AD7765;
+}
+
+#item-quantity button:hover {
+  color: black;
+}
+
+#shopping-cart-container table,
+#shopping-cart-container th,
+#shopping-cart-container td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 1em;
+}
+
+#shopping-cart-container table {
+  width: 100%;
+}
+
+#shopping-cart-container td {
+  text-align: center;
+  width: 25%;
+}
+
+#shopping-cart-container td a {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: inline-flex;
+  margin: 13px 0 0 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#shopping-cart-container td img {
+  /*object-fit: fill;*/
+  width: 100%;
+  height: 100%;
+
+}
+
+.shopping-cart-buttons {
+  /*width: 100%;*/
+  background-color: #cce5ff;
+  font-family: "Noto Naskh Arabic",serif;
+  border: 0;
+  cursor: pointer;
+  margin-right: 2px;
+  transition-duration: 0.5s;
+}
+
+.shopping-cart-buttons:hover {
+  background-color: #e5e5e5;
+}
+
+.shopping-cart-buttons a {
+  text-decoration: none;
+  color: black;
+}
+
+.cart-item-quantity-select {
+  margin-bottom: 20px;
+  width: 50px;
+}
+
+/* ##################### update_product.html CSS ############################# */
+
+.img-holder {
+  position: relative;
+}
+
+.image-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+.image-delete:hover {
+  color: #cce5ff;
+}

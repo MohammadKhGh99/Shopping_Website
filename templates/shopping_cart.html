@@ -5,96 +5,6 @@
   <title>سلة التسوق</title>
 </head>
 
-<style>
-
-  #shopping-cart-container {
-    padding: 20px 20px 20px 20px;
-  }
-
-  #item-handle button {
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-  }
-
-  #item-quantity {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    row-gap: 20px;
-  }
-
-  #item-quantity button {
-    cursor: pointer;
-    width: 25px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border: 0;
-    color: #AD7765;
-  }
-
-  #item-quantity button:hover {
-    color: black;
-  }
-
-  table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    font-size: 1em;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  td {
-    text-align: center;
-    width: 25%;
-  }
-
-  #shopping-cart-container td a {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    display: inline-flex;
-    margin: 13px 0 0 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  td img {
-    /*object-fit: fill;*/
-    width: 100%;
-    height: 100%;
-
-  }
-
-  .shopping-cart-buttons {
-    /*width: 100%;*/
-    background-color: #cce5ff;
-    font-family: "Noto Naskh Arabic",serif;
-    border: 0;
-    cursor: pointer;
-    margin-right: 2px;
-    transition-duration: 0.5s;
-  }
-
-  .shopping-cart-buttons:hover {
-    background-color: #e5e5e5;
-  }
-
-  .shopping-cart-buttons a {
-    text-decoration: none;
-    color: black;
-  }
-
-</style>
-
 <body>
 {% extends "base.html" %}
 
@@ -154,7 +64,7 @@
               نفد المخزون
             </span>
             {% endif %}
-            <select id="select{{item[0]}}" name="select{{item[0]}}" onchange="UpdateCart(this)">
+            <select id="select{{item[0]}}" class="cart-item-quantity-select" name="select{{item[0]}}" onchange="toggleUpdate(this)">
               <option value="0">0</option>
               {% for x in range(item[5]) %}
               <option value="{{ x + 1 }}">{{ x + 1 }}</option>
@@ -172,7 +82,6 @@
               {% endif %}
             </select>
           </div>
-          <br>
           <button disabled class="shopping-cart-buttons" onclick="toggleUpdate(this)">
             تعديل السلة
             {% if item[5] == 0 %}
@@ -181,11 +90,6 @@
               </script>
             {% endif %}
           </button>
-  <!--        <button id="delete-cart-item-button" onclick="DeleteCartItem(this)">-->
-          <span class="material-symbols-outlined image-delete" onclick="DeleteCartItem(this)">
-            delete
-          </span>
-  <!--        </button>-->
         </td>
         <script>
             if (parseInt("{{item[5]}}") === 0) {
@@ -242,22 +146,12 @@
 
       function DeleteCartItem(button) {
           // the wanted tag to remove from cart
-          const toDelete = button.parentNode.parentNode.parentNode;
+          const toDelete = button.parentNode.parentNode;
           // the parent of the wanted tag to remove child
-          const parenOftDeleted = toDelete.parentNode;
+          const parenOfDeleted = toDelete.parentNode;
           // take id, price and quantity from 3 hidden td tags
           const itemId = toDelete.querySelectorAll("td")[1].textContent;
-          // const price = parseFloat(toDelete.querySelectorAll("td")[2].textContent);
-          // const quantity = parseInt(toDelete.querySelectorAll("td")[3].textContent);
           console.log("item id:" + itemId.toString());
-          // put the value of the hidden input tag as the wanted item's id to remove from cart
-          // document.getElementById("deleted-id").value = itemId;
-                // change the cart counter as the quantity of the removed product
-          // const newCounter = parseInt(localStorage.getItem("cartCounter")) - quantity;
-          // counter.textContent = newCounter.toString();
-          // store the new cart counter
-          // localStorage.setItem("cartCounter", newCounter.toString());
-                // const newCartItems = JSON.parse(localStorage.getItem("cartItems"));
           // check this line when running
           // remove the product from cart items array
           delete retrievedArray[itemId];
@@ -265,19 +159,12 @@
           localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
           // put the changed array in the hidden input to retrieve in python
           document.getElementById("cart-items-input").value = localStorage.getItem("cartItems")
-          // take the total of the cart
-          // const totalDiv = document.getElementById("total-price").querySelector("b");
-          // const beforeSum = parseFloat(totalDiv.textContent);
-          // modify the total of the cart as required
-          // const totalSum = beforeSum - (quantity * price);
-          // totalDiv.textContent = totalSum.toString();
-                // const deleteForm = document.getElementById("delete-form");
-          parenOftDeleted.removeChild(toDelete);
-          // deleteForm.submit();
+          parenOfDeleted.removeChild(toDelete);
       }
 
       function UpdateCart(select) {
-          select.parentNode.parentNode.querySelector("button").removeAttribute("disabled");
+        select.parentNode.parentNode.querySelector("button").removeAttribute("disabled");
+        /*
           // the parent of hidden td tags
           const parentDiv = select.parentNode.parentNode.parentNode;
           // take the values of the hidden td tags
@@ -303,29 +190,48 @@
           document.getElementById("cart-update").value = "Yes";
           
           // document.getElementById("update-form" + curId).submit();
+          */
         }
         
-        function toggleUpdate(button) {
+        function toggleUpdate(select) {
           // the parent of hidden td tags
-          const parentDiv = button.parentNode.parentNode;
+          const parentDiv = select.parentNode.parentNode.parentNode;
           const price = parentDiv.querySelectorAll("td")[2].textContent;
           const quantityDiv = parentDiv.querySelectorAll("td")[3];
           // the initial quantity of the edited item
           const initialQuantity = parseInt(quantityDiv.textContent);
+          console.log("initial quantity: " + initialQuantity.toString());
           // the new selected quantity by select tag
-          const newQuantity = parseInt(document.querySelector("#item-quantity select").value);
+          const newQuantity = parseInt(parentDiv.querySelector("#item-quantity select").value);
+          console.log("new quantity: " + newQuantity.toString());
           // store the new counter
           let newCounter = parseInt(localStorage.getItem("cartCounter"));
+          console.log("new counter: " + newCounter.toString());
+
           const diff = (newQuantity - initialQuantity);
+          console.log("diff: " + diff.toString());
           newCounter += diff;
+
           localStorage.setItem("cartCounter", newCounter);
           counter.textContent = newCounter.toString();
           quantityDiv.textContent = newQuantity;
+
+          const curId = parentDiv.querySelectorAll("td")[1].textContent;
+          retrievedArray[curId] = newQuantity.toString();
+
+          parentDiv.querySelector("select").value = newQuantity;
           const totalDiv = document.getElementById("total-price").querySelector("b");
           let newTotal = parseFloat(totalDiv.textContent);
           newTotal += parseFloat(price) * diff;
           totalDiv.textContent = newTotal.toString();
-          DeleteCartItem(button);
+          if (newQuantity == 0){
+            const parenOfDeleted = parentDiv.parentNode;
+            const itemId = parentDiv.querySelectorAll("td")[1].textContent;
+            delete retrievedArray[curId];
+            parenOfDeleted.removeChild(parentDiv);
+          }
+          localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+          document.getElementById("cart-items-input").value = localStorage.getItem("cartItems");
           document.querySelector(".shopping-cart form").submit();
       }
   </script>

@@ -265,18 +265,6 @@ def login():
                 user = load_user(res_rows[0][0])
                 # login the current user
                 login_user(user)
-                # TODO
-                # todo - should I concatenate both anonymous and stored carts? I think NO
-                # store the current cart items in the database to include them in customer's database
-                # with sqlite3.connect("Shopping.db") as connection:
-                # 	cursor = connection.cursor()
-                # 	try:
-                #
-                # 	except Exception as e:
-                #       send_error(e)
-                # 		connection.rollback()
-                # 		flash("فشل تحديث سلة المشتريات الحالية\nنوع الخطأ: " + str(e), "error")
-                # 		# todo - what happens when adding anonymous cart to stored cart
                 flash("تم تسجيل الدخول بنجاح!", category="success")
                 # if the user is an admin then go to admin profile, otherwise to normal profile
                 if user_role == "admin":
@@ -461,7 +449,6 @@ def admin_profile():
     if user_role == "admin":
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
-            # try:
             # todo - keep it like this or make select without where condition then iterate using for loop???
             cursor.execute(f"""
             select * from Customers
@@ -475,7 +462,6 @@ def admin_profile():
             """)
             admins_num = len(cursor.fetchall())
             connection.commit()
-        # except Exception as e:
 
         return render_template('admin_profile.html', current_user=current_user, user_role=user_role,
                                customers_num=customers_num, admins_num=admins_num)

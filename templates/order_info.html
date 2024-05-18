@@ -5,35 +5,6 @@
   <title>معلومات الطلب</title>
 </head>
 
-<style>
-  #order-info-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 50px;
-  }
-
-  #order-info-container table, #order-info-container tr, #order-info-container th, #order-info-container td {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-
-  td {
-    vertical-align: top;
-    text-align: center;
-    padding: 10px 0 0 0;
-    font-size: 0.9em;
-  }
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    height: auto;
-    width: auto;
-  }
-</style>
-
 <body>
   {% if cur_user.role == "admin" %}
     {% extends "admin_profile.html" %}
