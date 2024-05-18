@@ -124,86 +124,88 @@
         الكمية
       </th>
     </tr>
-    {% for quantity, item in cart_items.values() %}
-    <tr>
-      <td style="justify-content: center; align-items: center">
-        <a href="{{url_for('product', name=item[1], ptype=item[2], id_num=item[0])}}">
-          {% if item[3].find('&') != -1 %}
-            <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
-          {% else %}
-            <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
-          {% endif %}
-        </a>
-      </td>
-      <td style="display: none">{{item[0]}}</td>
-      <td style="display: none">{{item[4]}}</td>
-      <td style="display: none">{{quantity}}</td>
-
-      <td>
-        {{item[1]}}
-      </td>
-      <td>
-        {{item[4]}} ₪
-      </td>
-      <td>
-        <div id="item-quantity">
-<!--          <form id="update-form{{item[0]}}" method="post">-->
-          {% if item[5] == 0 %}
-          <span style="background-color: #f64f4f; font-size: 1.5em">
-             نفد المخزون
-          </span>
-          {% endif %}
-          <select id="select{{item[0]}}" name="select{{item[0]}}" onchange="UpdateCart(this)">
-            <option value="0">0</option>
-            {% for x in range(item[5]) %}
-            <option value="{{ x + 1 }}">{{ x + 1 }}</option>
-            {% endfor %}
-            <script>
-                if (parseInt("{{item[5]}}") === 0)
-                  document.currentScript.parentNode.selectedIndex = 0;
-                else
-                  document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}");
-            </script>
-            {% if item[5] == 0 %}
-            <script>
-                document.currentScript.parentNode.setAttribute("disabled", "true");
-            </script>
+    {% if cart_items %}
+      {% for quantity, item in cart_items.values() %}
+      <tr>
+        <td style="justify-content: center; align-items: center">
+          <a href="{{url_for('product', name=item[1], ptype=item[2], id_num=item[0])}}">
+            {% if item[3].find('&') != -1 %}
+              <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
+            {% else %}
+              <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
             {% endif %}
-          </select>
-        </div>
-        <br>
-        <button disabled class="shopping-cart-buttons" onclick="toggleUpdate(this)">
-          تعديل السلة
-          {% if item[5] == 0 %}
-            <script>
-              document.currentScript.parentNode.setAttribute("disabled", "true");
-            </script>
-          {% endif %}
-        </button>
-<!--        <button id="delete-cart-item-button" onclick="DeleteCartItem(this)">-->
-        <span class="material-symbols-outlined image-delete" onclick="DeleteCartItem(this)">
-          delete
-        </span>
-<!--        </button>-->
-      </td>
-      <script>
-          if (parseInt("{{item[5]}}") === 0) {
-              document.currentScript.parentNode.style.opacity = 0.5;
-          }
+          </a>
+        </td>
+        <td style="display: none">{{item[0]}}</td>
+        <td style="display: none">{{item[4]}}</td>
+        <td style="display: none">{{quantity}}</td>
 
-          retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
-          if (parseInt("{{item[5]}}") === 0) {
-            
-              delete retrievedArray["{{item[0]}}"];
-              localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
-              const tempCounter = parseInt(counter.textContent);
-              const newCounter = tempCounter - parseInt("{{quantity}}");
-              counter.textContent = newCounter.toString();
-              localStorage.setItem("cartCounter", counter.textContent);
-          }
-      </script>
-    </tr>
-    {% endfor %}
+        <td>
+          {{item[1]}}
+        </td>
+        <td>
+          {{item[4]}} ₪
+        </td>
+        <td>
+          <div id="item-quantity">
+  <!--          <form id="update-form{{item[0]}}" method="post">-->
+            {% if item[5] == 0 %}
+            <span style="background-color: #f64f4f; font-size: 1.5em">
+              نفد المخزون
+            </span>
+            {% endif %}
+            <select id="select{{item[0]}}" name="select{{item[0]}}" onchange="UpdateCart(this)">
+              <option value="0">0</option>
+              {% for x in range(item[5]) %}
+              <option value="{{ x + 1 }}">{{ x + 1 }}</option>
+              {% endfor %}
+              <script>
+                  if (parseInt("{{item[5]}}") === 0)
+                    document.currentScript.parentNode.selectedIndex = 0;
+                  else
+                    document.currentScript.parentNode.selectedIndex = parseInt("{{quantity}}");
+              </script>
+              {% if item[5] == 0 %}
+              <script>
+                  document.currentScript.parentNode.setAttribute("disabled", "true");
+              </script>
+              {% endif %}
+            </select>
+          </div>
+          <br>
+          <button disabled class="shopping-cart-buttons" onclick="toggleUpdate(this)">
+            تعديل السلة
+            {% if item[5] == 0 %}
+              <script>
+                document.currentScript.parentNode.setAttribute("disabled", "true");
+              </script>
+            {% endif %}
+          </button>
+  <!--        <button id="delete-cart-item-button" onclick="DeleteCartItem(this)">-->
+          <span class="material-symbols-outlined image-delete" onclick="DeleteCartItem(this)">
+            delete
+          </span>
+  <!--        </button>-->
+        </td>
+        <script>
+            if (parseInt("{{item[5]}}") === 0) {
+                document.currentScript.parentNode.style.opacity = 0.5;
+            }
+
+            retrievedArray = JSON.parse(localStorage.getItem("cartItems"));
+            if (parseInt("{{item[5]}}") === 0) {
+              
+                delete retrievedArray["{{item[0]}}"];
+                localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+                const tempCounter = parseInt(counter.textContent);
+                const newCounter = tempCounter - parseInt("{{quantity}}");
+                counter.textContent = newCounter.toString();
+                localStorage.setItem("cartCounter", counter.textContent);
+            }
+        </script>
+      </tr>
+      {% endfor %}
+    {% endif %}
   </table>
 
   <form id="delete-form" method="post">

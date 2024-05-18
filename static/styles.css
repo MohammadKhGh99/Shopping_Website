@@ -35,6 +35,342 @@ body {
   font-style: normal;
 }
 
+/* ########################## add_product.html CSS ######################### */
+
+
+#add-product-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-right: 0;
+  padding-bottom: 40px;
+  font-size: 1.2em;
+}
+
+@media (max-width: 767px) {
+  #add-product-form div {
+    width: 80vw;
+  }
+}
+
+@media (min-width: 767px) {
+  #add-product-form div {
+    width: 50vw;
+  }
+}
+
+
+#add-product-form .input-field {
+  width: 100%;
+  padding-right: 10px;
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid rgba(12, 27, 84, .5);
+  font-family: "Noto Naskh Arabic", serif;
+  font-size: 0.8em;
+  
+}
+
+#product-description {
+  height: 100px;
+}
+
+#go-new-added-button, #save-product-button {
+  font-size: 1em;
+  font-family: 'Noto Naskh Arabic', sans-serif;
+  text-decoration: none;
+  background-color: #cce5ff;
+  cursor: pointer;
+  border: 0;
+  padding: 5px 5px 5px 5px;
+  transition-duration: 0.5s;
+}
+
+#go-new-added-button {
+  text-decoration: none;
+  margin: 30px 40vw 30px 0;
+}
+
+#go-new-added-button a{
+  text-decoration: none;
+  color: black;
+}
+
+#go-new-added-button:hover, #save-product-button:hover {
+  background-color: #e5e5e5;
+}
+
+#add-image-button {
+  background-color: #cce5ff;
+  cursor: pointer;
+  border: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px;
+  transition-duration: 0.5s;
+}
+
+#add-image-button:hover {
+  background-color: #e5e5e5;
+}
+
+#add-product-form .field-holder {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+#add-product-form #type-price-quantity {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* ########################## admin_profile.html CSS ######################### */
+
+#users-count {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  padding-right: 20px;
+  font-size: 0.9em;
+}
+
+/* ########################## all_customers_orders.html CSS ######################### */
+
+#all-orders-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 20px 20px 20px;
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .all-orders-table {
+    font-size: 0.7em;
+  }
+
+  .all-orders-table select {
+    font-size: 0.8em;
+  }
+
+  .order-info-link span {
+    font-size: 1.2em;
+  }
+
+  .order-total-td {
+    font-size: 1em;
+  }
+  
+}
+
+@media (min-width: 767px) {
+  .all-orders-table {
+    font-size: 0.9em;
+  }
+  .all-orders-table select {
+    font-size: 1em;
+  }
+
+  .order-info-link span {
+    font-size: 1.5em;
+  }
+
+}
+
+.order-info-link {
+  font-size: 1em;
+}
+
+.all-orders-table {
+  border-collapse: collapse;
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+
+.all-orders-table tr th {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.order-id-td, .order-total-td, .order-date-td, .order-status-td, .order-number {
+  vertical-align: middle;
+  text-align: center;
+  /*padding: 10px 0 0 0;*/
+}
+
+.order-status-td select {
+  height: 30px;
+}
+
+.order-customer-info div{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+
+.order-status-td div {
+  width: 100%;
+  font-size: 0.9em;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+}
+
+.order-content {
+  padding: 0;
+}
+
+#all-orders-container td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 0 10px 0;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#all-orders-container td img {
+  width: 100%;
+  height: 100%;
+}
+
+#order-info-button {
+  color: black;
+  background-color: transparent;
+  cursor: pointer;
+  border: 0;
+  text-decoration: none;
+  padding: 1px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0 10px 0 10px;
+}
+
+#order-info-button:hover {
+  background-color: #e5e5e5;
+}
+
+#edit-price-button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+#edit-price-button span {
+  color: black;
+}
+
+#edit-price-button span:hover {
+  color: rgb(147, 146, 146);
+}
+
+.table-titles {
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+#all-orders-title {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* ########################## Base.html CSS ######################### */
+
+#all-users-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 20px 20px 20px;
+  max-width: 100%;
+}
+
+#all-users-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+#all-users-container table tr th  {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+@media (max-width: 767px) {
+  #all-users-container table td {
+    font-size: 0.7em;
+  }
+  #all-users-container table td button {
+    font-size: 0.7em;
+
+  }
+  #all-users-container th {
+    font-size: 0.8em;
+  }
+}
+@media (min-width: 767px) {
+  #all-users-container table td {
+    font-size: 1em;
+  }
+}
+
+#all-users-container table td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px 0 10px 0;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#user-more-info-button {
+  color: black;
+  background-color: #cce5ff;
+  cursor: pointer;
+  border: 0;
+  text-decoration: none;
+  padding: 5px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0 10px 0 10px;
+  transition-duration: 0.5s;
+}
+
+#user-more-info-button:hover {
+  background-color: #e5e5e5;
+}
+
+#all-users-container td a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+}
+
+#all-users-container td a:hover {
+  color: #afaeae;
+}
+
+/* ########################## Base.html CSS ######################### */
+
 .material-symbols-outlined {
   user-select: none;
 }
@@ -69,8 +405,6 @@ header {
   height: 30px;
   display: inline-block;
 }
-
-/* ########################## Base.html CSS ######################### */
 
 .flash-message {
   display: flex;
@@ -281,6 +615,7 @@ select {
   left: -200%;
   opacity: 0;
   transition: opacity 0.3s;
+  cursor: initial;
 }
 
 .tooltip:hover .tooltiptext {
@@ -440,7 +775,6 @@ select {
   color: white;
 }
 
-
 .coming-soon-side {
   display: flex;
   justify-content: space-around;
@@ -565,6 +899,296 @@ select {
 .breadcrumb-list li a:hover {
   color: gray;
 }
+
+/* ##################### books.html CSS ############################# */
+
+#container {
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  display: block;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#books-upper {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  padding: 50px 50px 0 50px;
+  text-align: center;
+  color: #e5e5e5;
+}
+
+#books-upper b{
+  font-size: 2em;
+  margin-top: 50px;
+}
+
+#filters-button {
+  position: sticky;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  background-color: white;
+  border: 0;
+  cursor: pointer;
+  height: 40px;
+  border-bottom: 1px solid #f2e4d7;
+}
+
+#filters-button:hover {
+  background-color: #e5e5e5
+}
+
+#filters-button.sticky {
+  position: sticky;
+  top: 0;
+}
+
+.filters-icon {
+  color: #AD7765;
+}
+
+filters {
+  position: fixed; /* Position absolutely */
+  right: -1000px; /* Hide off-screen */
+  top: 0;
+  bottom: 0;
+  width: 50vw;
+  background-color: #ffffff;
+  transition: right 0.3s ease-in-out; /* Smooth animation */
+  z-index: 3;
+  display: block;
+  padding-top: 15px;
+  overflow: auto;
+}
+
+filters.open {
+  right: 0; /* Slide into view */
+}
+
+#filters-close-side-menu {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  padding-right: 30px;
+}
+
+filters ul {
+  text-decoration: none;
+  list-style: none;
+}
+
+filters ul li{
+  user-select: none;
+  display: block;
+  padding: 15px 15px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+filters ul li:first-child {
+  cursor: initial;
+}
+
+filters ul li .filter-upper {
+  display: flex;
+  justify-content: space-between;
+  user-select: none;
+}
+
+filters ul li:last-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}
+
+filters ul li:not(:last-child){
+  border-bottom: 1px solid gray;
+}
+
+@media (max-width: 767px) {
+  products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 35px 0 35px 0;
+    row-gap: 20px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  products a {
+    max-width: 90%;
+    padding-right: 10px;
+  }
+
+  product .upper-product {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    width: 100%;
+    height: 70%;
+  }
+
+  product .upper-product img {
+    width: 80%;
+    height: 100%;
+  }
+
+  .lower-product span {
+    font-size: 0.8em;
+  }
+}
+
+@media (min-width: 767px) {
+  products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 35px 20px 50px 20px;
+    column-gap: 40px;
+    row-gap: 40px;
+    max-width: 100%;
+  }
+  product .upper-product {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    width: 100%;
+    height: 70%;
+    padding-bottom: 5px;
+  }
+  product .upper-product img {
+    width: 80%;
+    height: 100%;
+  }
+  .lower-product span {
+    font-size: 1.2em;
+  }
+  
+}
+
+product {
+  display: inline-block;
+  text-align: center;
+  border-radius: 5%;
+  color: #AD7765;
+  background-color: white;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2),
+  -2px -2px 2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 10px;
+  transition-duration: 0.5s;
+  font-size: 1em;
+  font-family: Reem Kufi, Noto Naskh Arabic;
+}
+
+product:hover {
+  /* background-color: #e5e5e5; */
+  box-shadow: 12px 12px 16px 16px rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+product hr {
+  height: 1px;
+  width: 70%;
+  background-color: gray;
+  color: gray;
+}
+
+/* ##################### checkout.html CSS ############################# */
+
+#checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#checkout-container form {
+  text-align: right;
+  width: 350px;
+  color: #525d85;
+}
+
+.input_field {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid rgba(12, 27, 84, .5);
+  font-family: "Noto Naskh Arabic", serif;
+  font-size: 0.9em;
+  padding-right: 10px;
+}
+
+#lower-checkout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  /*column-gap: 10px;*/
+  margin: 20px 0 20px 0;
+}
+
+#checkout-button, #register-guest-button, #continue-as-guest-button {
+  font-family: "Noto Naskh Arabic",serif;
+  border: 0;
+  cursor: pointer;
+  padding: 10px;
+  transition-duration: 0.5s;
+  text-wrap: nowrap;
+  border-radius: 10px; 
+}
+
+#checkout-button {
+  background-color: #cce5ff;
+}
+
+#register-guest-button, #continue-as-guest-button {
+  scale: 0.8; 
+  background-color: rgb(248, 128, 128);
+}
+
+#checkout-button:hover {
+  background-color: #e5e5e5;
+}
+
+#register-guest-button:hover, #continue-as-guest-button:hover {
+  background-color: #f0f0f0;
+}
+
+/*rgb(192, 191, 191)*/
+
+.password-container {
+  position: relative;
+}
+
+.error-border {
+    border-color: red !important; /* Red border color */
+}
+
+.show-password-btn {
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* ##################### clothes.html CSS ############################# */
+
+
+
+
+
+
+
 
 /* ##################### Home.html CSS ############################# */
 

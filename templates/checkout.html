@@ -5,85 +5,6 @@
   <title>الدفع</title>
 </head>
 
-<style>
-  #checkout-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  #checkout-container form {
-    text-align: right;
-    width: 350px;
-    color: #525d85;
-  }
-
-  .input_field {
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    border: 1px solid rgba(12, 27, 84, .5);
-    font-family: "Noto Naskh Arabic", serif;
-    font-size: 0.9em;
-    padding-right: 10px;
-  }
-
-  #lower-checkout {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    /*column-gap: 10px;*/
-    margin: 20px 0 20px 0;
-  }
-
-  #checkout-button, #register-guest-button, #continue-as-guest-button {
-    font-family: "Noto Naskh Arabic",serif;
-    border: 0;
-    cursor: pointer;
-    padding: 10px;
-    transition-duration: 0.5s;
-    text-wrap: nowrap;
-    border-radius: 10px; 
-  }
-  
-  #checkout-button {
-    background-color: #cce5ff;
-  }
-  
-  #register-guest-button, #continue-as-guest-button {
-    scale: 0.8; 
-    background-color: rgb(248, 128, 128);
-  }
-
-  #checkout-button:hover {
-    background-color: #e5e5e5;
-  }
-
-  #register-guest-button:hover, #continue-as-guest-button:hover {
-    background-color: #f0f0f0;
-  }rgb(192, 191, 191)
-
-  .password-container {
-    position: relative;
-  }
-
-  .error-border {
-      border-color: red !important; /* Red border color */
-  }
-
-  .show-password-btn {
-    position: absolute;
-    left: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
-
-
-</style>
-
 <body>
   {% extends "base.html" %}
 
@@ -168,6 +89,9 @@
             </b>
             رسوم شحن)
           </span>
+        </span><br>
+        <span style="font-size: 0.8em; text-align: center">
+          يوجد لدينا خدمة <b>تغليف الهدايا وكتابة إهداء</b><br> للطلب الرجاء التواصل معنا عبر الواتساب
         </span>
         <button type="submit" id="checkout-button" onclick="Checkout()">
           تأكيد الطلب
@@ -177,11 +101,10 @@
   </div>
   <script>
     function Checkout() {
-      if (document.getElementsByClassName("password-container")[0].style.display === "none") {
+      if (document.getElementsByClassName("password-container")[0].style.display === "none" && "{{user_role}}" === "guest") {
         const confirmGuestCheckout = confirm("هل أنت متأكد من رغبتك في تأكيد الطلب بدون التسجيل للموقع؟");
-        console.log(confirmGuestCheckout);
         if (confirmGuestCheckout) {
-        } else {
+        } else if ("{{user_role}}" === "guest") {
           document.getElementById("register-notice").style.display = "none";
           document.getElementsByClassName("password-container")[0].style.display = "block";
         }
@@ -231,7 +154,7 @@
       const cityInput = document.getElementById("customer-city");
       if (cityInput.value !== "اختر بلد") {
         console.log("what happened");
-          AddShipping();
+        AddShipping();
       }
 
       function AddShipping() {
@@ -262,7 +185,7 @@
     inputField.addEventListener('input', function () {
         // var x =inputField.initialValue;
         console.log(inputField.value);
-        if (inputField.value === initialValue) {
+        if (inputField.value === "اختر بلد") {
             inputField.classList.add('error-border');
         } else {
             inputField.classList.remove('error-border');
@@ -276,7 +199,7 @@
 
         // Add a submit event listener to the form
         form.addEventListener('submit', function (event) {
-            if (inputField.value === initialValue) {
+            if (inputField.value === "اختر بلد") {
                 // Prevent form submission if content is not changed
                 inputField.classList.add('error-border');
                 event.preventDefault();

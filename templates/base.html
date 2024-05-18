@@ -213,7 +213,6 @@
 
         // define cart counter in localStorage if not defined
         let counter = document.getElementsByClassName("counter")[0];
-        console.log(JSON.parse(localStorage.getItem("cartItems")));
         if (localStorage.getItem("cartCounter") === null || localStorage.getItem("cartCounter") === 0) {
             localStorage.setItem("cartCounter", "0");
         }
@@ -272,15 +271,15 @@
               const BooksWhoWe = document.currentScript.parentNode.children[1];
               const clothesWhoWe = document.currentScript.parentNode.children[2];
               const giftsWhoWe = document.currentScript.parentNode.children[3];
-              if (window.location.href.includes("home")) {
-                irtekaaWhoWe.style.display = "inline-block";
-              } else if (window.location.href.includes("books")) {
+              if (window.location.href.includes("books")) {
                 BooksWhoWe.style.display = "inline-block";
               } else if (window.location.href.includes("clothes")) {
                 clothesWhoWe.style.display = "inline-block";
               } else if (window.location.href.includes("gifts")) {
                 giftsWhoWe.style.display = "inline-block";
-              }
+              }else {
+                irtekaaWhoWe.style.display = "inline-block";
+              } 
               
             </script>
           </div>

@@ -5,113 +5,6 @@
   <title>إضافة منتج</title>
 </head>
 
-<style>
-  form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding-right: 0;
-    padding-bottom: 40px;
-    font-size: 1.2em;
-  }
-
-  @media (max-width: 767px) {
-    form div {
-      width: 80vw;
-    }
-  }
-
-  @media (min-width: 767px) {
-    form div {
-      width: 50vw;
-    }
-  }
-
-
-  .input-field {
-    /*font-size: 0.9em;*/
-    width: 100%;
-    padding-right: 10px;
-    height: 50px;
-    line-height: 50px;
-    border: 1px solid rgba(12, 27, 84, .5);
-    font-family: "Noto Naskh Arabic", serif;
-    font-size: 0.8em;
-    /*
-    width: 100%;
-    max-width: 100%;
-    padding-right: 10px;
-    height: 50px;
-    line-height: 50px;
-    border: 1px solid rgba(12, 27, 84, .5);
-    font-family: "Noto Naskh Arabic", serif;
-    font-size: 1em;
-    box-sizing: border-box;
-    */
-  }
-
-  #product-description {
-    height: 100px;
-  }
-
-  #go-new-added-button, #save-product-button {
-    font-size: 1em;
-    font-family: 'Noto Naskh Arabic', sans-serif;
-    text-decoration: none;
-    background-color: #cce5ff;
-    cursor: pointer;
-    border: 0;
-    padding: 5px 5px 5px 5px;
-    transition-duration: 0.5s;
-  }
-
-  #go-new-added-button {
-    text-decoration: none;
-    margin: 30px 40vw 30px 0;
-  }
-
-  #go-new-added-button a{
-    text-decoration: none;
-    color: black;
-  }
-
-  #go-new-added-button:hover, #save-product-button:hover {
-    background-color: #e5e5e5;
-  }
-
-  #add-image-button {
-    background-color: #cce5ff;
-    cursor: pointer;
-    border: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    padding: 10px;
-    transition-duration: 0.5s;
-  }
-
-  #add-image-button:hover {
-    background-color: #e5e5e5;
-  }
-
-  .field-holder {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  #type-price-quantity {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-</style>
-
 <body>
 
   {% extends "handling_products.html" %}
@@ -122,7 +15,7 @@
   {% block lower_container %}
   <div id="adding-products-container">
   {% if not done %}
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="add-product-form">
       <h4 id="add-title">إضافة منتج</h4>
       <div id="form-container">
         <input id="product-id-input" style="display: none">

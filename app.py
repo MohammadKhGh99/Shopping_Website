@@ -58,7 +58,7 @@ types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا
 
 class User(UserMixin):
     def __init__(self, id_number, phone_number, first_name, last_name, role, date_joined, city, address, backup_phone,
-                 password, email):
+                 password, email, forgot_password=False):
         self.id_number = id_number
         self.phone_number = phone_number
         self.first_name = first_name
@@ -70,6 +70,7 @@ class User(UserMixin):
         self.backup_phone = backup_phone
         self.password = password
         self.email = email
+        self.forgot_password = forgot_password
 
     def get_id(self):
         return self.id_number
@@ -379,6 +380,11 @@ def forgot_password():
             user_fullname = wanted_user[2] + " " + wanted_user[3]
             chars = string.ascii_letters + string.digits
             unique_token = ''.join(random.choice(chars) for _ in range(10))
+            cursor.execute(f"""
+            update Customers
+            set password = '{bcrypt.generate_password_hash(unique_token)}'
+            where email = '{customer_email}'
+            """)
 
         send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
                    customer_email,
@@ -394,6 +400,8 @@ def forgot_password():
                        </b>
                    </p> 
                    """, "html")
+        flash("تم إرسال كلمة المرور المؤقتة إلى البريد الإلكتروني", "success")
+
 
     return render_template('forgot_password.html')
 
@@ -989,9 +997,8 @@ def shopping_cart():
     #         to_remove.append(id_num)
     # for id_num in to_remove:
     #     session["cart-items"].pop(id_num)
-    print(session.get("cart-items"))
     return render_template('shopping_cart.html', user_role=user_role, cart_items=session.get("cart-items"),
-                           total=session.get("total"))
+                           total=session.get("total") if session.get("total") else 0)
 
 
 @app.route('/checkout', methods=['GET', 'POST'])

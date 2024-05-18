@@ -5,88 +5,6 @@
   <title>جميع الزبائن</title>
 </head>
 
-<style>
-  #all-users-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px 20px 20px 20px;
-    max-width: 100%;
-  }
-
-  table {
-    border-collapse: collapse;
-    font-size: 0.9em;
-    max-width: 100%;
-    width: 100%;
-    margin-bottom: 50px;
-  }
-
-  #all-users-container table tr th  {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-
-  @media (max-width: 767px) {
-    #all-users-container table td {
-      font-size: 0.7em;
-    }
-    #all-users-container table td button {
-      font-size: 0.7em;
-
-    }
-    #all-users-container th {
-      font-size: 0.8em;
-    }
-  }
-  @media (min-width: 767px) {
-    #all-users-container table td {
-      font-size: 1em;
-    }
-  }
-
-  #all-users-container table td {
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px 0 10px 0;
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-
-  #user-more-info-button {
-    color: black;
-    background-color: #cce5ff;
-    cursor: pointer;
-    border: 0;
-    text-decoration: none;
-    padding: 5px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin: 0 10px 0 10px;
-    transition-duration: 0.5s;
-  }
-
-  #user-more-info-button:hover {
-    background-color: #e5e5e5;
-  }
-
-  #all-users-container td a {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    color: black;
-  }
-  
-  #all-users-container td a:hover {
-    color: #afaeae;
-  }
-
-
-</style>
-
 <body>
 {% extends "admin_profile.html" %}
 
@@ -98,7 +16,7 @@
   <h2>
     حميع المستخدمين - {{ users_num }}
   </h2>
-  <table>
+  <table id="all-users-table">
     <tr>
       <th style="width: 7%">الرقم التسلسلي</th>
       <th>إسم المستخدم</th>
