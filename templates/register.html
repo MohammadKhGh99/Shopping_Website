@@ -76,25 +76,9 @@
           </p>
         </div>
       </form>
-<!--      <dialog>hi</dialog>-->
-<!--      <script>-->
-<!--        document.getElementsByTagName("dialog")[0].show();-->
-<!--      </script>-->
     </div>
   </div>
   <script>
-    function callOTP() {
-        const children = document.getElementById("sign-up-form").getElementsByTagName('div');
-        console.log(children);
-        document.getElementById("check-otp-button").hidden = true;
-        document.getElementById("customer-phone").setAttribute('readonly', 'true');
-        for (let i = 0; i < children.length; i++) {
-            if (children[i].style.display !== "none") {
-              children[i].hidden = false;
-            }
-        }
-    }
-
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('customer-password');
         const showPasswordBtn = document.querySelector('.show-password-btn');
@@ -127,14 +111,21 @@
 
         // Add a submit event listener to the form
         form.addEventListener('submit', function (event) {
-            if (inputField.value === initialValue) {
-                // Prevent form submission if content is not changed
-                inputField.classList.add('error-border');
-                event.preventDefault();
-                alert('Please change the city before submitting.');
-            } else {
-                inputField.classList.remove('error-border');
-            }
+          if (document.getElementById("customer-phone").textContent.length < 10) {
+            document.getElementById("customer-phone").classList.add('error-border');
+            event.preventDefault();
+            alert('Please enter a valid phone number.');
+          } else {
+            inputField.classList.remove('error-border');
+          }
+          if (inputField.value === initialValue) {
+            // Prevent form submission if content is not changed
+            inputField.classList.add('error-border');
+            event.preventDefault();
+            alert('Please change the city before submitting.');
+          } else {
+            inputField.classList.remove('error-border');
+          }
         });
     });
   </script>

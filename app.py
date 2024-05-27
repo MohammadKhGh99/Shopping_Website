@@ -333,11 +333,11 @@ def register():
                 cursor.execute("""
                 INSERT INTO Customers(phone_number, first_name, last_name, 
                                       role, date_joined, city, address, 
-                                      backup_phone, password, email)
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                      backup_phone, password, email, forgot_password)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (phone_number, first_name, last_name,
                                   role, date_joined, city, address,
-                                  backup_phone, hashed_password, email))
+                                  backup_phone, hashed_password, email, 0))
                 connection.commit()
                 # successfully registered
                 flash("تم التسجيل في الموقع بنجاح", category="success")
