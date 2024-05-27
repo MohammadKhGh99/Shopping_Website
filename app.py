@@ -15,15 +15,17 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for, f
 # from database_handling import *
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
+load_dotenv(os.path.join(project_folder, '.env'))
 
 app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 # db = SQLAlchemy(app)
+GMAIL_PASS = os.getenv("GMAIL_APP_PASSWORD")
 
 bcrypt = Bcrypt(app)
 
@@ -106,7 +108,7 @@ def send_email(sender, app_password, to, subject, message_text, msg_type):
 
 def send_error(e, subject):
     send_email("mohammad.gh454@gmail.com", 
-               os.environ.get("GMAIL_APP_PASSWORD"),
+               GMAIL_PASS,
                "m7md.gh.99@hotmail.com",
                subject,
                str(e),
@@ -342,7 +344,7 @@ def register():
                 user = load_user(cursor.lastrowid)
                 login_user(user)
                 # notify admin of new user registration
-                send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+                send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
                            "m7md.gh.99@hotmail.com",
                            "تم تسحيل زبون جديد",
                            f"""
@@ -402,7 +404,7 @@ def forgot_password():
                     where email = '{customer_email}'
                     """)
                 connection.commit()
-                send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+                send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
                         customer_email,
                         "استعادة كلمة المرور",
                         f"""
@@ -615,7 +617,7 @@ def all_customers_orders():
             customer_email = orders_result[0][7]
             # todo - send email to customer when updating order status
             # send_email("mohammad.gh454@gmail.com",
-            #            os.environ.get("GMAIL_APP_PASSWORD"),
+            #            GMAIL_PASS,
             #            customer_email,
             #            "تم تحديث حالة الطلب",
             #            f"""
@@ -1118,7 +1120,7 @@ def checkout():
                     flash("تم التسجيل في الموقع بنجاح", category="success")
                     user = load_user(cursor.lastrowid)
                     login_user(user)
-                    send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+                    send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
                                "m7md.gh.99@hotmail.com",
                                "تم تسحيل زبون جديد",
                                f"زبون جديد بإسم {first_name} {last_name}\n "
@@ -1178,7 +1180,7 @@ def checkout():
                 , (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
             
             connection.commit()
-            send_email("mohammad.gh454@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"),
+            send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
                        "m7md.gh.99@hotmail.com",
                        f"طلب جديد برقم {cursor.lastrowid}",
                        f"طلب جديد برقم {cursor.lastrowid}\nللزبون {first_name} {last_name}\n"
