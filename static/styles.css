@@ -37,6 +37,12 @@ body {
 
 /* ########################## add_product.html CSS ######################### */
 
+#adding-updating-products-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .add-update-product-form {
   display: flex;
@@ -46,6 +52,8 @@ body {
   padding-right: 0;
   padding-bottom: 40px;
   font-size: 1.2em;
+  width: 50%;
+  max-width: 50%;
 }
 
 @media (max-width: 767px) {
@@ -81,10 +89,10 @@ body {
 
 #go-new-added-button,
 #save-product-button {
-  font-size: 1em;
+  font-size: 0.8em;
   font-family: 'Noto Naskh Arabic', sans-serif;
   text-decoration: none;
-  background-color: #cce5ff;
+  background-color: #c2ffd6;
   cursor: pointer;
   border: 0;
   padding: 5px 5px 5px 5px;
@@ -201,6 +209,10 @@ body {
   margin-bottom: 50px;
 }
 
+.show-order-info-eye:hover {
+  color:#e5e5e5;
+}
+
 .order-id-td,
 .order-total-td,
 .order-date-td,
@@ -250,7 +262,7 @@ body {
   height: 100%;
 }
 
-#order-info-button {
+#all-orders-container #order-info-button {
   color: black;
   background-color: transparent;
   cursor: pointer;
@@ -1100,7 +1112,6 @@ product hr {
   padding: 10px;
   transition-duration: 0.5s;
   text-wrap: nowrap;
-  border-radius: 10px;
 }
 
 #checkout-button {
@@ -1359,8 +1370,10 @@ product hr {
 /* ##################### login.html CSS ############################# */
 
 .sign-container {
-  display: block;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   max-width: 100%;
   text-align: center;
 }
@@ -1509,15 +1522,6 @@ product hr {
   vertical-align: middle;
   text-align: center;
   /*padding: 10px 0 0 0;*/
-}
-
-.order-customer-info div {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: column;
-  font-size: 0.9em;
-  margin-right: 5px;
 }
 
 .order-status-td {
@@ -1859,10 +1863,19 @@ product hr {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 50%;
+  max-width: 50%;
 }
 
 .field-holder {
   margin-bottom: 10px;
+  width: 100%;
+  max-width: 100%;
+}
+
+button {
+  font-family: "Noto Naskh Arabic", sans-serif;
+  border-radius: 10px;
 }
 
 /* ##################### remove_product.html CSS ############################# */

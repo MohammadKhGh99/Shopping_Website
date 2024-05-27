@@ -13,7 +13,7 @@
   {% endblock %}
 
   {% block lower_container %}
-  <div id="adding-products-container">
+  <div id="adding-updating-products-container">
   {% if not done %}
     <form method="post" enctype="multipart/form-data" class="add-update-product-form">
       <h4 id="add-title">إضافة منتج</h4>
@@ -26,7 +26,7 @@
         <div id="type-price-quantity">
           <div class="field-holder" style="align-items: center;">
             <label for="product-type">نوع المنتج</label>
-            <select id="product-type" name="product-type" class="input-field" style="width: 150px;">
+            <select id="product-type" name="product-type" class="input-field" style="width: 100%;">
               {% for type in types %}
                <option value="{{type}}">{{type}}</option>
               {% endfor %}
@@ -34,11 +34,11 @@
           </div>
           <div class="field-holder" style="align-items: center;">
             <label for="product-price">السعر</label>
-            <input type="text" id="product-price" name="product-price" class="input-field" style="width: 80px">
+            <input type="text" id="product-price" name="product-price" class="input-field" style="width: 70%">
           </div>
           <div class="field-holder" style="align-items: center;">
             <label for="product-items-left">الكمية</label>
-            <input type="number" id="product-items-left" name="product-items-left" class="input-field" style="width: 80px">
+            <input type="number" id="product-items-left" name="product-items-left" class="input-field" style="width: 70%">
           </div>
         </div>
         <div class="field-holder">

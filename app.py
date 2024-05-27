@@ -21,7 +21,6 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
-app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 # db = SQLAlchemy(app)
@@ -35,6 +34,11 @@ login_manager.login_view = "login"
 NO_ACCOUNTS = False
 STORE_CART = False
 NO_CLOTHES = False
+DEVELOPMENT = True
+
+
+if DEVELOPMENT:
+    app.config['DEBUG'] = True
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
@@ -424,7 +428,7 @@ def forgot_password():
 
 @app.route('/new_password', methods=['POST', 'GET'])
 def new_password():
-    if current_user is not None:
+    if check_role() != "guest":
         flash("يجب تسجيل الخروج أولاً", "warning")
         return redirect(url_for('profile'))
     if request.method == "POST":
@@ -964,6 +968,8 @@ def update_product():
                         img_file.save(img_path)
                         cur_images += img_path + "&"
                     cur_images = cur_images[:-1]
+
+                    # todo - cannot change type of product
                     # type = '{product_type}',
 
                     cursor.execute(f"""
@@ -987,7 +993,6 @@ def update_product():
                 return render_template('update_product.html', done_updating=True, name=product_name, ptype=product_type,
                                        id_num=product_id)
     img_src = [img[7:] for img in result[3].split("&")]
-    print("types" + str(types))
     return render_template('update_product.html', done_updating=False, result=result, images=img_src, types=types)
 
 
