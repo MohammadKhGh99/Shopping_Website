@@ -6,7 +6,8 @@ import string
 import random
 import shutil
 
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, text
 from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, \
     current_user
 from flask_bcrypt import Bcrypt
@@ -24,7 +25,15 @@ app = Flask(__name__)
 app.secret_key = 'lakjfpoek[gf;sldg165478'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
-# db = SQLAlchemy(app)
+
+SQL_PASS = ""
+SQLALCHEMY_DATABASE_URI = f"mysql+mysqldb://irtekaa:{SQL_PASS}@irtekaa.mysql.pythonanywhere-services.com/Shopping"
+# app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle' : 300}
+
+db = SQLAlchemy(app)
+
+engine = create_engine('sqlite:///Shopping.db')
 GMAIL_PASS = os.getenv("GMAIL_APP_PASSWORD")
 
 bcrypt = Bcrypt(app)
@@ -60,6 +69,8 @@ types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا
 # 	address = db.Column(db.NVARCHAR(50))
 # 	backup_phone = db.Column(db.NVARCHAR(10))
 # 	password = db.Column(db.NVARCHAR(80))
+#   email = db.Column(db.NVARCHAR(50), unique=True)
+#   forgot_password = db.Column(db.Integer)
 
 
 class User(UserMixin):
@@ -126,6 +137,10 @@ def check_role():
 
 @app.route("/")
 def index():
+    # with engine.connect() as connection:
+    #     result = connection.execute(text("SELECT * FROM Customers"))
+    #     for row in result:
+    #         print(row)
     # Redirect to the actual homepage
     return redirect('/home')
 
@@ -1295,7 +1310,7 @@ def page_not_found(error):
 
 
 if __name__ == "__main__":
-    # webbrowser.open("http://127.0.0.1:5000/home")
-    # app.run()
-    # create_table()
-    app.run(host="0.0.0.0", debug=True)
+    if DEVELOPMENT:
+        app.run(host="0.0.0.0", debug=True)
+    else:
+        app.run()
