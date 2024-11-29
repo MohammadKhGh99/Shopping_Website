@@ -8,8 +8,7 @@ import shutil
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, \
-    current_user
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
 from flask import render_template, Flask, request, redirect, url_for, flash, session
