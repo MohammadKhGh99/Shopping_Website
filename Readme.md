@@ -12,11 +12,13 @@ This is a shopping website project that allows users to browse and purchase prod
 ## Features
 
 - User registration and authentication
-- Product catalog with search and filtering options
+- Product catalog
+<!-- with search and filtering options -->
+
 - Shopping cart functionality
-- Secure payment processing
+<!-- - Secure payment processing -->
 - Order tracking and history
-- User reviews and ratings
+<!-- - User reviews and ratings -->
 - Admin dashboard for managing products and orders
 
 ## Installation
