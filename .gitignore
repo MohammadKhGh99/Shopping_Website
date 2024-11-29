@@ -23,3 +23,5 @@ see_database.py
 .env
 instance
 .pre-commit-config.yaml
+.venv
+images_facebook

@@ -22,7 +22,8 @@ project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust a
 load_dotenv(os.path.join(project_folder, '.env'))
 
 app = Flask(__name__)
-app.secret_key = 'lakjfpoek[gf;sldg165478'
+app.secret_key = os.environ.get("SHOPPING_APP_KEY")
+app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 
