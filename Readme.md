@@ -1,6 +1,6 @@
 # Shopping Website
 
-This is a shopping website project that allows users to browse and purchase products online.
+A shopping website project that allows users to browse and purchase products online.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ This is a shopping website project that allows users to browse and purchase prod
 ## Features
 
 - User registration and authentication
-- Product catalog
+- Product Catalog
 <!-- with search and filtering options -->
 
 - Shopping cart functionality
