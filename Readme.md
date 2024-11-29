@@ -24,18 +24,16 @@ This is a shopping website project that allows users to browse and purchase prod
 
 1. Clone the repository: `git clone https://github.com/MohammadKhGh99/shopping-website.git`
 2. Install dependencies: `pip install -r requirments.txt`
-3. Set up the database: [instructions here]
-4. Configure environment variables: [instructions here]
 
 ## Usage
 
-1. Start the server: `npm start`
-2. Open the website in your browser: `http://localhost:3000`
+1. Start the server: `python app.py`
+2. Open the website in your browser: `127.0.0.1:5000`
 
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
+<!-- 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE). -->
