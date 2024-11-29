@@ -16,10 +16,10 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for, f
 # from database_handling import *
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
-load_dotenv(os.path.join(project_folder, '.env'))
+# load_dotenv(os.path.join(project_folder, '.env'))
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SHOPPING_APP_KEY")

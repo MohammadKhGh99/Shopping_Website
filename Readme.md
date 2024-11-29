@@ -8,7 +8,6 @@ This is a shopping website project that allows users to browse and purchase prod
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
