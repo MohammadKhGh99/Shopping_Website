@@ -7,16 +7,14 @@ import random
 import shutil
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, text
-from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, \
+from sqlalchemy import create_engine
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, \
     current_user
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
-from flask import render_template, jsonify, Flask, request, redirect, url_for, flash, session
-# from database_handling import *
+from flask import render_template, Flask, request, redirect, url_for, flash, session
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-# from dotenv import load_dotenv
 
 project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
 # load_dotenv(os.path.join(project_folder, '.env'))
