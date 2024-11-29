@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>معلومات الطلب</title>
+</head>
+
+<style>
+  #order-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 50px;
+  }
+
+  #order-info-container table, #order-info-container tr, #order-info-container th, #order-info-container td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+  td {
+    vertical-align: top;
+    text-align: center;
+    padding: 10px 0 0 0;
+    font-size: 0.9em;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    width: auto;
+  }
+</style>
+
+<body>
+  {% if cur_user.role == "admin" %}
+    {% extends "admin_profile.html" %}
+
+    {% block users_count %}
+    {% endblock %}
+  {% else %}
+    {% extends "profile.html" %}
+  {% endif %}
+
+  {% block lower_container %}
+  <div id="order-info-container">
+    <h4 style="line-height: 35px">
+      الطلب رقم <mark>{{order[0]}}</mark><br>
+      تم طلبه في تاريخ <mark>{{order[10]}}</mark><br>
+      وحالته <mark>{{order[12]}}</mark>
+    </h4>
+    <h2>معلومات طلب رقم {{order[0]}}</h2>
+    <table>
+      <tr>
+        <th style="width: 10%">رقم المنتج</th>
+        <th style="width: 20%">صورة المنتج</th>
+        <th style="width: 20%">إسم المنتج</th>
+        <th style="width: 15%">السعر</th>
+        <th style="width: 10%">الكمية</th>
+        <th style="width: 10%">المجموع الجزئي</th>
+      </tr>
+      {% for id_num, (quantity, item) in order[-2].items() %}
+      <tr>
+        <td style="vertical-align: top; text-decoration: Highlight">
+          {{item[0]}}
+        </td>
+        <td>
+          <a href="{{url_for('product', ptype=item[2], id_num=item[0])}}">
+            {% if item[3].find('&') != -1 %}
+              <img src="{{url_for('static', filename=item[3][:item[3].index('&')][7:])}}" alt="item">
+            {% else %}
+              <img src="{{url_for('static', filename=item[3][7:])}}" alt="item">
+            {% endif %}
+          </a>
+        </td>
+        <td style="vertical-align: top">
+          {{item[1]}}
+        </td>
+        <td style="vertical-align: top">
+          {{item[4]}} ₪
+        </td>
+        <td style="vertical-align: top">
+          {{quantity}}
+        </td>
+        <td>
+          {{quantity * item[4]}}
+          <script>
+            document.currentScript.parentNode.textContent = (parseFloat("{{item[4]}}") * parseFloat("{{quantity}}")).toString() + " ₪";
+          </script>
+        </td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="5" style="text-align: right; padding-right: 20px">
+          مجموع منتجات الطلب:
+        </td>
+        <td>
+          {{order[11] - order[-1]}} ₪
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" style="text-align: right; padding-right: 20px">
+          التوصيل:
+        </td>
+        <td>
+          {{order[-1]}} ₪
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" style="text-align: right; padding-right: 20px">
+          طريقة الدفع:
+        </td>
+        <td>
+          <b>
+            الدفع عند الإستلام
+          </b>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" style="text-align: right; padding-right: 20px">
+          المجموع الكلي:
+        </td>
+        <td>
+          {{order[11]}} ₪
+        </td>
+      </tr>
+    </table>
+    <h3 style="margin-bottom: 0">
+      عنوان الطلب
+    </h3>
+    <ul>
+      <li>
+        الإسم الكامل:
+        {{order[2]}} {{order[3]}}
+        {% if order[4] == "guest" %}
+          - ضيف
+        {% else %}
+          - زبون
+        {% endif %}
+      </li>
+      <li>
+        العنوان:
+        {{order[6]}}
+      </li>
+      <li>
+        البلد:
+        {{order[5]}}
+      </li>
+      <li>
+        رقم الهاتف الشخصي:
+        {{order[9]}}
+      </li>
+      <li>
+        البريد الإلكتروني:
+        {{order[7]}}
+      </li>
+      <li>
+        هاتف إحتياطي:
+        {% if order[8] == "None" %}
+          -
+        {% else %}
+         {{order[8]}}
+        {% endif %}
+      </li>
+
+    </ul>
+  </div>
+  {% endblock %}
+</body>
+</html>

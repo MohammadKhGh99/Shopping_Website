@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول</title>
+</head>
+<style>
+  .sign-container {
+    display: block;
+    justify-content: center;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .sign-container form {
+    text-align: right;
+    max-width: 350px;
+    width: 350px;
+    color: #525d85;
+  }
+
+  .sign-container form span {
+    /*font-size: 0.7em;*/
+  }
+
+  .sign-container form a {
+    text-decoration: underline;
+  }
+
+  .input_field {
+    width: 100%;
+    /*max-width: 100%;*/
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgba(12, 27, 84, .5);
+    /*margin-right: 10px;*/
+    font-family: "Traditional Arabic", serif;
+  }
+
+  .password-div {
+    position: relative;
+    width: 100%;
+  }
+
+  .password-div input {
+    width: 100%;
+  }
+
+  .password-div a {
+    background-color: transparent;
+    border: 0;
+    text-decoration: underline;
+    position: absolute;
+    top: 30%;
+    left: 0;
+    /*top: 500px;*/
+    font-size: 0.8em;
+  }
+
+  .input_label {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .sign-in-button {
+    width: 100%;
+    background-color: #cce5ff;
+    font-family: "Traditional Arabic",serif;
+    border: 0;
+    cursor: pointer;
+    /*transition: left 0.5s ease-in-out;*/
+    margin-right: 2px;
+    transition-duration: 0.5s;
+  }
+
+  .sign-in-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  .sign-container form a {
+    color: black;
+    /*font-size: 0.7em;*/
+  }
+
+  .sign-container form a:hover {
+    color: gray;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .input_field {
+    font-size: 0.9em;
+    width: 100%;
+  }
+
+  .password-container {
+    position: relative;
+  }
+
+  .password-container a {
+    font-size: 0.7em;
+  }
+
+  .show-password-btn {
+    position: absolute;
+    left: 5px;
+    /*top: 68%;*/
+    top: 55%;
+    /*background-color: #bdbcbc;*/
+    /*transform: translateY(-50%);*/
+    cursor: pointer;
+  }
+
+  #login-method-selector {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+  }
+
+  .login-method {
+    background-color: #cce5ff;
+    font-family: 'Traditional Arabic', sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+    border: 0;
+    border-radius: 5px;
+    transition-duration: 0.5s;
+  }
+
+  .login-method:hover {
+    background-color: #e5e5e5;
+  }
+
+</style>
+<body>
+  {% extends "base.html" %}
+  {% block no_search %}hidden{% endblock %}
+  {% block breadcrumb_link %}
+  / <a href="{{url_for('login')}}">تسجيل الدخول</a>
+  {% endblock %}
+  {% block lower_container %}
+  <div class="sign-container">
+    <div class="upper-form">
+      <h2>تسجيل الدخول</h2>
+      <p id="login-method-title">الرجاء اختيار طريقة الدخول المناسبة</p>
+      <p id="email-login-title" style="display: none;">الرجاء إدخال البريد الإلكتروني وكلمة المرور:</p>
+      <p id="phone-login-title" style="display: none">الرجاء إدخال رقم الهاتف وكلمة المرور:</p>
+    </div>
+    <div class="form-container">
+      <form method="post">
+        <div id="login-method-selector">
+          <button type="button" class="login-method" id="email-method" onclick="CheckLoginMethod(this)">
+            البريد الإلكتروني
+          </button>
+          <button type="button" class="login-method" id="phone-method" onclick="CheckLoginMethod(this)">
+            رقم الهاتف
+          </button>
+          <input hidden="hidden" type="text" id="login-method-input" name="login-method" value="">
+<!--          <div>-->
+<!--            <label for="email-login-method">البريد الإلكتروني</label>-->
+<!--            <input checked type="radio" id="email-login-method" name="login-method" value="email" onchange="CheckLoginMethod()">-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <label for="phone-login-method">رقم الهاتف</label>-->
+<!--            <input type="radio" id="phone-login-method" name="login-method" value="phone" onchange="CheckLoginMethod()">-->
+<!--          </div>-->
+        </div>
+        <div class="field-holder" id="phone-method-holder" style="display: none">
+          <label for="customer-phone" class="input_label">رقم الهاتف</label>
+          <input type="tel" id="customer-phone" class="input_field" name="customer-phone" autocomplete="phone" style="text-align: right" maxlength="10">
+        </div>
+        <div class="field-holder" id="email-method-holder" style="display: none">
+          <label for="customer-email" class="input_label">البريد الإلكتروني</label>
+          <input type="email" id="customer-email" class="input_field" name="customer-email" autocomplete="email" required>
+        </div>
+        <div class="field-holder password-container" style="display: none">
+          <label for="customer-password" class="input_label">كلمة المرور</label>
+<!--          <div class="password-div">-->
+          <input type="password" id="customer-password" class="input_field" name="customer-password" maxlength="20">
+<!--          </div>-->
+          <span class="show-password-btn material-symbols-outlined" onclick="togglePasswordVisibility()">
+            visibility_off
+          </span>
+<!--          <a href="{{url_for('forgot_password')}}" class="forgot-password" style="cursor: pointer">&lt;!&ndash; onclick="window.alert('لا يمكن استرجاع كلمة المرور حاليًا, اتصل مع المسؤولين')">&ndash;&gt;-->
+<!--            هل نسيت كلمة المرور؟-->
+<!--          </a>-->
+        </div>
+        <br>
+        <button type="submit" class="sign-in-button" style="display: none">
+          تسجيل الدخول
+        </button>
+        <span id="new-user" style="font-size: 0.8em; display: none">
+          مستخدم جديد؟
+          <a href="{{url_for('register')}}" id="create-account">
+            إنشاء حساب
+          </a>
+        </span>
+      </form>
+    </div>
+  </div>
+  <br>
+  <script>
+    function togglePasswordVisibility() {
+        let passwordInput = document.getElementById('customer-password');
+        let showPasswordBtn = document.querySelector('.show-password-btn');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordBtn.textContent = 'visibility';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordBtn.textContent = 'visibility_off';
+        }
+    }
+
+    function PhoneMethod() {
+        let methods = document.getElementsByClassName("login-method");
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].style.display = "none";
+        }
+
+        document.getElementById("login-method-title").style.display = "none";
+
+        document.getElementById("phone-method-holder").style.display = "block";
+        document.getElementById("phone-login-title").style.display = "block";
+        document.getElementById("customer-phone").setAttribute("required", "true");
+
+        document.getElementById("email-method-holder").style.display = "none";
+        document.getElementById("email-login-title").style.display = "none";
+        document.getElementById("customer-email").removeAttribute("required");
+
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+    }
+
+    function EmailMethod() {
+        let methods = document.getElementsByClassName("login-method");
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].style.display = "none";
+        }
+
+        document.getElementById("login-method-title").style.display = "none";
+
+        document.getElementById("email-method-holder").style.display = "block";
+        document.getElementById("email-login-title").style.display = "block";
+        document.getElementById("customer-email").setAttribute("required", "true");
+
+        document.getElementById("phone-method-holder").style.display = "none";
+        document.getElementById("phone-login-title").style.display = "none";
+        document.getElementById("customer-phone").removeAttribute("required");
+
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+    }
+
+    function CheckLoginMethod(button) {
+        // console.log("Enter");
+        // let methods = document.getElementsByClassName("login-method");
+        // for (let i = 0; i < methods.length; i++) {
+        //     methods[i].style.display = "none";
+        // }
+
+        document.getElementById("login-method-title").style.display = "none";
+
+        if (button.id === "phone-method") {
+            document.getElementById("login-method-input").value = "phone";
+
+            document.getElementById("phone-method-holder").style.display = "block";
+            document.getElementById("phone-login-title").style.display = "block";
+            document.getElementById("customer-phone").setAttribute("required", "true");
+
+            document.getElementById("email-method-holder").style.display = "none";
+            document.getElementById("email-login-title").style.display = "none";
+            document.getElementById("customer-email").removeAttribute("required");
+        } else {
+            document.getElementById("login-method-input").value = "email";
+
+            document.getElementById("email-method-holder").style.display = "block";
+            document.getElementById("email-login-title").style.display = "block";
+            document.getElementById("customer-email").setAttribute("required", "true");
+
+            document.getElementById("phone-method-holder").style.display = "none";
+            document.getElementById("phone-login-title").style.display = "none";
+            document.getElementById("customer-phone").removeAttribute("required");
+        }
+
+        document.getElementById("new-user").style.display = "block";
+        document.getElementsByClassName("password-container")[0].style.display = "block";
+        document.getElementById("customer-password").setAttribute("required", "true");
+        document.getElementsByClassName("sign-in-button")[0].style.display = "block";
+    }
+  </script>
+  {% endblock %}
+
+</body>
+</html>

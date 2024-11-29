@@ -1,0 +1,10 @@
+.venv
+.vscode
+.idea
+__pycache__
+BackUp
+images_facebook
+instance
+cities_old.txt
+israel_cities.txt
+Notes-ToDo.txt

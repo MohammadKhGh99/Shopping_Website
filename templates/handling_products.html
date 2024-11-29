@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>التعامل مع المنتجات</title>
+</head>
+
+<style>
+  #products-handling-container {
+    margin: 20px 0 20px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .handle-products-button {
+    cursor: pointer;
+    background-color: #cce5ff;
+    border: 0;
+    font-size: 1em;
+    font-family: "Traditional Arabic", serif;
+    width: 5em;
+    height: 3em;
+    transition-duration: 0.5s;
+  }
+
+  .handle-products-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  .handle-products-button a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+</style>
+
+<body>
+
+  {% extends "admin_profile.html" %}
+
+  {% block users_count %}
+  {% endblock %}
+
+  {% block lower_container %}
+  <div id="products-handling-container">
+    <button class="handle-products-button">
+      <a href="{{url_for('add_product')}}">
+        إضافة منتج
+      </a>
+    </button>
+    <button class="handle-products-button">
+      <a href="{{url_for('search_update_product')}}">
+        تعديل منتج
+      </a>
+    </button>
+    <button class="handle-products-button">
+      <a href="{{url_for('remove_product')}}">
+        إزالة منتج
+      </a>
+    </button>
+  </div>
+  {% endblock %}
+
+</body>
+</html>

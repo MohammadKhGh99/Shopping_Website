@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>{{result[1]}}</title>
+</head>
+
+<style>
+  #product-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 40px 40px 40px 40px;
+  }
+
+  #product-left-side {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    width: 50vw;
+  }
+
+  #product-left-upper {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 0.9em;
+  }
+
+  #product-left-upper span {
+    font-size: 1em;
+  }
+
+  #product-right-side {
+    width: 50vw;
+    height: 90%;
+  }
+
+  #add-to-cart-button {
+    background-color: #cce5ff;
+    border: 0;
+    font-family: "Traditional Arabic", sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+    transition-duration: 0.5s;
+    width: 150px;
+    
+  }
+
+  #add-to-cart-button:hover {
+    background-color: #e5e5e5;
+  }
+
+  #product-left-lower {
+    display: flex;
+    text-align: right;
+    flex-direction: column;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 1em;
+  }
+
+  #product-left-lower span {
+    margin-bottom: 10px;
+  }
+
+  #images-gallery-container {
+    position: relative;
+    width: 90%;
+    height: 90%;
+  }
+
+  .slides {
+    display: none;
+    /*transition: width 0.5s ease-in-out;*/
+    width: 100%;
+    height: 100%;
+  }
+
+  .prev,
+  .next {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    width: auto;
+    padding-right: 16px;
+    padding-left: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    -webkit-user-select: none;
+    height: 100%;
+    text-align: center;
+    line-height: 30px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-duration: 0.5s;
+  }
+
+  .next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .prev {
+    left: 0;
+  }
+
+  .prev:hover,
+  .next:hover {
+    background-color: rgba(225, 224, 224, 0.472);
+  }
+
+  #wish-product {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .wish-button {
+    border: 1px solid black;
+    border-radius: 50%;
+    padding: 3px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .wish-button:hover {
+    background-color: #f15252;
+  }
+
+</style>
+
+<body>
+  {% extends "base.html" %}
+
+  {% block lower_container %}
+  <div id="product-container">
+    <div id="product-right-side">
+      <div id="images-gallery-container">
+        {% for image in images %}
+        <div class="slides" style="width: 100%; height: 100%">
+          <img src="{{url_for('static', filename=image)}}" alt="" style="width: 100%; height: 100%; object-fit: fill">
+        </div>
+        {% endfor %}
+        <a class="next" onclick="MoveSlides(1)">&#10094;</a>
+        <a class="prev" onclick="MoveSlides(-1)">&#10095;</a>
+        <script>
+            // hide the next and prev symbols if there is just one image
+            const productImages = "{{result[3]}}";
+            if (productImages.indexOf("&") === -1) {
+                document.getElementsByClassName("next")[0].style.display = "none";
+                document.getElementsByClassName("prev")[0].style.display = "none";
+            }
+        </script>
+      </div>
+      <script>
+          let slideIndex = 0;
+          let slides = document.getElementsByClassName("slides");
+          MoveSlides();
+
+          function HideSlides(avoid) {
+              for (let i = 0; i < slides.length; i++) {
+                  if (i === avoid) continue;
+                  slides[i].style.display = "none";
+              }
+          }
+
+          function MoveSlides(n=0) {
+              if (n === 0) {
+                  HideSlides(0);
+                  slides[0].style.display = "block";
+              }
+              else if (n === 1 && slideIndex + 1 < slides.length) {
+                  slideIndex++;
+                  HideSlides(slideIndex);
+                  slides[slideIndex].style.display = "block";
+              }
+              else if (n === -1 && slideIndex > 0) {
+                  slideIndex--;
+                  HideSlides(slideIndex);
+                  slides[slideIndex].style.display = "block";
+              }
+          }
+      </script>
+    </div>
+    <div id="product-left-side">
+      <h5 style="background-color: #e5e5e5; width: 150px; text-align: center">
+        رقم المنتج: {{result[0]}}
+      </h5>
+      {% if result[5] == 0 %}
+        <h2 style="background-color: #f64f4f; width: 100%; text-align: center; margin-top: 0; height: 50px">
+          نفد المخزون
+        </h2>
+        <form method="post" id="wish-product-form">
+          <input type="hidden" value="{{result[0]}}" id="wish-product-id" name="wish-product-id">
+        </form>
+<!--        <div id="wish-product">-->
+<!--          <span style="background-color: #ddc36c">-->
+<!--            إن كنت مهتمًّا بإعادة هذا المنتج إلى المخزون-->
+<!--          </span>-->
+<!--          <span class="material-symbols-outlined wish-button" onclick="WishProduct()">-->
+<!--            favorite-->
+<!--          </span>-->
+<!--        </div>-->
+<!--        <script>-->
+<!--          function WishProduct() {-->
+<!--              document.getElementById("wish-product").style.display = "none";-->
+<!--              document.getElementById("wish-product-form").submit();-->
+<!--          }-->
+<!--        </script>-->
+      {% endif %}
+      <div id="product-left-upper">
+        <h1 style="margin-top: 0; line-height: 1">
+          {{result[1]}}
+        </h1>
+        <span style="font-size: 1.5em;">
+          {{result[4]}} ₪
+        </span>
+        <span style="margin-bottom: 20px">
+          تكلفة الشحن ستحسب عند ادخال العنوان
+        </span>
+      </div>
+      <br>
+      <!-- {% if user_role == "admin" %}
+        <div id="product-left-options">
+          <b>
+            الخيارات
+          </b>
+          <br>
+          <div>
+            <input type="checkbox" id="package-as-gift" name="package-as-gift">
+            <label for="package-as-gift">التغليف كهدية 10₪</label>
+          </div>
+          <div>
+            <input type="checkbox" id="ehdaa" name="ehdaa" onchange="EhdaaChange()">
+            <label for="ehdaa">إهداء 10₪</label>
+            <br>
+            <div id="ehdaa-text-div" style="display: none;">
+              <textarea id="ehdaa-text" name="ehdaa-text"></textarea>
+            </div>
+          </div>
+        </div>
+        <script>
+          function EhdaaChange() {
+            if (document.getElementById("ehdaa").checked) {
+              document.getElementById("ehdaa-text-div").style.display = "block";
+            } else {
+              document.getElementById("ehdaa-text-div").style.display = "none";
+            }
+          }
+        </script>
+      {% endif %} -->
+      <!-- <br> -->
+      <div id="product-left-lower">
+        {% if user_role != "admin" %}
+          <button id="add-to-cart-button" onclick="AddToCart()">
+            إضافة إلى سلة التسوق
+          </button>
+          <a href="#" style="display: none; font-size: 0.9em" id="go-to-shop-cart" onclick="ClickOnCart()">
+            الذهاب إلى سلة التسوق
+          </a>
+          <form method="post" id="update-cart-form">
+            <input type="hidden" name="cart-item-id-update" id="cart-item-id-update">
+            <input type="hidden" name="cart-items-update" id="cart-items-update">
+            <input type="hidden" name="item-price-update" id="item-price-update">
+          </form>
+          <script>
+            // const addToCartButton = document.getElementById("add-to-cart-button");
+            // const counter1 = document.getElementsByClassName("counter")[0];
+            // addToCartButton.setAttribute("onclick", "AddToCart()");
+
+            function AddToCart() {
+                // checking if the user has already put the maximum number of items from this product in cart
+                const itemsLeft = document.querySelector("#items-left b");
+                if (parseInt(itemsLeft.textContent) === 0) {
+                    window.alert("لا يوجد المزيد من هذا المنتج");
+                    return;
+                } else if (parseInt(itemsLeft.textContent) < parseInt(retrievedArray["{{result[0]}}"]) + 1) {
+                    window.alert(`يمكنك إضافة فقط ${itemsLeft.textContent} من هذا المنتج`);
+                    return;
+                }
+
+                // increment the shopping cart counter
+                const newCounter = parseInt(counter.textContent) + 1;
+                counter.textContent = newCounter.toString();
+                localStorage.setItem("cartCounter", counter.textContent);
+
+                // checking if there is already items from the current product
+                if (retrievedArray["{{result[0]}}"] === undefined) {
+                    // let dict = {"count": 1};
+                    // if (document.getElementById("package-as-gift").checked){
+                    //   dict["gift"] = true;
+                    // }
+                    // if (document.getElementById("ehdaa").checked) {
+                    //   dict["ehdaa"] = true;
+                    //   dict["ehdaa-text"] = document.getElementById("ehdaa-text").text;
+                    // }
+                    // retrievedArray.push(["{{result[0]}}", dict]);
+                    retrievedArray["{{result[0]}}"] = "1";
+                } 
+                else {
+                    // increment the current amount of items from this product
+                    const newItemCounter = parseInt(retrievedArray["{{result[0]}}"]) + 1;
+                    retrievedArray["{{result[0]}}"] = newItemCounter.toString();
+                }
+                // store the changed cart items array
+                localStorage.setItem("cartItems", JSON.stringify(retrievedArray));
+
+                document.getElementById("go-to-shop-cart").style.display = "block";
+
+                document.getElementById("cart-item-id-update").value = "{{result[0]}}";
+                document.getElementById("cart-items-update").value = localStorage.getItem("cartItems");
+                document.getElementById("item-price-update").value = "{{result[4]}}";
+                // document.getElementById("update-cart-form").submit();
+            }
+
+            function ClickOnCart() {
+                document.getElementsByClassName("shopping-cart")[0].click();
+            }
+
+          </script>
+        {% endif %}
+
+        <!-- <br> -->
+        <span id="items-left">
+          الكمية المتبقية:
+          <b>{{result[5]}}</b>
+        </span>
+        <p>
+          {{result[6]}}
+        </p>
+        <!-- <span>
+          سنة النشر: {{result[7]}}
+        </span>
+        <span>
+          المؤلف: {{result[8]}}
+        </span> -->
+        <!-- <span>
+          تصنيفات: {{result[9]}}
+        </span> -->
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+</body>
+</html>

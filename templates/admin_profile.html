@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>صفحة المسؤول</title>
+</head>
+
+<style>
+  #users-count {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding-right: 20px;
+    font-size: 0.9em;
+  }
+</style>
+
+<body>
+  {% extends "profile.html" %}
+
+  {% block link_bar %}
+  <a href="{{url_for('all_customers')}}">
+    حميع المستخدمين
+  </a>
+  <a href="{{url_for('all_customers_orders')}}">
+    جميع الطلبات
+  </a>
+  <a href="{{url_for('handling_products')}}">
+    المنتجات
+  </a>
+  {% endblock %}
+
+  {% block admin %}
+  <span style="color: #428403; border-radius: 30%; font-size: 0.6em">مسؤول</span>
+  {% endblock %}
+
+  {% block users_count %}
+  <div id="users-count">
+    <span style="color: #428403">
+      عدد المسؤولين:
+      {{admins_num}}
+    </span>
+    <span>
+      عدد الزبائن:
+      {{customers_num}}
+    </span>
+  </div>
+  {% endblock %}
+
+
+</body>
+</html>
