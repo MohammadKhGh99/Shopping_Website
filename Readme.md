@@ -20,10 +20,13 @@ A shopping website project that allows users to browse and purchase products onl
 ## Installation
 
 1. Clone the repository:
+
    ```sh
    git clone https://github.com/MohammadKhGh99/Shopping_Website.git
    ```
+
 2. Install dependencies:
+
    ```sh
    pip install -r requirments.txt
    ```
@@ -31,9 +34,11 @@ A shopping website project that allows users to browse and purchase products onl
 ## Usage
 
 1. Start the server:
+
    ```sh
    python app.py
    ```
+
 2. Open the website in your browser: [127.0.0.1:5000](http://127.0.0.1:5000)
 
 ## Contributing
