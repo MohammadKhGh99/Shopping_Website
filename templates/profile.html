@@ -67,7 +67,9 @@
                 <label for="customer-password">كلمة المرور</label>
                 <input disabled id="customer-password" name="customer-password" value="**********">
                 <!-- <p style="margin-bottom: 5px;">**********</p> -->
-                <a href="#" style="text-decoration: none; font-size: 0.6em; color: black" onclick="window.alert('لا يمكن تغيير كلمة السر حتى الآن');">هل نسيت كلمة السر؟</a>
+                <a href="{{url_for('forgot_password')}}" class="forgot-password">
+                  هل نسيت كلمة المرور؟
+                </a>
               </div>
             </li>
             <li>

@@ -127,7 +127,7 @@ body {
 #add-to-cart-button:hover,
 #update-info-button:hover,
 .sign-up-button:hover,
-#search-product-id-button:hover  {
+#search-product-id-button:hover {
   background-color: #e5e5e5;
 }
 
@@ -588,7 +588,7 @@ select {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  animation: pulse 2s infinite;
+  /* animation: pulse 2s infinite; */
 }
 
 .tooltiptext {
@@ -1401,6 +1401,18 @@ product hr {
   left: 0;
   /*top: 500px;*/
   font-size: 0.8em;
+}
+
+.forgot-password {
+  display: block;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.6em;
+  color: black;
+}
+
+.forgot-password:hover {
+  color: gray;
 }
 
 .sign-in-button {
