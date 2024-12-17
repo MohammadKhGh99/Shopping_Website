@@ -111,7 +111,7 @@
 
         // Add a submit event listener to the form
         form.addEventListener('submit', function (event) {
-          if (document.getElementById("customer-phone").textContent.length < 10) {
+          if (document.getElementById("customer-phone").value.length < 10) {
             document.getElementById("customer-phone").classList.add('error-border');
             event.preventDefault();
             alert('Please enter a valid phone number.');

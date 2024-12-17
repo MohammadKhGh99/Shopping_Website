@@ -14,20 +14,21 @@ from werkzeug.utils import secure_filename
 from flask import render_template, Flask, request, redirect, url_for, flash, session
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
 
 project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
-# load_dotenv(os.path.join(project_folder, '.env'))
+load_dotenv(os.path.join(project_folder, '.env'))
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SHOPPING_APP_KEY")
 app.config['DEBUG'] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle' : 300}
 
 SQL_PASS = ""
 SQLALCHEMY_DATABASE_URI = f"mysql+mysqldb://irtekaa:{SQL_PASS}@irtekaa.mysql.pythonanywhere-services.com/Shopping"
 # app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle' : 300}
 
 db = SQLAlchemy(app)
 
@@ -39,15 +40,6 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-NO_ACCOUNTS = False
-STORE_CART = False
-NO_CLOTHES = False
-DEVELOPMENT = True
-
-
-if DEVELOPMENT:
-    app.config['DEBUG'] = True
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
@@ -177,8 +169,8 @@ def books():
 
 @app.route('/clothes')
 def clothes():
-    if NO_CLOTHES:
-        return redirect(url_for('home'))
+    # if NO_CLOTHES:
+    #     return redirect(url_for('home'))
     user_role = check_role()
     # check this
     clothes_lst = []
@@ -187,8 +179,8 @@ def clothes():
 
 @app.route('/gifts_corner')
 def gifts_corner():
-    if NO_CLOTHES:
-        return redirect(url_for('home'))
+    # if NO_CLOTHES:
+    #     return redirect(url_for('home'))
     user_role = check_role()
 
     with sqlite3.connect("Shopping.db") as connection:
@@ -274,9 +266,9 @@ def login():
         # if we found more than one user with this "unique" info (will not happen, but in case...)
         if len(res_rows) == 1:
             # if we still don't have any users except admins
-            if NO_ACCOUNTS and res_rows[0][4] != "admin":
-                flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
-                return redirect(request.referrer)
+            # if NO_ACCOUNTS and res_rows[0][4] != "admin":
+            #     flash("فقط المسؤول يمكنه تسجيل الدخول", "warning")
+            #     return redirect(request.referrer)
             # checking the entered password with the stored password
             # if they are identical then login the current user
             if bcrypt.check_password_hash(res_rows[0][-3], password):
@@ -320,9 +312,9 @@ def register():
     if user_role != "guest":
         return redirect(url_for('profile'))
 
-    if NO_ACCOUNTS:
-        flash("فقط المسؤول يمكنه الدخول", "warning")
-        return redirect(request.referrer)
+    # if NO_ACCOUNTS:
+    #     flash("فقط المسؤول يمكنه الدخول", "warning")
+    #     return redirect(request.referrer)
 
     if request.method == 'POST':
         form = request.form
@@ -1308,7 +1300,5 @@ def page_not_found(error):
 
 
 if __name__ == "__main__":
-    if DEVELOPMENT:
-        app.run(host="0.0.0.0", debug=True)
-    else:
-        app.run()
+    # app.run(host="0.0.0.0", debug=True)
+    app.run()
