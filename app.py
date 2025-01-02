@@ -19,6 +19,11 @@ from dotenv import load_dotenv
 project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
 load_dotenv(os.path.join(project_folder, '.env'))
 
+bucket_name = os.getenv("BUCKET_NAME")
+access_key_id = os.getenv("ACCESS_KEY_ID")
+secret_access_key = os.getenv("SECRET_ACCESS_KEY")
+bucket_token = os.getenv("BUCKET_TOKEN")
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SHOPPING_APP_KEY")
 app.config['DEBUG'] = True
