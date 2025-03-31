@@ -45,14 +45,14 @@
           </ul>
           <div class="side-menu-footer">
             <footer id="side-menu-footer">
-              <a href="{{url_for('login')}}" class="profile" title="الصفحة الشخصية" style="display: flex; justify-content: center; align-items: center; text-decoration: none">
+              <a href="{{url_for('users.login')}}" class="profile" title="الصفحة الشخصية" style="display: flex; justify-content: center; align-items: center; text-decoration: none">
                 <span class="material-symbols-outlined" style="font-size: 30px;">
                   person
                 </span>
                 <span>الحساب</span>
               </a>
               {% if user_role == "admin" or user_role == "customer" %}
-                <a href="{{url_for('logout')}}">
+                <a href="{{url_for('users.logout')}}">
                   تسجيل الخروج
                 </a>
               {% endif %}
@@ -105,14 +105,14 @@
             ضيف
           </span>
         {% endif %}
-        <a href="{{url_for('login')}}" class="profile" title="الصفحة الشخصية">
+        <a href="{{url_for('users.login')}}" class="profile" title="الصفحة الشخصية">
           <span class="material-symbols-outlined profile-icon">
             person
           </span>
         </a>
         {% if user_role != "admin" %}
           <div class="shopping-cart" onclick="GoShoppingCart()" title="سلة التسوق">
-            <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart')}}">
+            <form id="cart-go-form" method="post" style="display: none" action="{{url_for('shopping_cart.shopping_cart')}}">
               <input style="display: none" id="cart-items-input" name="cart-items-input" value="">
               <input style="display: none" id="cart-update" name="cart-update" value="no">
             </form>
@@ -130,27 +130,27 @@
   {% if user_role == "admin" or user_role == "customer" %}
     <div id="dashboard-link-bar">
       {% if user_role == "admin" %}
-        <a href="{{url_for('all_customers')}}">
+        <a href="{{url_for('admin.all_customers')}}">
           حميع المستخدمين
         </a>
-        <a href="{{url_for('all_customers_orders')}}">
+        <a href="{{url_for('admin.all_customers_orders')}}">
           جميع الطلبات
         </a>
-        <a href="{{url_for('handling_products')}}">
+        <a href="{{url_for('products_handling.handling_products')}}">
           المنتجات
         </a>
       {% endif %}
 
       {% if user_role == "customer" %}
-        <a href="{{url_for('orders')}}">
+        <a href="{{url_for('profile.orders')}}">
           الطلبات
         </a>
       {% endif %}
 
-      <a href="{{url_for('profile')}}">
+      <a href="{{url_for('profile.profile')}}">
         الصفحة الشخصية
       </a>
-      <a href="{{url_for('logout')}}">
+      <a href="{{url_for('users.logout')}}">
         تسجيل الخروج
       </a>
     </div>
@@ -235,7 +235,7 @@
             // get the current cart items and give it to input tag to give to python
             document.getElementById("cart-items-input").setAttribute("value", localStorage.getItem("cartItems"));
             document.querySelector(".shopping-cart form").submit();
-            // window.location.href =  "{{url_for('shopping_cart')}}";
+            // window.location.href =  "{{url_for('shopping_cart.shopping_cart')}}";
             // console.log(localStorage.getItem("cartItems"));
         }
     </script>

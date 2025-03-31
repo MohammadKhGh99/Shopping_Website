@@ -9,7 +9,7 @@
   {% extends "base.html" %}
   {% block no_search %}hidden{% endblock %}
   {% block breadcrumb_link %}
-  / <a href="{{url_for('register')}}">تسجيل</a>
+  / <a href="{{url_for('users.register')}}">تسجيل</a>
   {% endblock %}
   {% block lower_container %}
   <div class="sign-container">
@@ -70,7 +70,7 @@
           </button>
           <p style="text-align: center; font-size: 0.8em">
             هل لديك حساب بالفعل؟
-            <a href="{{url_for('login')}}">
+            <a href="{{url_for('users.login')}}">
               دخول
             </a>
           </p>

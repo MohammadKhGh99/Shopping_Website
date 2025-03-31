@@ -12,14 +12,14 @@
 
 {% block breadcrumb_link %}
 /
-<a href="{{url_for('shopping_cart')}}">سلة التسوق</a>
+<a href="{{url_for('shopping_cart.shopping_cart')}}">سلة التسوق</a>
 {% endblock %}
 
 {% block lower_container %}
 <div id="shopping-cart-container">
   <h2 style="text-align: center">سلة التسوق</h2>
   {% if user_role == "guest" %}
-    <h4 style="text-align: center;">إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع <a href="{{url_for('register')}}">إضغط هنا</a></h4>
+    <h4 style="text-align: center;">إذا لم تسجّل في الموقع فلن يمكنك تتبع الطلب الخاص بك, للتسجيل في الموقع <a href="{{url_for('users.register')}}">إضغط هنا</a></h4>
   {% endif %}
   <table>
     <tr>
@@ -131,7 +131,7 @@
   <br>
   <div id="cart-footer">
     <button class="shopping-cart-buttons">
-      <a href="{{url_for('checkout')}}">
+      <a href="{{url_for('shopping_cart.checkout')}}">
         لإتمام الطلب
       </a>
     </button>
