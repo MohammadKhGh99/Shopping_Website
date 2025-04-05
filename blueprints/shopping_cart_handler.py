@@ -36,7 +36,7 @@ def load_user(user_id):
             return None
 
 
-@shopping_cart_bp.route('/', methods=['GET', 'POST'])
+@shopping_cart_bp.route('/shopping_cart', methods=['GET', 'POST'])
 def shopping_cart():
     user_role = check_role()
     # prevent admin from entering the shopping cart, it is for customeeeers

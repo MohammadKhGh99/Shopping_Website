@@ -264,8 +264,8 @@ def page_not_found(error):
 
 
 if __name__ == "__main__":
-    for rule in app.url_map.iter_rules():
-        print(f"Endpoint: {rule.endpoint}, URL: {rule.rule}")
+    # for rule in app.url_map.iter_rules():
+    #     print(f"Endpoint: {rule.endpoint}, URL: {rule.rule}")
     app.run(host="0.0.0.0", debug=True)
     # Print all registered routes in Flask
     # app.run()
