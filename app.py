@@ -122,6 +122,11 @@ def books():
             all_books = cursor.fetchall()
             connection.commit()
             all_books = [book[:3] + (book[3].split('&'),) + book[4:] for book in all_books]
+            for i in range(len(all_books)):
+                book = all_books[i]
+                if book[3][0].startswith("https"):
+                    all_books[i] = book[:3] + ([f"https://drive.google.com/uc?id={src.split('/d/')[1].split('/')[0]}" for src in book[3]],) + book[4:]
+            print(all_books)
             return render_template('books.html', products=all_books, user_role=user_role)
         except Exception as e:
             send_error(e, "خطأ في تحميل الكتب")
@@ -200,13 +205,13 @@ def product(ptype, id_num):
             cart_items[int(tmp[0])] = tmp[1]
 
     
-    # retrieve the info for the current product
+    # Retrieve the info for the current product
     with sqlite3.connect('Shopping.db') as connection:
         cursor = connection.cursor()
         try:
             res_rows = cursor.execute(f"""
-                select * from Products
-                where id_number = {id_num}
+                SELECT * FROM Products
+                WHERE id_number = {id_num}
                 """)
 
             result = res_rows.fetchone()
@@ -217,8 +222,10 @@ def product(ptype, id_num):
             flash("خطأ في تحميل صفحة المنتج\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
 
-        # take the product's image src path
-        img_src = [img[7:] for img in result[3].split("&")]
+        # Convert Google Drive sharing links to direct links
+        img_src = result[3].split("&")
+        img_src = [f"https://drive.google.com/uc?id={src.split('/d/')[1].split('/')[0]}" for src in img_src]
+        print(img_src)  # Debugging: Check the converted URLs
 
     return render_template('product.html', user_role=user_role, result=result, images=img_src)
 

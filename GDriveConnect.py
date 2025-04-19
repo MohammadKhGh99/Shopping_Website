@@ -237,52 +237,73 @@ def save_to_json(data, output_file):
         print(f"Error saving data to JSON file: {e}")
 
 
-def upload_file_to_drive(file_path, folder_id):
+def upload_file_to_drive(file_path, product_folder_name, root_folder_id, product_id):
     """
-    Upload a file to a specific folder in Google Drive.
+    Upload a file to a specific folder in Google Drive. Create a folder for the product if it doesn't exist.
 
     Args:
         file_path (str): The local path to the file to upload.
-        folder_id (str): The ID of the Google Drive folder where the file will be saved.
+        product_folder_name (str): The name of the parent folder (e.g., "books", "clothes").
+        root_folder_id (str): The ID of the root folder in Google Drive.
+        product_id (str): The ID of the product (used as the folder name for the product).
 
     Returns:
-        dict: The metadata of the uploaded file.
+        dict: The metadata of the uploaded file, including its webViewLink.
     """
     try:
-        # Extract the file name from the file path
-        file_name = file_path.split("/")[-1]
+        # Check if the parent folder (e.g., "books") exists
+        query = f"'{root_folder_id}' in parents and name = '{product_folder_name}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
+        results = service.files().list(q=query, fields="files(id)").execute()
+        parent_folder = results.get("files", [])
 
-        # Define the file metadata
+        if not parent_folder:
+            raise Exception(f"Parent folder '{product_folder_name}' does not exist in Google Drive.")
+
+        parent_folder_id = parent_folder[0]["id"]
+
+        # Check if the product folder exists
+        query = f"'{parent_folder_id}' in parents and name = '{product_id}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
+        results = service.files().list(q=query, fields="files(id)").execute()
+        product_folder = results.get("files", [])
+
+        # If the product folder does not exist, create it
+        if not product_folder:
+            folder_metadata = {
+                "name": product_id,
+                "mimeType": "application/vnd.google-apps.folder",
+                "parents": [parent_folder_id]
+            }
+            product_folder = service.files().create(body=folder_metadata, fields="id").execute()
+            product_folder_id = product_folder["id"]
+        else:
+            product_folder_id = product_folder[0]["id"]
+
+        # Upload the file to the product folder
+        file_name = file_path.split("/")[-1]
         file_metadata = {
             "name": file_name,
-            "parents": [folder_id]  # Specify the folder ID
+            "parents": [product_folder_id]
         }
-
-        # Create a MediaFileUpload object for the file
         media = MediaFileUpload(file_path, resumable=True)
-
-        # Upload the file
         uploaded_file = service.files().create(
             body=file_metadata,
             media_body=media,
             fields="id, name, webViewLink"
         ).execute()
 
-        print(f"File '{uploaded_file['name']}' uploaded successfully.")
-        print(f"File ID: {uploaded_file['id']}")
-        print(f"File Link: {uploaded_file['webViewLink']}")
+        print(f"File '{uploaded_file['name']}' uploaded successfully to folder '{product_id}'.")
         return uploaded_file
     except Exception as e:
-        print(f"Error uploading file: {e}")
+        print(f"Error uploading file to Google Drive: {e}")
         return None
 
 
-if __name__ == "__main__":
-    root_folder_id = "1k5rB_WljD_v9ExgMx4ASvy4o7VNvnm6R"
-    output_json_file = "drive_image_links.json"
+# if __name__ == "__main__":
+#     root_folder_id = "1k5rB_WljD_v9ExgMx4ASvy4o7VNvnm6R"
+#     output_json_file = "drive_image_links.json"
 
-    # Traverse the Google Drive folder structure
-    drive_data = traverse_drive(root_folder_id)
+#     # Traverse the Google Drive folder structure
+#     drive_data = traverse_drive(root_folder_id)
 
-    # Save the results to a JSON file
-    save_to_json(drive_data, output_json_file)
+#     # Save the results to a JSON file
+#     save_to_json(drive_data, output_json_file)

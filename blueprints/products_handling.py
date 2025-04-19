@@ -6,13 +6,23 @@ from helpers import check_role, send_error
 from flask import render_template, redirect, url_for, request, flash, session, Blueprint
 from flask_login import login_required
 from werkzeug.utils import secure_filename
+from GDriveConnect import upload_file_to_drive
 
 
 products_handling_bp = Blueprint('products_handling', __name__)
-
+# TODO: change this to environment variable
+root_folder_id = "1k5rB_WljD_v9ExgMx4ASvy4o7VNvnm6R"
 
 types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا": "gifts_corner"}
 types = ["كتب", "أزياء", "ركن الهدايا"]
+
+
+@products_handling_bp.errorhandler(Exception)
+def handle_exception(e):
+    # Handle the exception and log it
+    send_error(e, "خطأ غير متوقع")
+    # TODO: redirect to a custom error page or show a message
+    return redirect(request.referrer)
 
 
 @products_handling_bp.route('/admin_profile/handling_products', methods=['GET', 'POST'])
@@ -22,7 +32,7 @@ def handling_products():
     # just the admin can go to products handling page
     if user_role == "admin":
         return render_template('handling_products.html', user_role=user_role)
-    return redirect(url_for('profile.profile'))
+    return redirect(url_for('products_handling.profile.profile'))
 
 
 @products_handling_bp.route('/admin_profile/handling_products/add_product', methods=['GET', 'POST'])
@@ -31,7 +41,7 @@ def add_product():
     user_role = check_role()
     # just admin can add products
     if user_role != "admin":
-        return redirect(url_for('profile.profile'))
+        return redirect(url_for('products_handling.profile.profile'))
 
     done = request.args.get('done')
     name = request.args.get('name')
@@ -71,29 +81,41 @@ def add_product():
                      product_publish_year, product_author))
                     #  product_categories)
 
-                # validating filename and creating img src path to store in database
-                product_img = ""
+               # Get the last inserted product ID
+                product_id = cursor.lastrowid
+
+                # Google Drive folder structure
+                product_folder = types_dict[product_type]
+                drive_folder_name = f"{product_folder}/{product_id}"
+
+                # Upload images to Google Drive
+                product_img_links = []
                 for img_file in product_images:
                     filename = secure_filename(img_file.filename)
-                    product_folder = types_dict[product_type]
-                    img_path = f'static/images/{product_folder}'
-                    if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
-                        os.mkdir(img_path + f"/{cursor.lastrowid}")
-                    img_path += f"/{cursor.lastrowid}/{filename}"
-                    img_file.save(img_path)
-                    product_img += img_path + "&"
-                product_img = product_img[:-1]
+                    img_file_path = f"/tmp/{filename}"  # Temporarily save the file locally
+                    img_file.save(img_file_path)
+
+                    # Upload the file to Google Drive
+                    uploaded_file = upload_file_to_drive(img_file_path, product_folder, root_folder_id, str(product_id))
+                    if uploaded_file:
+                        product_img_links.append(uploaded_file["webViewLink"])
+
+                    # Remove the temporary file
+                    os.remove(img_file_path)
+
+                # Save the image links in the database
+                product_img_links_str = "&".join(product_img_links)
 
                 cursor.execute(f"""
                 update Products
-                set img_path = '{product_img}'
+                set img_path = '{product_img_links_str}'
                 where id_number = {cursor.lastrowid}
                 """)
 
                 connection.commit()
                 # successfully added
                 flash(f"تمت إضافة ال{product_type} بنجاح", category="success")
-                return redirect(url_for('add_product', done=True, name=product_name, ptype=product_type, id_num=cursor.lastrowid))
+                return redirect(url_for('products_handling.add_product', done=True, name=product_name, ptype=product_type, id_num=cursor.lastrowid))
             except Exception as e:
                 send_error(e, f"حدث خطأ أثناء إضافة ال{product_type}")
                 connection.rollback()
@@ -111,7 +133,7 @@ def remove_product():
     user_role = check_role()
     # just the admin can enter removing product page
     if user_role != "admin":
-        return redirect(url_for('profile.profile'))
+        return redirect(url_for('products_handling.profile.profile'))
 
     if request.method == "POST":
         product_id = request.form["search-product-id-input"]
@@ -161,7 +183,7 @@ def search_update_product():
     user_role = check_role()
     if user_role == "admin":
         return render_template("search_update_product.html", user_role=user_role)
-    return redirect(url_for('profile.profile'))
+    return redirect(url_for('products_handling.profile.profile'))
 
 
 @products_handling_bp.route('/admin_profile/handling_products/update_product', methods=['GET', 'POST'])
@@ -170,7 +192,7 @@ def update_product():
     user_role = check_role()
     # just the admin can enter update product page
     if user_role != "admin":
-        return redirect(url_for('profile.profile'))
+        return redirect(url_for('products_handling.profile.profile'))
 
     done = request.args.get('done')
     name = request.args.get('name')
