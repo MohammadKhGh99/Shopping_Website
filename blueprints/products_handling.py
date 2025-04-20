@@ -2,16 +2,13 @@ import sqlite3
 import shutil
 import os
 
-from helpers import check_role, send_error
+from helpers import check_role, send_error, r2_handler
 from flask import render_template, redirect, url_for, request, flash, session, Blueprint
 from flask_login import login_required
 from werkzeug.utils import secure_filename
-from GDriveConnect import upload_file_to_drive
 
 
 products_handling_bp = Blueprint('products_handling', __name__)
-# TODO: change this to environment variable
-root_folder_id = "1k5rB_WljD_v9ExgMx4ASvy4o7VNvnm6R"
 
 types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا": "gifts_corner"}
 types = ["كتب", "أزياء", "ركن الهدايا"]
@@ -81,36 +78,46 @@ def add_product():
                      product_publish_year, product_author))
                     #  product_categories)
 
-               # Get the last inserted product ID
-                product_id = cursor.lastrowid
+                # # validating filename and creating img src path to store in database
+                # product_img = ""
+                # for img_file in product_images:
+                #     filename = secure_filename(img_file.filename)
+                #     product_folder = types_dict[product_type]
+                #     img_path = f'static/images/{product_folder}'
+                #     if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
+                #         os.mkdir(img_path + f"/{cursor.lastrowid}")
+                #     img_path += f"/{cursor.lastrowid}/{filename}"
+                #     img_file.save(img_path)
+                #     product_img += img_path + "&"
+                # product_img = product_img[:-1]
 
-                # Google Drive folder structure
-                product_folder = types_dict[product_type]
-                drive_folder_name = f"{product_folder}/{product_id}"
+                # cursor.execute(f"""
+                # update Products
+                # set img_path = '{product_img}'
+                # where id_number = {cursor.lastrowid}
+                # """)
 
-                # Upload images to Google Drive
-                product_img_links = []
+                # Upload images to Cloudflare R2 and store their URLs
+                product_img_urls = ""
                 for img_file in product_images:
                     filename = secure_filename(img_file.filename)
-                    img_file_path = f"/tmp/{filename}"  # Temporarily save the file locally
-                    img_file.save(img_file_path)
+                    object_name = f"{product_type}/{cursor.lastrowid}/{filename}"
+                    
+                    uploaded_url = r2_handler.upload_image(img_file, object_name)
+                    if uploaded_url:
+                        product_img_urls += "https://pub-1423258e1fec4fbcba881867fef15f46.r2.dev/" + object_name + "&"
+                    else:
+                        raise Exception("Failed to upload image to Cloudflare R2.")
 
-                    # Upload the file to Google Drive
-                    uploaded_file = upload_file_to_drive(img_file_path, product_folder, root_folder_id, str(product_id))
-                    if uploaded_file:
-                        product_img_links.append(uploaded_file["webViewLink"])
+                product_img_urls = product_img_urls[:-1]  # Remove trailing '&'
 
-                    # Remove the temporary file
-                    os.remove(img_file_path)
-
-                # Save the image links in the database
-                product_img_links_str = "&".join(product_img_links)
-
+                # Update the product record with image URLs
                 cursor.execute(f"""
-                update Products
-                set img_path = '{product_img_links_str}'
-                where id_number = {cursor.lastrowid}
+                UPDATE Products
+                SET img_path = '{product_img_urls}'
+                WHERE id_number = {cursor.lastrowid}
                 """)
+
 
                 connection.commit()
                 # successfully added

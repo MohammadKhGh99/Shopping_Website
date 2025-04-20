@@ -1,10 +1,25 @@
 import os
 import smtplib
 
+
+from dotenv import load_dotenv
 from flask_login import current_user, LoginManager, UserMixin
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from images_handler import CloudflareR2Handler
 
+
+project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
+load_dotenv(os.path.join(project_folder, '.env'))
+
+BUCKET_NAME = os.getenv("BUCKET_NAME")
+ACCESS_KEY = os.getenv("ACCESS_KEY")
+SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
+TOKEN_VALUE = os.getenv("TOKEN_VALUE")
+ENDPOINT_URL = os.getenv("ENDPOINT_URL")
+
+# Initialize the handler
+r2_handler = CloudflareR2Handler(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME, ENDPOINT_URL)
 
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]

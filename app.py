@@ -6,23 +6,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from flask_login import UserMixin, LoginManager, login_required, current_user
 from flask import render_template, Flask, request, redirect, url_for, flash
-from dotenv import load_dotenv
 from blueprints.admin import admin_bp
 from blueprints.shopping_cart_handler import shopping_cart_bp
 from blueprints.products_handling import products_handling_bp
 from blueprints.users_handling import user_bp
 from blueprints.user_profile import user_profile_bp
-from helpers import check_role, send_error, convert_str_to_dic, User
+from helpers import check_role, send_error, convert_str_to_dic, User, r2_handler
 from extensions import bcrypt, login_manager
 
-
-project_folder = os.path.expanduser(os.path.abspath(os.path.curdir))  # adjust as appropriate
-load_dotenv(os.path.join(project_folder, '.env'))
-
-bucket_name = os.getenv("BUCKET_NAME")
-access_key_id = os.getenv("ACCESS_KEY_ID")
-secret_access_key = os.getenv("SECRET_ACCESS_KEY")
-bucket_token = os.getenv("BUCKET_TOKEN")
 
 app = Flask(__name__)
 bcrypt.init_app(app)
@@ -122,11 +113,6 @@ def books():
             all_books = cursor.fetchall()
             connection.commit()
             all_books = [book[:3] + (book[3].split('&'),) + book[4:] for book in all_books]
-            for i in range(len(all_books)):
-                book = all_books[i]
-                if book[3][0].startswith("https"):
-                    all_books[i] = book[:3] + ([f"https://drive.google.com/uc?id={src.split('/d/')[1].split('/')[0]}" for src in book[3]],) + book[4:]
-            print(all_books)
             return render_template('books.html', products=all_books, user_role=user_role)
         except Exception as e:
             send_error(e, "خطأ في تحميل الكتب")
@@ -205,13 +191,13 @@ def product(ptype, id_num):
             cart_items[int(tmp[0])] = tmp[1]
 
     
-    # Retrieve the info for the current product
+    # retrieve the info for the current product
     with sqlite3.connect('Shopping.db') as connection:
         cursor = connection.cursor()
         try:
             res_rows = cursor.execute(f"""
-                SELECT * FROM Products
-                WHERE id_number = {id_num}
+                select * from Products
+                where id_number = {id_num}
                 """)
 
             result = res_rows.fetchone()
@@ -222,10 +208,9 @@ def product(ptype, id_num):
             flash("خطأ في تحميل صفحة المنتج\nنوع الخطأ: " + str(e), "error")
             return redirect(request.referrer)
 
-        # Convert Google Drive sharing links to direct links
+        # take the product's image src path
         img_src = result[3].split("&")
-        img_src = [f"https://drive.google.com/uc?id={src.split('/d/')[1].split('/')[0]}" for src in img_src]
-        print(img_src)  # Debugging: Check the converted URLs
+        print(img_src)
 
     return render_template('product.html', user_role=user_role, result=result, images=img_src)
 
