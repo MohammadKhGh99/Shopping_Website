@@ -2,7 +2,7 @@ import sqlite3
 import shutil
 import os
 
-from helpers import check_role, send_error, r2_handler
+from helpers import check_role, send_error, r2_handler, R2_DEV_BUCKET_URL
 from flask import render_template, redirect, url_for, request, flash, session, Blueprint
 from flask_login import login_required
 from werkzeug.utils import secure_filename
@@ -105,7 +105,7 @@ def add_product():
                     
                     uploaded_url = r2_handler.upload_image(img_file, object_name)
                     if uploaded_url:
-                        product_img_urls += "https://pub-1423258e1fec4fbcba881867fef15f46.r2.dev/" + object_name + "&"
+                        product_img_urls += R2_DEV_BUCKET_URL + object_name + "&"
                     else:
                         raise Exception("Failed to upload image to Cloudflare R2.")
 

@@ -17,6 +17,7 @@ ACCESS_KEY = os.getenv("ACCESS_KEY")
 SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
 TOKEN_VALUE = os.getenv("TOKEN_VALUE")
 ENDPOINT_URL = os.getenv("ENDPOINT_URL")
+R2_DEV_BUCKET_URL = os.getenv("R2-DEV-BUCKET-URL")
 
 # Initialize the handler
 r2_handler = CloudflareR2Handler(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME, ENDPOINT_URL)
