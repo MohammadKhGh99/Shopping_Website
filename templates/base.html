@@ -91,6 +91,16 @@
       </div>
       <div id="header-left">
         {% if user_role == "admin" %}
+        <form>
+          <!-- <button type="submit" style="background-color: transparent; border: 0; cursor: pointer"> -->
+            <a href="{{url_for('admin.backup')}}" class="backup" title="نسخة احتياطية" style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
+              <span class="material-symbols-outlined backup-icon" style="font-size: 20px; color: #AD7765;">
+                backup
+              </span>
+            </a>
+          <!-- </button> -->
+        </form>
+          
           <span style="padding: 3px; color: #65d001">
             مسؤول
           </span>
@@ -131,7 +141,7 @@
     <div id="dashboard-link-bar">
       {% if user_role == "admin" %}
         <a href="{{url_for('admin.all_customers')}}">
-          حميع المستخدمين
+          جميع المستخدمين
         </a>
         <a href="{{url_for('admin.all_customers_orders')}}">
           جميع الطلبات

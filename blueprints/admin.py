@@ -1,6 +1,9 @@
 import sqlite3
+import datetime
+import os
+import shutil
 
-from helpers import check_role, send_error, statuses, convert_str_to_dic
+from helpers import check_role, send_error, statuses, convert_str_to_dic, DB_FILE, send_email, GMAIL_PASS, EMAIL
 from flask import render_template, redirect, url_for, request, flash, Blueprint
 from flask_login import login_required, current_user
 
@@ -131,3 +134,30 @@ def all_customers():
         connection.commit()
 
     return render_template("all_customers.html", users=users, user_role=user_role, users_num=len(users))
+
+
+@admin_bp.route('/backup', methods=['POST'])
+@login_required
+def backup():
+    user_role = check_role()
+    if user_role != "admin":
+        return redirect(request.referrer)
+
+    now = datetime.datetime.now()
+    backup_filename = f"{os.path.splitext(DB_FILE)[0]}_backup_{now.strftime('%Y%m%d_%H%M%S')}.db"
+
+    # Copy the database file
+    shutil.copy2(DB_FILE, backup_filename)
+
+    send_email("mohammad.gh454@gmail.com", 
+               GMAIL_PASS,
+               "m7md.gh.99@hotmail.com",
+               "Backup of Website's Data",
+               now.strftime("%Y-%m-%d %H:%M:%S"),
+               "plain",
+               backup_filename)
+
+    print(f"Backup created: {backup_filename}")
+    os.remove(backup_filename)
+    flash("تم أخذ نسخة احتياطية من قاعدة البيانات بنجاح", "success")
+    return redirect(request.referrer)

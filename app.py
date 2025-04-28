@@ -133,6 +133,9 @@ def clothes():
 
 @app.route('/gifts_corner')
 def gifts_corner():
+    # gifts still not available
+    return redirect(url_for('home'))
+
     # if NO_CLOTHES:
     #     return redirect(url_for('home'))
     user_role = check_role()
@@ -210,7 +213,6 @@ def product(ptype, id_num):
 
         # take the product's image src path
         img_src = result[3].split("&")
-        print(img_src)
 
     return render_template('product.html', user_role=user_role, result=result, images=img_src)
 

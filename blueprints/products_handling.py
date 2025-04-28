@@ -105,12 +105,11 @@ def add_product():
                     
                     uploaded_url = r2_handler.upload_image(img_file, object_name)
                     if uploaded_url:
-                        product_img_urls += R2_DEV_BUCKET_URL + object_name + "&"
+                        product_img_urls += R2_DEV_BUCKET_URL + "/" + object_name + "&"
                     else:
                         raise Exception("Failed to upload image to Cloudflare R2.")
 
                 product_img_urls = product_img_urls[:-1]  # Remove trailing '&'
-
                 # Update the product record with image URLs
                 cursor.execute(f"""
                 UPDATE Products

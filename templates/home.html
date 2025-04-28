@@ -11,40 +11,31 @@
 
   {% block lower_container %}
 
-<!--  <br>-->
   <div class="container">
     <div class="books-shopping" title="كتب">
       <a href="{{url_for('books')}}">
         <img src="{{url_for('static', filename='images/books_logo.jpg')}}" alt="books">
-<!--        https://drive.google.com/thumbnail?id=1Hc2iQOr5Xn3ZZumoy_EW-Jj7AstRT-wm&sz=w1000-->
         <span>مكتبة ورثة الأنبياء</span>
       </a>
     </div>
     <div class="clothes-shopping" title="أزياء شرعية">
-      <!-- <span class="coming-soon">
-        <span>
-          &ensp;قريبًا
-        </span>
-      </span> -->
-      <!-- <a href="{{url_for('clothes')}}" > -->
       <a href="{{url_for('clothes')}}" >
         <img src="{{ url_for('static', filename='images/clothes_logo.jpg')}}" alt="clothes">
         <span>نور الفضيلة للألبسة الشرعية</span>
       </a>
     </div>
-    <div class="gifts_corner-shopping" title="ركن الهدايا">
-      <!-- <span class="coming-soon">
-        <span>
-          &ensp;قريبًا
-        </span>
-      </span> -->
-      <a href="{{url_for('gifts_corner')}}">
-       <img src="{{ url_for('static', filename='images/gifts_corner_logo.png')}}" alt="gifts">
+    <div class="gifts_corner-shopping" title="ركن الهدايا" style="opacity: 0.5; pointer-events: none;">
+      <a href="{{url_for('gifts_corner')}}" onclick="giftsDisabled()">
+        <img src="{{ url_for('static', filename='images/gifts_corner_logo.png')}}" alt="gifts">
         <span>ركن الهدايا</span>
       </a>
     </div>
+    <script>
+      function giftsDisabled() {
+        const confirmGuestCheckout = confirm("عذراً، ركن الهدايا غير متوفر حالياً.");
+      }
+    </script>
   </div>
-<!--  <br>-->
   {% endblock %}
 </body>
 </html>

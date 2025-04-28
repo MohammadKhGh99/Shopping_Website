@@ -289,7 +289,8 @@ body {
 .sign-container form a,
 .menu-icon:hover,
 .search-icon:hover,
-.shopping-cart-icon:hover {
+.shopping-cart-icon:hover,
+.backup-icon:hover {
   color: black;
 }
 
@@ -640,6 +641,7 @@ select {
   color: black;
   text-align: center;
   border-left: 1px solid #f2e4d7;
+  /* border-bottom: 1px solid #f2e4d7; */
   width: 100%;
 }
 

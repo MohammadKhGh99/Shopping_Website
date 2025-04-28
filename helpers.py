@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask_login import current_user, LoginManager, UserMixin
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 from images_handler import CloudflareR2Handler
 
 
@@ -18,6 +20,8 @@ SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
 TOKEN_VALUE = os.getenv("TOKEN_VALUE")
 ENDPOINT_URL = os.getenv("ENDPOINT_URL")
 R2_DEV_BUCKET_URL = os.getenv("R2-DEV-BUCKET-URL")
+DB_FILE = os.getenv("DB_FILE")
+EMAIL = os.getenv("WEBSITE_EMAIL")
 
 # Initialize the handler
 r2_handler = CloudflareR2Handler(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME, ENDPOINT_URL)
@@ -61,10 +65,12 @@ def check_role():
 
 
 
-def send_email(sender, app_password, to, subject, message_text, msg_type):
+def send_email(sender, app_password, to, subject, message_text, msg_type, attachment=None):
+
     # Create a secure connection to the Gmail SMTP server
     # with smtplib.SMTP('smtp.gmail.com', 587) as smtp_server:
     smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
+
     smtp_server.starttls()
 
     # Log in to your Gmail account using the App Password
@@ -75,6 +81,18 @@ def send_email(sender, app_password, to, subject, message_text, msg_type):
     msg['To'] = to
     msg['Subject'] = subject
     msg.attach(MIMEText(message_text, msg_type))
+
+    # If there's an attachment, add it to the email
+    if attachment:
+        with open(attachment, 'rb') as f:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                'Content-Disposition',
+                f'attachment; filename={os.path.basename(attachment)}'
+            )
+            msg.attach(part)
 
     # send email
     smtp_server.send_message(msg)
