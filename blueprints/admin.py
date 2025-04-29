@@ -20,26 +20,26 @@ def admin_profile():
             cursor = connection.cursor()
             # todo - keep it like this or make select without where condition then iterate using for loop???
             cursor.execute(f"""
-            select * from Customers
+            select * from Users
             where role = 'customer'
             """)
-            customers_num = len(cursor.fetchall())
+            Users_num = len(cursor.fetchall())
             connection.commit()
             cursor.execute(f"""
-            select * from Customers
+            select * from Users
             where role = 'admin'
             """)
             admins_num = len(cursor.fetchall())
             connection.commit()
 
         return render_template('admin_profile.html', current_user=current_user, user_role=user_role,
-                               customers_num=customers_num, admins_num=admins_num)
+                               Users_num=Users_num, admins_num=admins_num)
     return redirect(url_for('profile.profile'))
 
 
-@admin_bp.route('/all_customers_orders', methods=['GET', 'POST'])
+@admin_bp.route('/all_Users_orders', methods=['GET', 'POST'])
 @login_required
-def all_customers_orders():
+def all_Users_orders():
     user_role = check_role()
     # the customer cannot enter the admin orders page
     if user_role == "customer":
@@ -113,27 +113,27 @@ def all_customers_orders():
         total_delivered = 0
         for cur_order in all_orders_dict["تم التوصيل"]:
             total_delivered += cur_order[11]
-    return render_template('all_customers_orders.html',
+    return render_template('all_Users_orders.html',
                            user_role=user_role, orders_num=orders_count,
                            statuses=statuses, all_orders_dict=all_orders_dict,
                            total_delivered=total_delivered)
 
 
-@admin_bp.route('/all_customers', methods=['GET', 'POST'])
+@admin_bp.route('/all_Users', methods=['GET', 'POST'])
 @login_required
-def all_customers():
+def all_Users():
     user_role = check_role()
     if user_role != "admin":
         return redirect(request.referrer)
 
     with sqlite3.connect("Shopping.db") as connection:
         cursor = connection.cursor()
-        cursor.execute("select * from Customers")
+        cursor.execute("select * from Users")
 
         users = cursor.fetchall()
         connection.commit()
 
-    return render_template("all_customers.html", users=users, user_role=user_role, users_num=len(users))
+    return render_template("all_Users.html", users=users, user_role=user_role, users_num=len(users))
 
 
 @admin_bp.route('/backup', methods=['POST'])
@@ -152,8 +152,8 @@ def backup():
     send_email("mohammad.gh454@gmail.com", 
                GMAIL_PASS,
                "m7md.gh.99@hotmail.com",
-               "Backup of Website's Data",
-               now.strftime("%Y-%m-%d %H:%M:%S"),
+               "نسخة احتياطية من قاعدة البيانات",
+               f"تم أخذ نسخة احتياطية من قاعدة البيانات في {now.strftime('%Y-%m-%d %H:%M:%S')}\n",
                "plain",
                backup_filename)
 

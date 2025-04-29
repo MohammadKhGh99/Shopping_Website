@@ -18,7 +18,7 @@ def load_user(user_id):
         try:
             cursor.execute(f"""
             select *
-            from Customers
+            from Users
             where id_number = '{user_id}'
             """)
             result = cursor.fetchone()
@@ -141,7 +141,7 @@ def checkout():
                 hashed_password = bcrypt.generate_password_hash(password)
                 try:
                     cursor.execute("""
-                    INSERT INTO Customers(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
+                    INSERT INTO Users(phone_number, first_name, last_name, role, date_joined, city, address, backup_phone, password, email)
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (phone_number, first_name, last_name, role, date_joined, city, address, backup_phone,
                           hashed_password, email))

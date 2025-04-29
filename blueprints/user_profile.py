@@ -29,7 +29,7 @@ def profile():
             cursor = connection.cursor()
             try:
                 cursor.execute(f"""
-                update Customers
+                update Users
                 set first_name = '{new_first_name}',
                 last_name = '{new_last_name}',
                 phone_number = '{new_phone_number}',
@@ -62,7 +62,7 @@ def orders():
     user_role = check_role()
     # the admin cannot enter the customer orders page
     if user_role == "admin":
-        return redirect(url_for('admin.all_customers_orders'))
+        return redirect(url_for('admin.all_Users_orders'))
 
     # retrieve all the orders of the current user
     with sqlite3.connect('Shopping.db') as connection:

@@ -20,7 +20,7 @@ def load_user(user_id):
         try:
             cursor.execute(f"""
             select *
-            from Customers
+            from Users
             where id_number = '{user_id}'
             """)
             result = cursor.fetchone()
@@ -57,14 +57,14 @@ def login():
                 # retrieve the user that has this phone number
                 check_user_existence = f"""
                     select *
-                    from Customers
+                    from Users
                     where phone_number = '{phone_number}'
                     """
             else:
                 # retrieve the user that has this email
                 check_user_existence = f"""
                     select *
-                    from Customers
+                    from Users
                     where email = '{email}'
                     """
 
@@ -145,7 +145,7 @@ def register():
             cursor = connection.cursor()
             try:
                 cursor.execute("""
-                INSERT INTO Customers(phone_number, first_name, last_name, 
+                INSERT INTO Users(phone_number, first_name, last_name, 
                                       role, date_joined, city, address, 
                                       backup_phone, password, email, forgot_password)
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -191,14 +191,14 @@ def forgot_password():
                 unique_token = ''.join(random.choice(chars) for _ in range(10))
                 if login_method == "phone":
                     cursor.execute(f"""
-                    select * from Customers
+                    select * from Users
                     where phone_number = '{customer_phone}'
                     """)
                     wanted_user = cursor.fetchone()
                     user_fullname = wanted_user[2] + " " + wanted_user[3]
                     temp_password = bcrypt.generate_password_hash(unique_token).decode('utf-8')
                     cursor.execute(f"""
-                    update Customers
+                    update Users
                     set password = '{temp_password}',
                     forgot_password = 1
                     where phone_number = '{customer_phone}'
@@ -206,13 +206,13 @@ def forgot_password():
                     customer_email = wanted_user[10]
                 else:
                     cursor.execute(f"""
-                    select * from Customers
+                    select * from Users
                     where email = '{customer_email}'
                     """)
                     wanted_user = cursor.fetchone()
                     user_fullname = wanted_user[2] + " " + wanted_user[3]
                     cursor.execute(f"""
-                    update Customers
+                    update Users
                     set password = '{bcrypt.generate_password_hash(unique_token)}',
                     forgot_password = 1
                     where email = '{customer_email}'
@@ -260,7 +260,7 @@ def new_password():
             new_hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
             try:
                 cursor.execute(f"""
-                update Customers
+                update Users
                 set password = '{new_hashed_password}',
                 forgot_password = 0
                 where phone_number = '{phone_number}'

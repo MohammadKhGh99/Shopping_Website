@@ -168,7 +168,7 @@ body {
   font-size: 0.9em;
 }
 
-/* ########################## all_customers_orders.html CSS ######################### */
+/* ########################## all_Users_orders.html CSS ######################### */
 
 @media (max-width: 767px) {
   .all-orders-table {
@@ -309,7 +309,7 @@ body {
   margin-top: 20px;
 }
 
-/* ########################## all_customers.html CSS ######################### */
+/* ########################## all_Users.html CSS ######################### */
 
 #all-users-container,
 #all-orders-container,

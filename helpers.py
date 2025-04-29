@@ -86,11 +86,11 @@ def send_email(sender, app_password, to, subject, message_text, msg_type, attach
     if attachment:
         with open(attachment, 'rb') as f:
             part = MIMEBase('application', 'octet-stream')
-            part.set_payload(attachment.read())
+            part.set_payload(f.read())
             encoders.encode_base64(part)
             part.add_header(
                 'Content-Disposition',
-                f'attachment; filename={os.path.basename(attachment)}'
+                f'attachment; filename={os.path.basename(f.name)}'
             )
             msg.attach(part)
 

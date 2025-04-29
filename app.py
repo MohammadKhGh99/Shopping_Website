@@ -42,8 +42,8 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 
 
-# class Customers(db.Model):
-# 	__tablename__ = "customers"
+# class Users(db.Model):
+# 	__tablename__ = "Users"
 # 	id_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
 # 	phone_number = db.Column(db.NVARCHAR(10), unique=True)
 # 	first_name = db.Column(db.NVARCHAR(15))
@@ -66,7 +66,7 @@ def load_user(user_id):
         try:
             cursor.execute(f"""
             select *
-            from Customers
+            from Users
             where id_number = '{user_id}'
             """)
             result = cursor.fetchone()

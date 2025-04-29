@@ -91,14 +91,14 @@
       </div>
       <div id="header-left">
         {% if user_role == "admin" %}
-        <form>
-          <!-- <button type="submit" style="background-color: transparent; border: 0; cursor: pointer"> -->
+        <form method="post" action="{{url_for('admin.backup')}}">
+          <button type="submit" style="background-color: transparent; border: 0; cursor: pointer">
             <a href="{{url_for('admin.backup')}}" class="backup" title="نسخة احتياطية" style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
               <span class="material-symbols-outlined backup-icon" style="font-size: 20px; color: #AD7765;">
                 backup
               </span>
             </a>
-          <!-- </button> -->
+          </button>
         </form>
           
           <span style="padding: 3px; color: #65d001">
@@ -140,10 +140,10 @@
   {% if user_role == "admin" or user_role == "customer" %}
     <div id="dashboard-link-bar">
       {% if user_role == "admin" %}
-        <a href="{{url_for('admin.all_customers')}}">
+        <a href="{{url_for('admin.all_Users')}}">
           جميع المستخدمين
         </a>
-        <a href="{{url_for('admin.all_customers_orders')}}">
+        <a href="{{url_for('admin.all_Users_orders')}}">
           جميع الطلبات
         </a>
         <a href="{{url_for('products_handling.handling_products')}}">
