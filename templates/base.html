@@ -92,12 +92,12 @@
       <div id="header-left">
         {% if user_role == "admin" %}
         <form method="post" action="{{url_for('admin.backup')}}">
-          <button type="submit" style="background-color: transparent; border: 0; cursor: pointer">
-            <a href="{{url_for('admin.backup')}}" class="backup" title="نسخة احتياطية" style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
-              <span class="material-symbols-outlined backup-icon" style="font-size: 20px; color: #AD7765;">
+          <button type="submit" class="backup" title="نسخة احتياطية">
+            <!-- <a href="{{url_for('admin.backup')}}" class="backup" title="نسخة احتياطية" style="display: flex; justify-content: center; align-items: center; text-decoration: none;"> -->
+              <span class="material-symbols-outlined backup-icon">
                 backup
               </span>
-            </a>
+            <!-- </a> -->
           </button>
         </form>
           

@@ -290,7 +290,8 @@ body {
 .menu-icon:hover,
 .search-icon:hover,
 .shopping-cart-icon:hover,
-.backup-icon:hover {
+.backup-icon:hover,
+.backup:hover {
   color: black;
 }
 
@@ -378,6 +379,17 @@ body {
 }
 
 /* ########################## base.html CSS ######################### */
+
+.backup {
+  background-color: transparent; 
+  border: 0; 
+  cursor: pointer;
+}
+
+.backup-icon {
+  font-size: 20px; 
+  color: #AD7765;
+}
 
 .material-symbols-outlined {
   user-select: none;

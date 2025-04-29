@@ -2,8 +2,9 @@ import sqlite3
 import datetime
 import os
 import shutil
+import json
 
-from helpers import check_role, send_error, statuses, convert_str_to_dic, DB_FILE, send_email, GMAIL_PASS, EMAIL
+from helpers import check_role, send_error, statuses, convert_str_to_dic, DB_FILE, send_email, GMAIL_PASS, EMAIL, update_last_backup_time_in_file, get_last_backup_time_from_file
 from flask import render_template, redirect, url_for, request, flash, Blueprint
 from flask_login import login_required, current_user
 
@@ -32,8 +33,11 @@ def admin_profile():
             admins_num = len(cursor.fetchall())
             connection.commit()
 
+        # get the last backup time from the txt file
+        last_backup_time = get_last_backup_time_from_file()
+
         return render_template('admin_profile.html', current_user=current_user, user_role=user_role,
-                               Users_num=Users_num, admins_num=admins_num)
+                               Users_num=Users_num, admins_num=admins_num, last_backup_time=last_backup_time)
     return redirect(url_for('profile.profile'))
 
 
@@ -156,6 +160,9 @@ def backup():
                f"تم أخذ نسخة احتياطية من قاعدة البيانات في {now.strftime('%Y-%m-%d %H:%M:%S')}\n",
                "plain",
                backup_filename)
+    
+    # Update the last backup time in the JSON file
+    update_last_backup_time_in_file()
 
     print(f"Backup created: {backup_filename}")
     os.remove(backup_filename)

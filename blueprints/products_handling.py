@@ -59,43 +59,18 @@ def add_product():
         product_description = request.form['product-description']
         product_price = request.form['product-price']
         product_items_left = request.form['product-items-left']
-        product_publish_year = "" #request.form['product-publish-year']
-        product_author = " " #request.form['product-author']
-        # product_categories = request.form['product-categories']
-        # product_on_sale = request.form['product-on-sale']
-        # product_sale_price = request.form['product-sale-price']
-
-        # categories = [x.strip() for x in product_categories.split(',')]
+        product_publish_year = ""
+        product_author = " "
 
         # add the entered product info to the database
         with sqlite3.connect("Shopping.db") as connection:
             cursor = connection.cursor()
             try:
                 cursor.execute(
-                    "INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name) " # , categories
+                    "INSERT INTO Products (name, type, price, items_left, description, publish_year, author_name) "
                     "VALUES(?, ?, ?, ?, ?, ?, ?)",
                     (product_name, product_type, product_price, product_items_left, product_description,
                      product_publish_year, product_author))
-                    #  product_categories)
-
-                # # validating filename and creating img src path to store in database
-                # product_img = ""
-                # for img_file in product_images:
-                #     filename = secure_filename(img_file.filename)
-                #     product_folder = types_dict[product_type]
-                #     img_path = f'static/images/{product_folder}'
-                #     if not os.path.exists(img_path + f"/{cursor.lastrowid}"):
-                #         os.mkdir(img_path + f"/{cursor.lastrowid}")
-                #     img_path += f"/{cursor.lastrowid}/{filename}"
-                #     img_file.save(img_path)
-                #     product_img += img_path + "&"
-                # product_img = product_img[:-1]
-
-                # cursor.execute(f"""
-                # update Products
-                # set img_path = '{product_img}'
-                # where id_number = {cursor.lastrowid}
-                # """)
 
                 # Upload images to Cloudflare R2 and store their URLs
                 product_img_urls = ""

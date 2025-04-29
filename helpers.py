@@ -1,5 +1,6 @@
 import os
 import smtplib
+import datetime
 
 
 from dotenv import load_dotenv
@@ -23,6 +24,8 @@ R2_DEV_BUCKET_URL = os.getenv("R2-DEV-BUCKET-URL")
 DB_FILE = os.getenv("DB_FILE")
 EMAIL = os.getenv("WEBSITE_EMAIL")
 
+# CONFIG_FILE = "backup_config.json"
+CONFIG_FILE = "backup_time.txt"
 # Initialize the handler
 r2_handler = CloudflareR2Handler(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME, ENDPOINT_URL)
 
@@ -145,3 +148,20 @@ def convert_str_to_dic(string: str) -> dict:
 
     dic = {keys[i]: values[i] for i in range(len(keys))}
     return dic
+
+
+def update_last_backup_time_in_file():
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    with open(CONFIG_FILE, "w") as file:
+        file.write(now)
+        # json.dump({"last_backup_time": now}, file)
+
+
+def get_last_backup_time_from_file():
+    try:
+        with open(CONFIG_FILE, "r") as file:
+            data = file.read()
+            # data = json.load(file)
+            return data
+    except FileNotFoundError:
+        return "-"
