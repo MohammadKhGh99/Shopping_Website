@@ -4,7 +4,7 @@ import os
 import shutil
 import json
 
-from helpers import check_role, send_error, statuses, convert_str_to_dic, DB_FILE, send_email, GMAIL_PASS, EMAIL, update_last_backup_time_in_file, get_last_backup_time_from_file
+from helpers import check_role, send_error, statuses, convert_str_to_dic, DB_FILE, send_email, GMAIL_PASS, WEBSITE_EMAIL, update_last_backup_time_in_file, get_last_backup_time_from_file
 from flask import render_template, redirect, url_for, request, flash, Blueprint
 from flask_login import login_required, current_user
 
@@ -88,7 +88,7 @@ def all_Users_orders():
             orders_result = cursor.fetchall()
             customer_email = orders_result[0][7]
             # todo - send email to customer when updating order status
-            # send_email("mohammad.gh454@gmail.com",
+            # send_email(WEBISTE_EMAIL,
             #            GMAIL_PASS,
             #            customer_email,
             #            "تم تحديث حالة الطلب",
@@ -153,9 +153,9 @@ def backup():
     # Copy the database file
     shutil.copy2(DB_FILE, backup_filename)
 
-    send_email("mohammad.gh454@gmail.com", 
+    send_email(WEBSITE_EMAIL, 
                GMAIL_PASS,
-               "m7md.gh.99@hotmail.com",
+               WEBSITE_EMAIL,
                "نسخة احتياطية من قاعدة البيانات",
                f"تم أخذ نسخة احتياطية من قاعدة البيانات في {now.strftime('%Y-%m-%d %H:%M:%S')}\n",
                "plain",

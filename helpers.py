@@ -22,7 +22,9 @@ TOKEN_VALUE = os.getenv("TOKEN_VALUE")
 ENDPOINT_URL = os.getenv("ENDPOINT_URL")
 R2_DEV_BUCKET_URL = os.getenv("R2-DEV-BUCKET-URL")
 DB_FILE = os.getenv("DB_FILE")
-EMAIL = os.getenv("WEBSITE_EMAIL")
+WEBSITE_EMAIL = os.getenv("WEBSITE_EMAIL")
+DEV_EMAIL = os.getenv("DEV_EMAIL")
+GMAIL_PASS = os.getenv("GMAIL_APP_PASSWORD")
 
 # CONFIG_FILE = "backup_config.json"
 CONFIG_FILE = "backup_time.txt"
@@ -32,7 +34,6 @@ r2_handler = CloudflareR2Handler(ACCESS_KEY, SECRET_ACCESS_KEY, BUCKET_NAME, END
 cities = sorted(open("cities.txt", "r", encoding="utf8").readlines())
 statuses = ["تم تأكيد الطلب", "تم تجهيز الطلب", "تم التوصيل"]
 
-GMAIL_PASS = os.getenv("GMAIL_APP_PASSWORD")
 
 
 class User(UserMixin):
@@ -104,19 +105,13 @@ def send_email(sender, app_password, to, subject, message_text, msg_type, attach
 
 
 def send_error(e, subject):
-    send_email("mohammad.gh454@gmail.com", 
-               GMAIL_PASS,
-               "m7md.gh.99@hotmail.com",
-               subject,
-               str(e),
-               "plain")
+    send_email(WEBSITE_EMAIL, GMAIL_PASS, DEV_EMAIL, subject, str(e), "plain")
     
 
 # converting cart_items from Orders SQL table from string to dictionary to use it in creating orders page
 def convert_str_to_dic(string: str) -> dict:
     keys = []
     values = []
-    # string = "{'10': ('2', (10, 'كتاب1', 'كتب', 'static/images/books/10/product2.png', '30', 12, 'asdfghjk', '2000', 'مش أنا', 'قصص أطفال')), '9': ('3', (9, 'كتاب', 'كتب', 'static/images/books/9/product1.png', '50', 5, 'asd', '2022', 'أنا', 'روايات'))}"
     tmp = string[1:-1].split(":")
     ind = -1
     for i, x in enumerate(tmp):
@@ -154,14 +149,12 @@ def update_last_backup_time_in_file():
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     with open(CONFIG_FILE, "w") as file:
         file.write(now)
-        # json.dump({"last_backup_time": now}, file)
 
 
 def get_last_backup_time_from_file():
     try:
         with open(CONFIG_FILE, "r") as file:
             data = file.read()
-            # data = json.load(file)
             return data
     except FileNotFoundError:
         return "-"

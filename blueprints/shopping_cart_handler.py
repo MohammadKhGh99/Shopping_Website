@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 
-from helpers import check_role, send_error, send_email, GMAIL_PASS, cities, User
+from helpers import check_role, send_error, send_email, GMAIL_PASS, cities, User, WEBSITE_EMAIL
 from flask import flash, request, render_template, redirect, url_for, session, Blueprint
 from flask_login import current_user, login_user
 from extensions import bcrypt, login_manager
@@ -158,8 +158,7 @@ def checkout():
                     flash("تم التسجيل في الموقع بنجاح", category="success")
                     user = load_user(cursor.lastrowid)
                     login_user(user)
-                    send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
-                               "m7md.gh.99@hotmail.com",
+                    send_email(WEBSITE_EMAIL, GMAIL_PASS, WEBSITE_EMAIL,
                                "تم تسحيل زبون جديد",
                                f"زبون جديد بإسم {first_name} {last_name}\n "
                                f"email: {email}\nphone: {phone_number}", "plain")
@@ -218,8 +217,7 @@ def checkout():
                 , (first_name, last_name, role, city, address, email, backup_phone, phone_number, date_purchased, total_amount, status, str(cart_items)))
             
             connection.commit()
-            send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
-                       "m7md.gh.99@hotmail.com",
+            send_email(WEBSITE_EMAIL, GMAIL_PASS, WEBSITE_EMAIL,
                        f"طلب جديد برقم {cursor.lastrowid}",
                        f"طلب جديد برقم {cursor.lastrowid}\nللزبون {first_name} {last_name}\n"
                        f" email: {email}\n"

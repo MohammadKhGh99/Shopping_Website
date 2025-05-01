@@ -30,13 +30,13 @@ app.config['DEBUG'] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Shopping.db'
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle' : 300}
 
-SQL_PASS = ""
-SQLALCHEMY_DATABASE_URI = f"mysql+mysqldb://irtekaa:{SQL_PASS}@irtekaa.mysql.pythonanywhere-services.com/Shopping"
+# SQL_PASS = ""
+# SQLALCHEMY_DATABASE_URI = f"mysql+mysqldb://irtekaa:{SQL_PASS}@irtekaa.mysql.pythonanywhere-services.com/Shopping"
 # app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
-engine = create_engine('sqlite:///Shopping.db')
+# engine = create_engine('sqlite:///Shopping.db')
 
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -258,8 +258,4 @@ def page_not_found(error):
 
 
 if __name__ == "__main__":
-    # for rule in app.url_map.iter_rules():
-    #     print(f"Endpoint: {rule.endpoint}, URL: {rule.rule}")
     app.run(host="0.0.0.0", debug=True)
-    # Print all registered routes in Flask
-    # app.run()

@@ -3,7 +3,7 @@ import sqlite3
 import datetime
 import string
 
-from helpers import check_role, send_error, send_email, GMAIL_PASS, cities, User
+from helpers import check_role, send_error, send_email, GMAIL_PASS, cities, User, WEBSITE_EMAIL
 from flask_login import current_user, login_required, logout_user, login_user
 from flask import flash, request, redirect, url_for, render_template, Blueprint
 from extensions import bcrypt, login_manager
@@ -158,8 +158,7 @@ def register():
                 user = load_user(cursor.lastrowid)
                 login_user(user)
                 # notify admin of new user registration
-                send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
-                           "m7md.gh.99@hotmail.com",
+                send_email(WEBSITE_EMAIL, GMAIL_PASS, WEBSITE_EMAIL,
                            "تم تسحيل زبون جديد",
                            f"""
                            زبون جديد بإسم {first_name} {last_name}\n
@@ -218,7 +217,7 @@ def forgot_password():
                     where email = '{customer_email}'
                     """)
                 connection.commit()
-                send_email("mohammad.gh454@gmail.com", GMAIL_PASS,
+                send_email(WEBSITE_EMAIL, GMAIL_PASS,
                         customer_email,
                         "استعادة كلمة المرور",
                         f"""
