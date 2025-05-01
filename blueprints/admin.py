@@ -41,9 +41,9 @@ def admin_profile():
     return redirect(url_for('profile.profile'))
 
 
-@admin_bp.route('/all_Users_orders', methods=['GET', 'POST'])
+@admin_bp.route('/all_customers_orders', methods=['GET', 'POST'])
 @login_required
-def all_Users_orders():
+def all_customers_orders():
     user_role = check_role()
     # the customer cannot enter the admin orders page
     if user_role == "customer":
@@ -117,27 +117,27 @@ def all_Users_orders():
         total_delivered = 0
         for cur_order in all_orders_dict["تم التوصيل"]:
             total_delivered += cur_order[11]
-    return render_template('all_Users_orders.html',
+    return render_template('all_customers_orders.html',
                            user_role=user_role, orders_num=orders_count,
                            statuses=statuses, all_orders_dict=all_orders_dict,
                            total_delivered=total_delivered)
 
 
-@admin_bp.route('/all_Users', methods=['GET', 'POST'])
+@admin_bp.route('/all_users', methods=['GET', 'POST'])
 @login_required
-def all_Users():
+def all_users():
     user_role = check_role()
     if user_role != "admin":
         return redirect(request.referrer)
 
-    with sqlite3.connect("Shopping.db") as connection:
+    with sqlite3.connect('Shopping.db') as connection:
         cursor = connection.cursor()
         cursor.execute("select * from Users")
 
         users = cursor.fetchall()
         connection.commit()
 
-    return render_template("all_Users.html", users=users, user_role=user_role, users_num=len(users))
+    return render_template("all_users.html", users=users, user_role=user_role, users_num=len(users))
 
 
 @admin_bp.route('/backup', methods=['POST'])

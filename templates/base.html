@@ -140,10 +140,10 @@
   {% if user_role == "admin" or user_role == "customer" %}
     <div id="dashboard-link-bar">
       {% if user_role == "admin" %}
-        <a href="{{url_for('admin.all_Users')}}">
+        <a href="{{url_for('admin.all_users')}}">
           جميع المستخدمين
         </a>
-        <a href="{{url_for('admin.all_Users_orders')}}">
+        <a href="{{url_for('admin.all_customers_orders')}}">
           جميع الطلبات
         </a>
         <a href="{{url_for('products_handling.handling_products')}}">
