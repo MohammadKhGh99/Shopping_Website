@@ -86,18 +86,20 @@ def all_customers_orders():
             select * from Orders
             """)
             orders_result = cursor.fetchall()
-            customer_email = orders_result[0][7]
-            # todo - send email to customer when updating order status
-            # send_email(WEBISTE_EMAIL,
-            #            GMAIL_PASS,
-            #            customer_email,
-            #            "تم تحديث حالة الطلب",
-            #            f"""
-            #            تم تحديث حالة طلبك الى {new_status}\n
-            #             والسعر الكلي إلى {new_total_amount}
-            #             """, "plain")
+            if orders_result != []:
+                customer_email = orders_result[0][7]
+                # todo - send email to customer when updating order status
+                # send_email(WEBISTE_EMAIL,
+                #            GMAIL_PASS,
+                #            customer_email,
+                #            "تم تحديث حالة الطلب",
+                #            f"""
+                #            تم تحديث حالة طلبك الى {new_status}\n
+                #             والسعر الكلي إلى {new_total_amount}
+                #             """, "plain")
             connection.commit()
         except Exception as e:
+            print(e)
             send_error(e, "خطأ في تحميل الطلبات")
             connection.rollback()
             flash("حدث خطأ أثناء تحميل الطلبات,\n خطأ: " + str(e), "error")

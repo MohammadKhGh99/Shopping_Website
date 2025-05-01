@@ -134,7 +134,7 @@ def register():
         city = form['customer-city'].strip()
         address = form['customer-address'].strip()
         phone_number = form['customer-phone'].strip()
-        if phone_number == "0543818223":
+        if phone_number in ["0543818223", "0528942919"]:
             role = "admin"
         email = form['customer-email'].strip()
         backup_phone = form['customer-backup-phone'].strip()
@@ -158,11 +158,14 @@ def register():
                 user = load_user(cursor.lastrowid)
                 login_user(user)
                 # notify admin of new user registration
+                print(WEBSITE_EMAIL)
+                print(GMAIL_PASS)
                 send_email(WEBSITE_EMAIL, GMAIL_PASS, WEBSITE_EMAIL,
                            "تم تسحيل زبون جديد",
                            f"""
                            زبون جديد بإسم {first_name} {last_name}\n
-                            email: {email}\nphone: {phone_number}
+                           email: {email}\n
+                           phone: {phone_number}
                             """, "plain")
                 return redirect(url_for('profile.profile'))
             except Exception as e:
