@@ -1,17 +1,14 @@
 import os
 import sqlite3
-import smtplib
 
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from flask_login import UserMixin, LoginManager, login_required, current_user
+from flask_login import login_required, current_user
 from flask import render_template, Flask, request, redirect, url_for, flash
 from blueprints.admin import admin_bp
 from blueprints.shopping_cart_handler import shopping_cart_bp
 from blueprints.products_handling import products_handling_bp
 from blueprints.users_handling import user_bp
 from blueprints.user_profile import user_profile_bp
-from helpers import check_role, send_error, convert_str_to_dic, User, r2_handler
+from helpers import check_role, send_error, convert_str_to_dic, User
 from extensions import bcrypt, login_manager
 
 
