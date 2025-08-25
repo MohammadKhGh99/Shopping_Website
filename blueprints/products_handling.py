@@ -10,8 +10,8 @@ from werkzeug.utils import secure_filename
 
 products_handling_bp = Blueprint('products_handling', __name__)
 
-types_dict = {"كتب": "books", "أزياء": "clothes", "ركن الهدايا": "gifts_corner"}
-types = ["كتب", "أزياء", "ركن الهدايا"]
+types_dict = {"كتب": "books", "أزياء": "clothes"}#, "ركن الهدايا": "gifts_corner"}
+types = ["كتب", "أزياء"]#, "ركن الهدايا"]
 
 
 @products_handling_bp.errorhandler(Exception)
