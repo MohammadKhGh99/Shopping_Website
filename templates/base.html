@@ -39,9 +39,9 @@
             <li style="position: relative">
               <a href="{{url_for('clothes')}}">أزياء شرعية</a>
             </li>
-            <li style="position: relative">
+            <!-- <li style="position: relative">
               <a href="{{url_for('gifts_corner')}}">ركن الهدايا</a>
-            </li>
+            </li> -->
           </ul>
           <div class="side-menu-footer">
             <footer id="side-menu-footer">
@@ -280,14 +280,14 @@
               const irtekaaWhoWe = document.currentScript.parentNode.children[0];
               const BooksWhoWe = document.currentScript.parentNode.children[1];
               const clothesWhoWe = document.currentScript.parentNode.children[2];
-              const giftsWhoWe = document.currentScript.parentNode.children[3];
+              //const giftsWhoWe = document.currentScript.parentNode.children[3];
               if (window.location.href.includes("books")) {
                 BooksWhoWe.style.display = "inline-block";
               } else if (window.location.href.includes("clothes")) {
                 clothesWhoWe.style.display = "inline-block";
-              } else if (window.location.href.includes("gifts")) {
-                giftsWhoWe.style.display = "inline-block";
-              }else {
+              //} else if (window.location.href.includes("gifts")) {
+                //giftsWhoWe.style.display = "inline-block";
+              } else {
                 irtekaaWhoWe.style.display = "inline-block";
               } 
               
@@ -338,9 +338,9 @@
       } else if (window.location.href.includes("books")) {
         document.getElementById("books-instagram").style.display = "inline-block";
         document.getElementById("books-facebook").style.display = "inline-block";
-      } else if (window.location.href.includes("gifts_corner")) {
-        document.getElementById("books-instagram").style.display = "none";
-        document.getElementById("books-facebook").style.display = "none";
+      //} else if (window.location.href.includes("gifts_corner")) {
+        //document.getElementById("books-instagram").style.display = "none";
+        //document.getElementById("books-facebook").style.display = "none";
       }
     </script>
     <div id="footer-middle">

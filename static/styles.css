@@ -792,39 +792,55 @@ select {
 }
 
 #overlay {
-  display: none;
+  display: flex;
+  visibility: hidden;
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
-  transition-duration: 1s ease-in-out;
+  /* transition: 1s ease-in-out; */
+  opacity: 0;
   width: 100vw;
   height: 100vh;
   z-index: 2;
   background-color: rgba(0, 0, 0, 0.5);
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s 0s;
 }
 
 #overlay.show {
   display: initial;
+  opacity: 1;
+  visibility: visible;
 }
 
 @media (max-width: 767px) {
 
   #search-menu,
-  #side-menu,
-  #side-menu.open {
+  #side-menu {
+    /* display: none; */
     width: 50vw;
+    transform: translateX(50vw);
+  }
+  #side-menu.open {
+    display: flex;
+    width: 50vw;
+    transform: translateX(0);
   }
 }
 
 @media (min-width: 767px) {
   #search-menu,
   #side-menu {
+    /* display: none; */
     width: 30vw;
+    transform: translateX(30vw);
   }
   #side-menu.open {
-    width: 35vw;
+    transform: translateX(0);
+    z-index: 3;
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.5s ease-in-out;
   }
 }
 
@@ -832,30 +848,39 @@ select {
   width: 70%;
 }
 
+/* When menu is open */
+#side-menu.open {
+  transform: translateX(0); /* Slide into view */
+}
+
+#side-menu:not(.open),
+#search-menu:not(.open) {
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, visibility 0s 0.5s, z-index 0s 0.5s;
+}
+
 #search-menu,
 #side-menu,
 filters {
   position: fixed;
-  /* Position absolutely */
-  width: 0;
-  /* Hide off-screen */
   top: 0;
   bottom: 0;
+  right: 0;
   background-color: white;
-  transition: 0.5s;
-  /* Smooth animation */
-  z-index: 3;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-in-out;
+  z-index: -1;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   padding-top: 15px;
-  overflow: auto;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
 }
 
 #search-menu.open {
-  right: 0;
-  /* Slide into view */
+  transform: translateX(0);
 }
 
 #search-menu ul {
